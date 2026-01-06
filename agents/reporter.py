@@ -110,32 +110,53 @@ class ReporterAgent:
         return report
     
     def _generate_comment(self, item: NewsItem) -> str:
-        """生成幽默点评"""
+        """生成详细点评和内容介绍"""
         prompt = ChatPromptTemplate.from_messages([
-            ("system", """你是一个技术博主，擅长用简洁幽默的语言点评技术新闻。
+            ("system", """你是一个专业的技术内容分析师，擅长深入解读技术资讯。
 
 要求：
-1. 一句话概括核心内容（20-40字）
-2. 可以带一点幽默或调侃
-3. 要专业但不枯燥
-4. 避免过度夸张
+1. 先用1-2句话概括核心技术内容和创新点
+2. 分析这项技术的实际意义和应用前景（2-3句话）
+3. 保持专业性，突出技术价值
+4. 总长度控制在100-150字
 
 示例：
-- "又一个声称超越GPT-4的模型，不过这次好像是真的有点东西"
-- "机器人终于学会开门了，距离统治人类又近了一步（笑）"
-- "这个优化让训练速度提升3倍，钱包终于可以松口气了"
+"OpenAI发布了GPT-4的优化版本，通过改进注意力机制将推理能力提升了25%。这项技术主要改进了多步骤推理任务的准确性，对于复杂问题解决和代码生成有显著帮助。预计将在自动编程和科学研究领域带来新的突破。"
+
+重点关注：
+- 技术创新的具体内容
+- 性能提升的数据
+- 实际应用场景
+- 潜在影响
 """),
-            ("user", "标题：{title}\n内容：{content}\n\n请生成一句点评：")
+            ("user", "标题：{title}\n内容：{content}\n来源：{source}\n\n请生成详细的技术点评：")
         ])
         
         try:
             chain = prompt | self.llm
             response = chain.invoke({
                 "title": item['title'],
-                "content": item['content'][:200]
+                "content": item['content'][:200],
+                "source": item.get('source', 'Unknown')
             })
-            return response.content.strip()
-        except:
+
+            # 调试信息
+            self.logger.debug(f"LLM点评响应类型: {type(response)}")
+            self.logger.debug(f"LLM点评响应内容: {response}")
+
+            if hasattr(response, 'content') and response.content:
+                content = response.content.strip()
+                if content:
+                    return content
+                else:
+                    self.logger.warning("LLM返回内容为空")
+            else:
+                self.logger.warning(f"LLM响应没有content属性: {response}")
+
+            return "值得关注的技术进展"
+
+        except Exception as e:
+            self.logger.error(f"生成点评失败: {str(e)}")
             return "值得关注的技术进展"
     
     def _generate_trend_analysis(self, items: List[NewsItem]) -> str:

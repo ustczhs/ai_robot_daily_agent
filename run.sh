@@ -7,7 +7,7 @@
 cd /home/zhs/code/ai_robot_daily_agent || exit 1
 
 # 设置API密钥 (请替换为您的实际阿里百炼API密钥)
-export DASHSCOPE_API_KEY="sk-5d894cdc85774350b6bb29d3be994c6e"
+export DASHSCOPE_API_KEY="sk-??"
 
 # 激活Conda环境
 # 假设conda已安装并初始化

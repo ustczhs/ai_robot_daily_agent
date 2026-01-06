@@ -20,7 +20,7 @@ search:
   engines:
     - "google"
     - "bing"
-  max_results_per_query: 2
+  max_results_per_query: 100
   
 # 信息源配置
 sources:
@@ -44,7 +44,7 @@ sources:
 
 # 内容过滤配置
 filtering:
-  min_quality_score: 5.0  # 最低质量分数（0-10）
+  min_quality_score: 0.0  # 最低质量分数（0-10）
   max_age_hours: 48  # 最大内容年龄（小时）
   similarity_threshold: 0.85  # 去重相似度阈值
   min_content_length: 100  # 最小内容长度（字符）

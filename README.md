@@ -83,7 +83,7 @@ pip install -r requirements.txt
 本项目使用阿里百炼（DashScope）API。请在终端中设置您的API密钥。
 
 ```bash
-export DASHSCOPE_API_KEY="sk-5d894cdc85774350b6bb29d3be994c6e"
+export DASHSCOPE_API_KEY="sk-??"
 ```
 
 **重要提示**：为了长期使用，建议将此行命令添加到您的`~/.bashrc`或`~/.zshrc`文件中，然后执行`source ~/.bashrc`使其生效。
