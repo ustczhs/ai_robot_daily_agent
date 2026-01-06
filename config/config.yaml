@@ -1,0 +1,83 @@
+# AI与机器人技术日报Agent配置文件
+
+# LLM配置
+llm:
+  provider: "dashscope"  # 阿里百炼
+  model: "qwen-plus"     # 推荐使用 qwen-plus 或 qwen-max
+  base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+  temperature: 0.7
+  max_tokens: 2000
+
+# 嵌入模型配置
+embedding:
+  provider: "dashscope"
+  model: "text-embedding-v3" # 阿里百炼嵌入模型
+  base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+
+# 搜索配置
+search:
+  # 使用Google搜索（通过requests直接搜索，无需API key）
+  engines:
+    - "google"
+    - "bing"
+  max_results_per_query: 2
+  
+# 信息源配置
+sources:
+  keywords:
+    - "AI breakthrough"
+    - "artificial intelligence news"
+    - "robotics technology"
+    - "machine learning advancement"
+    - "LLM large language model"
+    - "computer vision"
+    - "reinforcement learning"
+    - "AI agent"
+    - "人工智能最新进展"
+    - "机器人技术突破"
+  
+  # 可选：特定网站（作为补充）
+  websites:
+    - "https://arxiv.org/list/cs.AI/recent"
+    - "https://news.ycombinator.com/"
+    - "https://www.reddit.com/r/MachineLearning/"
+
+# 内容过滤配置
+filtering:
+  min_quality_score: 5.0  # 最低质量分数（0-10）
+  max_age_hours: 48  # 最大内容年龄（小时）
+  similarity_threshold: 0.85  # 去重相似度阈值
+  min_content_length: 100  # 最小内容长度（字符）
+
+# 分类配置
+categories:
+  - "大语言模型与生成式AI"
+  - "机器人技术与具身智能"
+  - "计算机视觉"
+  - "强化学习与决策智能"
+  - "AI基础设施与工具"
+  - "行业应用与产品"
+  - "研究前沿与理论突破"
+
+# 报告配置
+report:
+  format: "markdown"
+  output_dir: "./reports"
+  include_summary: true
+  include_trend_analysis: true
+  include_insights: true
+  include_predictions: true
+  max_items_per_category: 8
+
+# 数据库配置
+database:
+  vector_db_path: "./data/chroma_db"
+  history_db_path: "./data/history.db"
+  retention_days: 30  # 历史数据保留天数
+
+# 日志配置
+logging:
+  level: "DEBUG"
+  file: "./logs/agent.log"
+  max_size_mb: 10
+  backup_count: 5

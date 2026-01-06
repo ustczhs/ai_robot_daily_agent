@@ -1,0 +1,122 @@
+"""
+Agent编排器 - 协调各个Agent完成日报生成
+"""
+import os
+import logging
+from datetime import datetime
+from pathlib import Path
+from typing import Dict, List
+
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langgraph.graph import StateGraph, END
+
+from agents.collector import CollectorAgent
+from agents.analyzer import AnalyzerAgent
+from agents.deduplicator import DeduplicatorAgent
+from agents.reporter import ReporterAgent
+from utils.state import AgentState
+
+
+class DailyReportOrchestrator:
+    """日报生成编排器"""
+    
+    def __init__(self, config: dict):
+        self.config = config
+        self.logger = logging.getLogger(__name__)
+        
+        # 初始化LLM
+        self.llm = ChatOpenAI(
+            model=config['llm']['model'],
+            temperature=config['llm']['temperature'],
+            max_tokens=config['llm']['max_tokens'],
+            openai_api_base=config['llm'].get('base_url'),
+            openai_api_key=os.getenv('DASHSCOPE_API_KEY') or os.getenv('OPENAI_API_KEY')
+        )
+        
+        # 初始化嵌入模型
+        self.embeddings = OpenAIEmbeddings(
+            model=config['embedding']['model'],
+            openai_api_base=config['embedding'].get('base_url'),
+            openai_api_key=os.getenv('DASHSCOPE_API_KEY') or os.getenv('OPENAI_API_KEY')
+        )
+        
+        # 初始化各个Agent
+        self.collector = CollectorAgent(config, self.llm)
+        self.analyzer = AnalyzerAgent(config, self.llm)
+        self.deduplicator = DeduplicatorAgent(config, self.embeddings)
+        self.reporter = ReporterAgent(config, self.llm)
+        
+        # 构建工作流
+        self.workflow = self._build_workflow()
+    
+    def _build_workflow(self) -> StateGraph:
+        """构建Agent工作流"""
+        workflow = StateGraph(AgentState)
+        
+        # 添加节点
+        workflow.add_node("collect", self._collect_node)
+        workflow.add_node("analyze", self._analyze_node)
+        workflow.add_node("deduplicate", self._deduplicate_node)
+        workflow.add_node("report", self._report_node)
+        
+        # 定义流程
+        workflow.set_entry_point("collect")
+        workflow.add_edge("collect", "analyze")
+        workflow.add_edge("analyze", "deduplicate")
+        workflow.add_edge("deduplicate", "report")
+        workflow.add_edge("report", END)
+        
+        return workflow.compile()
+    
+    def _collect_node(self, state: AgentState) -> AgentState:
+        """信息采集节点"""
+        self.logger.info("📡 阶段1: 信息采集")
+        raw_items = self.collector.collect()
+        state['raw_items'] = raw_items
+        state['stage'] = 'collected'
+        self.logger.info(f"   收集到 {len(raw_items)} 条原始信息")
+        return state
+    
+    def _analyze_node(self, state: AgentState) -> AgentState:
+        """内容分析节点"""
+        self.logger.info("🔍 阶段2: 内容分析与评分")
+        analyzed_items = self.analyzer.analyze(state['raw_items'])
+        state['analyzed_items'] = analyzed_items
+        state['stage'] = 'analyzed'
+        self.logger.info(f"   分析完成，保留 {len(analyzed_items)} 条高质量内容")
+        return state
+    
+    def _deduplicate_node(self, state: AgentState) -> AgentState:
+        """去重节点"""
+        self.logger.info("🔄 阶段3: 语义去重")
+        unique_items = self.deduplicator.deduplicate(state['analyzed_items'])
+        state['unique_items'] = unique_items
+        state['stage'] = 'deduplicated'
+        self.logger.info(f"   去重完成，剩余 {len(unique_items)} 条独特内容")
+        return state
+    
+    def _report_node(self, state: AgentState) -> AgentState:
+        """报告生成节点"""
+        self.logger.info("📝 阶段4: 生成报告")
+        report_path = self.reporter.generate_report(state['unique_items'])
+        state['report_path'] = report_path
+        state['stage'] = 'completed'
+        self.logger.info(f"   报告已生成: {report_path}")
+        return state
+    
+    def run(self) -> str:
+        """运行完整流程"""
+        # 初始化状态
+        initial_state = AgentState(
+            raw_items=[],
+            analyzed_items=[],
+            unique_items=[],
+            stage='initialized',
+            report_path='',
+            timestamp=datetime.now()
+        )
+        
+        # 执行工作流
+        final_state = self.workflow.invoke(initial_state)
+        
+        return final_state['report_path']

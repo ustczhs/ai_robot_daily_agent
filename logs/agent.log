@@ -1,0 +1,911 @@
+2026-01-06 14:13:48,872 - __main__ - INFO - 配置加载成功
+2026-01-06 14:13:48,872 - __main__ - INFO - 运行时间: 2026-01-06 14:13:48
+2026-01-06 14:13:48,872 - __main__ - ERROR - 未找到 DASHSCOPE_API_KEY 或 OPENAI_API_KEY 环境变量
+2026-01-06 14:14:10,956 - __main__ - INFO - 配置加载成功
+2026-01-06 14:14:10,956 - __main__ - INFO - 运行时间: 2026-01-06 14:14:10
+2026-01-06 14:14:10,956 - __main__ - ERROR - 执行失败: name 'os' is not defined
+Traceback (most recent call last):
+  File "/home/zhs/code/ai_robot_daily_agent/main.py", line 68, in main
+    orchestrator = DailyReportOrchestrator(config)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/zhs/code/ai_robot_daily_agent/agents/orchestrator.py", line 33, in __init__
+    openai_api_key=os.getenv('DASHSCOPE_API_KEY') or os.getenv('OPENAI_API_KEY')
+                   ^^
+NameError: name 'os' is not defined
+2026-01-06 14:14:54,005 - __main__ - INFO - 配置加载成功
+2026-01-06 14:14:54,005 - __main__ - INFO - 运行时间: 2026-01-06 14:14:54
+2026-01-06 14:14:54,005 - __main__ - ERROR - 未找到 DASHSCOPE_API_KEY 或 OPENAI_API_KEY 环境变量
+2026-01-06 14:15:11,432 - __main__ - INFO - 配置加载成功
+2026-01-06 14:15:11,432 - __main__ - INFO - 运行时间: 2026-01-06 14:15:11
+2026-01-06 14:15:11,432 - __main__ - ERROR - 执行失败: name 'os' is not defined
+Traceback (most recent call last):
+  File "/home/zhs/code/ai_robot_daily_agent/main.py", line 68, in main
+    orchestrator = DailyReportOrchestrator(config)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/zhs/code/ai_robot_daily_agent/agents/orchestrator.py", line 33, in __init__
+    openai_api_key=os.getenv('DASHSCOPE_API_KEY') or os.getenv('OPENAI_API_KEY')
+                   ^^
+NameError: name 'os' is not defined
+2026-01-06 14:20:39,952 - __main__ - INFO - 配置加载成功
+2026-01-06 14:20:39,952 - __main__ - INFO - 运行时间: 2026-01-06 14:20:39
+2026-01-06 14:20:39,952 - __main__ - ERROR - 未找到 DASHSCOPE_API_KEY 或 OPENAI_API_KEY 环境变量
+2026-01-06 14:21:17,631 - __main__ - INFO - 配置加载成功
+2026-01-06 14:21:17,631 - __main__ - INFO - 运行时间: 2026-01-06 14:21:17
+2026-01-06 14:21:17,631 - __main__ - ERROR - 执行失败: name 'os' is not defined
+Traceback (most recent call last):
+  File "/home/zhs/code/ai_robot_daily_agent/./main.py", line 68, in main
+    orchestrator = DailyReportOrchestrator(config)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/zhs/code/ai_robot_daily_agent/agents/orchestrator.py", line 33, in __init__
+    openai_api_key=os.getenv('DASHSCOPE_API_KEY') or os.getenv('OPENAI_API_KEY')
+                   ^^
+NameError: name 'os' is not defined
+2026-01-06 14:22:07,113 - __main__ - INFO - 配置加载成功
+2026-01-06 14:22:07,113 - __main__ - INFO - 运行时间: 2026-01-06 14:22:07
+2026-01-06 14:22:07,786 - chromadb.telemetry.product.posthog - ERROR - Failed to send telemetry event ClientStartEvent: capture() takes 1 positional argument but 3 were given
+2026-01-06 14:22:07,815 - chromadb.telemetry.product.posthog - ERROR - Failed to send telemetry event ClientCreateCollectionEvent: capture() takes 1 positional argument but 3 were given
+2026-01-06 14:22:07,816 - __main__ - INFO - 开始执行日报生成流程...
+2026-01-06 14:22:07,852 - agents.orchestrator - INFO - 📡 阶段1: 信息采集
+2026-01-06 14:22:17,908 - agents.collector - ERROR - Google搜索失败: HTTPSConnectionPool(host='www.google.com', port=443): Max retries exceeded with url: /search?q=AI+breakthrough&tbm=nws&tbs=qdr:d2 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7f2440b52850>: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+2026-01-06 14:22:29,921 - agents.collector - ERROR - Google搜索失败: HTTPSConnectionPool(host='www.google.com', port=443): Max retries exceeded with url: /search?q=artificial+intelligence+news&tbm=nws&tbs=qdr:d2 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7f2440bee510>: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+2026-01-06 14:22:41,932 - agents.collector - ERROR - Google搜索失败: HTTPSConnectionPool(host='www.google.com', port=443): Max retries exceeded with url: /search?q=robotics+technology&tbm=nws&tbs=qdr:d2 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7f243c900910>: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+2026-01-06 14:22:53,940 - agents.collector - ERROR - Google搜索失败: HTTPSConnectionPool(host='www.google.com', port=443): Max retries exceeded with url: /search?q=machine+learning+advancement&tbm=nws&tbs=qdr:d2 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7f243c902d10>: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+2026-01-06 14:23:05,989 - agents.collector - ERROR - Google搜索失败: HTTPSConnectionPool(host='www.google.com', port=443): Max retries exceeded with url: /search?q=LLM+large+language+model&tbm=nws&tbs=qdr:d2 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7f243c905150>: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+2026-01-06 14:23:18,000 - agents.collector - ERROR - Google搜索失败: HTTPSConnectionPool(host='www.google.com', port=443): Max retries exceeded with url: /search?q=computer+vision&tbm=nws&tbs=qdr:d2 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7f243c902cd0>: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+2026-01-06 14:23:30,057 - agents.collector - ERROR - Google搜索失败: HTTPSConnectionPool(host='www.google.com', port=443): Max retries exceeded with url: /search?q=reinforcement+learning&tbm=nws&tbs=qdr:d2 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7f243c900f50>: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+2026-01-06 14:23:42,069 - agents.collector - ERROR - Google搜索失败: HTTPSConnectionPool(host='www.google.com', port=443): Max retries exceeded with url: /search?q=AI+agent&tbm=nws&tbs=qdr:d2 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7f2440bd7190>: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+2026-01-06 14:23:54,082 - agents.collector - ERROR - Google搜索失败: HTTPSConnectionPool(host='www.google.com', port=443): Max retries exceeded with url: /search?q=%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E6%9C%80%E6%96%B0%E8%BF%9B%E5%B1%95&tbm=nws&tbs=qdr:d2 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7f2440bed890>: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+2026-01-06 14:24:06,124 - agents.collector - ERROR - Google搜索失败: HTTPSConnectionPool(host='www.google.com', port=443): Max retries exceeded with url: /search?q=%E6%9C%BA%E5%99%A8%E4%BA%BA%E6%8A%80%E6%9C%AF%E7%AA%81%E7%A0%B4&tbm=nws&tbs=qdr:d2 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7f243c906690>: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+2026-01-06 14:24:08,125 - agents.collector - INFO - 总共收集到 0 条信息
+2026-01-06 14:24:08,125 - agents.orchestrator - INFO -    收集到 0 条原始信息
+2026-01-06 14:24:08,126 - agents.orchestrator - INFO - 🔍 阶段2: 内容分析与评分
+2026-01-06 14:24:08,126 - agents.orchestrator - INFO -    分析完成，保留 0 条高质量内容
+2026-01-06 14:24:08,127 - agents.orchestrator - INFO - 🔄 阶段3: 语义去重
+2026-01-06 14:24:08,127 - agents.orchestrator - INFO -    去重完成，剩余 0 条独特内容
+2026-01-06 14:24:08,128 - agents.orchestrator - INFO - 📝 阶段4: 生成报告
+2026-01-06 14:24:09,385 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:24:11,017 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:24:30,506 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:24:30,508 - agents.orchestrator - INFO -    报告已生成: reports/ai_robot_daily_20260106.md
+2026-01-06 14:24:30,509 - __main__ - INFO - 报告已保存至: reports/ai_robot_daily_20260106.md
+2026-01-06 14:36:15,713 - __main__ - INFO - 配置加载成功
+2026-01-06 14:36:15,713 - __main__ - INFO - 运行时间: 2026-01-06 14:36:15
+2026-01-06 14:36:15,715 - __main__ - ERROR - 执行失败: 1 validation error for ChatOpenAI
+  Value error, Unknown scheme for proxy URL URL('socks://127.0.0.1:7897/') [type=value_error, input_value={'model': 'qwen-plus', 't...6e', 'model_kwargs': {}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/value_error
+Traceback (most recent call last):
+  File "/home/zhs/code/ai_robot_daily_agent/main.py", line 68, in main
+    orchestrator = DailyReportOrchestrator(config)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/zhs/code/ai_robot_daily_agent/agents/orchestrator.py", line 28, in __init__
+    self.llm = ChatOpenAI(
+               ^^^^^^^^^^^
+  File "/home/zhs/miniconda3/envs/daily_agent/lib/python3.11/site-packages/langchain_core/load/serializable.py", line 130, in __init__
+    super().__init__(*args, **kwargs)
+  File "/home/zhs/miniconda3/envs/daily_agent/lib/python3.11/site-packages/pydantic/main.py", line 214, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for ChatOpenAI
+  Value error, Unknown scheme for proxy URL URL('socks://127.0.0.1:7897/') [type=value_error, input_value={'model': 'qwen-plus', 't...6e', 'model_kwargs': {}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/value_error
+2026-01-06 14:36:51,547 - __main__ - INFO - 配置加载成功
+2026-01-06 14:36:51,547 - __main__ - INFO - 运行时间: 2026-01-06 14:36:51
+2026-01-06 14:36:51,548 - __main__ - ERROR - 未找到 DASHSCOPE_API_KEY 或 OPENAI_API_KEY 环境变量
+2026-01-06 14:37:29,074 - __main__ - INFO - 配置加载成功
+2026-01-06 14:37:29,074 - __main__ - INFO - 运行时间: 2026-01-06 14:37:29
+2026-01-06 14:37:29,380 - chromadb.telemetry.product.posthog - ERROR - Failed to send telemetry event ClientStartEvent: capture() takes 1 positional argument but 3 were given
+2026-01-06 14:37:29,381 - chromadb.telemetry.product.posthog - ERROR - Failed to send telemetry event ClientCreateCollectionEvent: capture() takes 1 positional argument but 3 were given
+2026-01-06 14:37:29,382 - __main__ - INFO - 开始执行日报生成流程...
+2026-01-06 14:37:29,385 - agents.orchestrator - INFO - 📡 阶段1: 信息采集
+2026-01-06 14:37:39,426 - agents.collector - ERROR - Google搜索失败: HTTPSConnectionPool(host='www.google.com', port=443): Max retries exceeded with url: /search?q=AI+breakthrough&tbm=nws&tbs=qdr:d2 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7cb260135e50>: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+2026-01-06 14:37:51,512 - agents.collector - ERROR - Google搜索失败: HTTPSConnectionPool(host='www.google.com', port=443): Max retries exceeded with url: /search?q=artificial+intelligence+news&tbm=nws&tbs=qdr:d2 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7cb267f847d0>: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+2026-01-06 14:46:44,052 - __main__ - INFO - 配置加载成功
+2026-01-06 14:46:44,052 - __main__ - INFO - 运行时间: 2026-01-06 14:46:44
+2026-01-06 14:46:44,394 - chromadb.telemetry.product.posthog - ERROR - Failed to send telemetry event ClientStartEvent: capture() takes 1 positional argument but 3 were given
+2026-01-06 14:46:44,396 - chromadb.telemetry.product.posthog - ERROR - Failed to send telemetry event ClientCreateCollectionEvent: capture() takes 1 positional argument but 3 were given
+2026-01-06 14:46:44,396 - __main__ - INFO - 开始执行日报生成流程...
+2026-01-06 14:46:44,399 - agents.orchestrator - INFO - 📡 阶段1: 信息采集
+2026-01-06 14:46:44,480 - agents.collector - ERROR - Google搜索失败: HTTPSConnectionPool(host='www.google.com', port=443): Max retries exceeded with url: /search?q=AI+breakthrough&tbm=nws&tbs=qdr:d2 (Caused by ProxyError('Unable to connect to proxy. Your proxy appears to only use HTTP and not HTTPS, try changing your proxy URL to be HTTP. See: https://urllib3.readthedocs.io/en/latest/advanced-usage.html#https-proxy-error-http-proxy', SSLError(SSLError(1, '[SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:1016)'))))
+2026-01-06 14:46:46,558 - agents.collector - ERROR - Google搜索失败: HTTPSConnectionPool(host='www.google.com', port=443): Max retries exceeded with url: /search?q=artificial+intelligence+news&tbm=nws&tbs=qdr:d2 (Caused by ProxyError('Unable to connect to proxy. Your proxy appears to only use HTTP and not HTTPS, try changing your proxy URL to be HTTP. See: https://urllib3.readthedocs.io/en/latest/advanced-usage.html#https-proxy-error-http-proxy', SSLError(SSLError(1, '[SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:1016)'))))
+2026-01-06 14:46:48,682 - agents.collector - ERROR - Google搜索失败: HTTPSConnectionPool(host='www.google.com', port=443): Max retries exceeded with url: /search?q=robotics+technology&tbm=nws&tbs=qdr:d2 (Caused by ProxyError('Unable to connect to proxy. Your proxy appears to only use HTTP and not HTTPS, try changing your proxy URL to be HTTP. See: https://urllib3.readthedocs.io/en/latest/advanced-usage.html#https-proxy-error-http-proxy', SSLError(SSLError(1, '[SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:1016)'))))
+2026-01-06 14:46:50,768 - agents.collector - ERROR - Google搜索失败: HTTPSConnectionPool(host='www.google.com', port=443): Max retries exceeded with url: /search?q=machine+learning+advancement&tbm=nws&tbs=qdr:d2 (Caused by ProxyError('Unable to connect to proxy. Your proxy appears to only use HTTP and not HTTPS, try changing your proxy URL to be HTTP. See: https://urllib3.readthedocs.io/en/latest/advanced-usage.html#https-proxy-error-http-proxy', SSLError(SSLError(1, '[SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:1016)'))))
+2026-01-06 14:46:52,861 - agents.collector - ERROR - Google搜索失败: HTTPSConnectionPool(host='www.google.com', port=443): Max retries exceeded with url: /search?q=LLM+large+language+model&tbm=nws&tbs=qdr:d2 (Caused by ProxyError('Unable to connect to proxy. Your proxy appears to only use HTTP and not HTTPS, try changing your proxy URL to be HTTP. See: https://urllib3.readthedocs.io/en/latest/advanced-usage.html#https-proxy-error-http-proxy', SSLError(SSLError(1, '[SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:1016)'))))
+2026-01-06 14:46:54,955 - agents.collector - ERROR - Google搜索失败: HTTPSConnectionPool(host='www.google.com', port=443): Max retries exceeded with url: /search?q=computer+vision&tbm=nws&tbs=qdr:d2 (Caused by ProxyError('Unable to connect to proxy. Your proxy appears to only use HTTP and not HTTPS, try changing your proxy URL to be HTTP. See: https://urllib3.readthedocs.io/en/latest/advanced-usage.html#https-proxy-error-http-proxy', SSLError(SSLError(1, '[SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:1016)'))))
+2026-01-06 14:46:57,044 - agents.collector - ERROR - Google搜索失败: HTTPSConnectionPool(host='www.google.com', port=443): Max retries exceeded with url: /search?q=reinforcement+learning&tbm=nws&tbs=qdr:d2 (Caused by ProxyError('Unable to connect to proxy. Your proxy appears to only use HTTP and not HTTPS, try changing your proxy URL to be HTTP. See: https://urllib3.readthedocs.io/en/latest/advanced-usage.html#https-proxy-error-http-proxy', SSLError(SSLError(1, '[SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:1016)'))))
+2026-01-06 14:46:59,129 - agents.collector - ERROR - Google搜索失败: HTTPSConnectionPool(host='www.google.com', port=443): Max retries exceeded with url: /search?q=AI+agent&tbm=nws&tbs=qdr:d2 (Caused by ProxyError('Unable to connect to proxy. Your proxy appears to only use HTTP and not HTTPS, try changing your proxy URL to be HTTP. See: https://urllib3.readthedocs.io/en/latest/advanced-usage.html#https-proxy-error-http-proxy', SSLError(SSLError(1, '[SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:1016)'))))
+2026-01-06 14:47:01,208 - agents.collector - ERROR - Google搜索失败: HTTPSConnectionPool(host='www.google.com', port=443): Max retries exceeded with url: /search?q=%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E6%9C%80%E6%96%B0%E8%BF%9B%E5%B1%95&tbm=nws&tbs=qdr:d2 (Caused by ProxyError('Unable to connect to proxy. Your proxy appears to only use HTTP and not HTTPS, try changing your proxy URL to be HTTP. See: https://urllib3.readthedocs.io/en/latest/advanced-usage.html#https-proxy-error-http-proxy', SSLError(SSLError(1, '[SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:1016)'))))
+2026-01-06 14:47:38,789 - __main__ - INFO - 配置加载成功
+2026-01-06 14:47:38,789 - __main__ - INFO - 运行时间: 2026-01-06 14:47:38
+2026-01-06 14:47:38,857 - __main__ - ERROR - 执行失败: Using SOCKS proxy, but the 'socksio' package is not installed. Make sure to install httpx using `pip install httpx[socks]`.
+Traceback (most recent call last):
+  File "/home/zhs/code/ai_robot_daily_agent/./main.py", line 68, in main
+    orchestrator = DailyReportOrchestrator(config)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/zhs/code/ai_robot_daily_agent/agents/orchestrator.py", line 28, in __init__
+    self.llm = ChatOpenAI(
+               ^^^^^^^^^^^
+  File "/home/zhs/miniconda3/envs/daily_agent/lib/python3.11/site-packages/langchain_core/load/serializable.py", line 130, in __init__
+    super().__init__(*args, **kwargs)
+  File "/home/zhs/miniconda3/envs/daily_agent/lib/python3.11/site-packages/pydantic/main.py", line 214, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/zhs/miniconda3/envs/daily_agent/lib/python3.11/site-packages/langchain_openai/chat_models/base.py", line 578, in validate_environment
+    self.root_client = openai.OpenAI(**client_params, **sync_specific)  # type: ignore[arg-type]
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/zhs/miniconda3/envs/daily_agent/lib/python3.11/site-packages/openai/_client.py", line 164, in __init__
+    super().__init__(
+  File "/home/zhs/miniconda3/envs/daily_agent/lib/python3.11/site-packages/openai/_base_client.py", line 864, in __init__
+    self._client = http_client or SyncHttpxClientWrapper(
+                                  ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/zhs/miniconda3/envs/daily_agent/lib/python3.11/site-packages/openai/_base_client.py", line 794, in __init__
+    super().__init__(**kwargs)
+  File "/home/zhs/miniconda3/envs/daily_agent/lib/python3.11/site-packages/httpx/_client.py", line 697, in __init__
+    self._mounts: dict[URLPattern, BaseTransport | None] = {
+                                                           ^
+  File "/home/zhs/miniconda3/envs/daily_agent/lib/python3.11/site-packages/httpx/_client.py", line 700, in <dictcomp>
+    else self._init_proxy_transport(
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/zhs/miniconda3/envs/daily_agent/lib/python3.11/site-packages/httpx/_client.py", line 750, in _init_proxy_transport
+    return HTTPTransport(
+           ^^^^^^^^^^^^^^
+  File "/home/zhs/miniconda3/envs/daily_agent/lib/python3.11/site-packages/httpx/_transports/default.py", line 191, in __init__
+    raise ImportError(
+ImportError: Using SOCKS proxy, but the 'socksio' package is not installed. Make sure to install httpx using `pip install httpx[socks]`.
+2026-01-06 14:48:09,120 - __main__ - INFO - 配置加载成功
+2026-01-06 14:48:09,120 - __main__ - INFO - 运行时间: 2026-01-06 14:48:09
+2026-01-06 14:48:09,188 - __main__ - ERROR - 执行失败: Using SOCKS proxy, but the 'socksio' package is not installed. Make sure to install httpx using `pip install httpx[socks]`.
+Traceback (most recent call last):
+  File "/home/zhs/code/ai_robot_daily_agent/./main.py", line 68, in main
+    orchestrator = DailyReportOrchestrator(config)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/zhs/code/ai_robot_daily_agent/agents/orchestrator.py", line 28, in __init__
+    self.llm = ChatOpenAI(
+               ^^^^^^^^^^^
+  File "/home/zhs/miniconda3/envs/daily_agent/lib/python3.11/site-packages/langchain_core/load/serializable.py", line 130, in __init__
+    super().__init__(*args, **kwargs)
+  File "/home/zhs/miniconda3/envs/daily_agent/lib/python3.11/site-packages/pydantic/main.py", line 214, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/zhs/miniconda3/envs/daily_agent/lib/python3.11/site-packages/langchain_openai/chat_models/base.py", line 578, in validate_environment
+    self.root_client = openai.OpenAI(**client_params, **sync_specific)  # type: ignore[arg-type]
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/zhs/miniconda3/envs/daily_agent/lib/python3.11/site-packages/openai/_client.py", line 164, in __init__
+    super().__init__(
+  File "/home/zhs/miniconda3/envs/daily_agent/lib/python3.11/site-packages/openai/_base_client.py", line 864, in __init__
+    self._client = http_client or SyncHttpxClientWrapper(
+                                  ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/zhs/miniconda3/envs/daily_agent/lib/python3.11/site-packages/openai/_base_client.py", line 794, in __init__
+    super().__init__(**kwargs)
+  File "/home/zhs/miniconda3/envs/daily_agent/lib/python3.11/site-packages/httpx/_client.py", line 697, in __init__
+    self._mounts: dict[URLPattern, BaseTransport | None] = {
+                                                           ^
+  File "/home/zhs/miniconda3/envs/daily_agent/lib/python3.11/site-packages/httpx/_client.py", line 700, in <dictcomp>
+    else self._init_proxy_transport(
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/zhs/miniconda3/envs/daily_agent/lib/python3.11/site-packages/httpx/_client.py", line 750, in _init_proxy_transport
+    return HTTPTransport(
+           ^^^^^^^^^^^^^^
+  File "/home/zhs/miniconda3/envs/daily_agent/lib/python3.11/site-packages/httpx/_transports/default.py", line 191, in __init__
+    raise ImportError(
+ImportError: Using SOCKS proxy, but the 'socksio' package is not installed. Make sure to install httpx using `pip install httpx[socks]`.
+2026-01-06 14:48:27,264 - __main__ - INFO - 配置加载成功
+2026-01-06 14:48:27,264 - __main__ - INFO - 运行时间: 2026-01-06 14:48:27
+2026-01-06 14:48:27,662 - chromadb.telemetry.product.posthog - ERROR - Failed to send telemetry event ClientStartEvent: capture() takes 1 positional argument but 3 were given
+2026-01-06 14:48:27,664 - chromadb.telemetry.product.posthog - ERROR - Failed to send telemetry event ClientCreateCollectionEvent: capture() takes 1 positional argument but 3 were given
+2026-01-06 14:48:27,665 - __main__ - INFO - 开始执行日报生成流程...
+2026-01-06 14:48:27,702 - agents.orchestrator - INFO - 📡 阶段1: 信息采集
+2026-01-06 14:48:30,992 - agents.collector - INFO - 从Google搜索 'AI breakthrough' 获取 10 条结果
+2026-01-06 14:48:34,288 - agents.collector - INFO - 从Google搜索 'artificial intelligence news' 获取 10 条结果
+2026-01-06 14:48:39,395 - agents.collector - INFO - 从Google搜索 'robotics technology' 获取 10 条结果
+2026-01-06 14:48:45,148 - agents.collector - INFO - 从Google搜索 'machine learning advancement' 获取 10 条结果
+2026-01-06 14:48:47,826 - agents.collector - INFO - 从Google搜索 'LLM large language model' 获取 10 条结果
+2026-01-06 14:48:53,705 - agents.collector - INFO - 从Google搜索 'computer vision' 获取 10 条结果
+2026-01-06 14:49:00,899 - agents.collector - INFO - 从Google搜索 'reinforcement learning' 获取 10 条结果
+2026-01-06 14:49:08,176 - agents.collector - INFO - 从Google搜索 'AI agent' 获取 10 条结果
+2026-01-06 14:49:19,612 - agents.collector - INFO - 从Google搜索 '人工智能最新进展' 获取 10 条结果
+2026-01-06 14:49:25,450 - agents.collector - INFO - 从Google搜索 '机器人技术突破' 获取 10 条结果
+2026-01-06 14:49:27,450 - agents.collector - INFO - 总共收集到 100 条信息
+2026-01-06 14:49:27,451 - agents.orchestrator - INFO -    收集到 100 条原始信息
+2026-01-06 14:49:27,452 - agents.orchestrator - INFO - 🔍 阶段2: 内容分析与评分
+2026-01-06 14:49:27,452 - agents.analyzer - INFO -    分析 1/100: XPENG achieves AI breakthrough in autonomous drivi...
+2026-01-06 14:49:31,781 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:49:31,794 - agents.analyzer - INFO -    分析 2/100: AI is humanity's second greatest breakthrough: Tam...
+2026-01-06 14:49:34,597 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:49:34,601 - agents.analyzer - INFO -    分析 3/100: Nadella Rejects ‘AI Slop’ Label, Eyes 2026 as AI B...
+2026-01-06 14:49:41,034 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:49:41,038 - agents.analyzer - INFO -    分析 4/100: Amazon (AMZN): Rufus AI to Help Sales, Boost Stock...
+2026-01-06 14:49:44,807 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:49:44,811 - agents.analyzer - INFO -    分析 5/100: OpenAI boss Sam Altman predicts next big AI breakt...
+2026-01-06 14:49:47,735 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:49:47,739 - agents.analyzer - INFO -    分析 6/100: Saal.ai, Nutanix to introduce SovereignGPT, mark b...
+2026-01-06 14:49:51,985 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:49:51,989 - agents.analyzer - INFO -    分析 7/100: Finpace Announces Breakthrough Workflow Automation...
+2026-01-06 14:49:55,058 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:49:55,062 - agents.analyzer - INFO -    分析 8/100: Global tech companies, startups showcase breakthro...
+2026-01-06 14:49:58,898 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:49:58,902 - agents.analyzer - INFO -    分析 9/100: SmartRay breakthrough in AI-powered weld inspectio...
+2026-01-06 14:50:02,245 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:50:02,249 - agents.analyzer - INFO -    分析 10/100: Generative AI hype distracts us from AI’s more imp...
+2026-01-06 14:50:07,330 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:50:07,334 - agents.analyzer - INFO -    分析 11/100: 誰小時候沒養過電子雞？最受歡迎的口袋寵物回來了 有了AI會記得你的聲音...
+2026-01-06 14:50:09,926 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:50:09,930 - agents.analyzer - INFO -    分析 12/100: 2025年AI讓投資人談了一場戀愛 2026年該付帳單了...
+2026-01-06 14:50:14,324 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:50:14,329 - agents.analyzer - INFO -    分析 13/100: 從算力到智力：AI 成長並未停滯！智商線性增長成「新摩爾定律」...
+2026-01-06 14:50:18,322 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:50:18,326 - agents.analyzer - INFO -    分析 14/100: AI news summaries may stop people reading newspape...
+2026-01-06 14:50:21,434 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:50:21,437 - agents.analyzer - INFO -    分析 15/100: 【CES 2026】技嘉以「AI Forward」為題展示 AI 代理、實體 AI 與 AI 基礎建...
+2026-01-06 14:50:24,584 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:50:24,589 - agents.analyzer - INFO -    分析 16/100: 重振人類智慧HI以駕馭AI...
+2026-01-06 14:50:28,038 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:50:28,042 - agents.analyzer - INFO -    分析 17/100: Ethiopia Lays Foundation for Artificial Intelligen...
+2026-01-06 14:50:31,307 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:50:31,313 - agents.analyzer - INFO -    分析 18/100: 經濟日報社論／AI革命性應用的機會與挑戰...
+2026-01-06 14:50:34,793 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:50:34,795 - agents.analyzer - INFO -    分析 19/100: More people using AI, mostly for transport, langua...
+2026-01-06 14:50:37,830 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:50:37,834 - agents.analyzer - INFO -    分析 20/100: Leading AI expert delays timeline for its possible...
+2026-01-06 14:50:41,006 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:50:41,010 - agents.analyzer - INFO -    分析 21/100: CES 2026: China's tech heavyweights to showcase hu...
+2026-01-06 14:50:46,182 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:50:46,187 - agents.analyzer - INFO -    分析 22/100: Car giant Hyundai to use human-like robots in fact...
+2026-01-06 14:50:49,027 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:50:49,032 - agents.analyzer - INFO -    分析 23/100: Robotics Technology Market to Hit USD 349.8 Billio...
+2026-01-06 14:50:52,856 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:50:52,861 - agents.analyzer - INFO -    分析 24/100: Hyundai Motor Group Announces AI Robotics Strategy...
+2026-01-06 14:50:56,353 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:50:56,355 - agents.analyzer - INFO -    分析 25/100: Nvidia announces humanoid robot plans, self-drivin...
+2026-01-06 14:51:00,149 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:51:00,154 - agents.analyzer - INFO -    分析 26/100: Boston Dynamics’s upcoming generation of humanoid ...
+2026-01-06 14:51:02,893 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:51:02,898 - agents.analyzer - INFO -    分析 27/100: Quibdo Opened a STEAM Robotics Lab for Over 300 St...
+2026-01-06 14:51:05,767 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:51:05,769 - agents.analyzer - INFO -    分析 28/100: HOT STOCK: Hyundai Motor jumps over 4% early Tuesd...
+2026-01-06 14:51:08,253 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:51:08,257 - agents.analyzer - INFO -    分析 29/100: Qualcomm Introduces a Full Suite of Robotics Techn...
+2026-01-06 14:51:12,450 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:51:12,455 - agents.analyzer - INFO -    分析 30/100: CES 2026 to showcase real-world AI applications...
+2026-01-06 14:51:15,577 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:51:15,581 - agents.analyzer - INFO -    分析 31/100: Frequency-guided Structure Learning Advances Graph...
+2026-01-06 14:51:19,459 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:51:19,463 - agents.analyzer - INFO -    分析 32/100: Is AI Hype in Drug Development About to Turn Into ...
+2026-01-06 14:51:23,558 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:51:23,560 - agents.analyzer - INFO -    分析 33/100: Enhanced Alzheimer’s Detection via Machine Learnin...
+2026-01-06 14:51:28,213 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:51:28,217 - agents.analyzer - INFO -    分析 34/100: Yann LeCun Quits Meta to Start AI Firm, Citing Zuc...
+2026-01-06 14:51:31,072 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:51:31,076 - agents.analyzer - INFO -    分析 35/100: US Autonomous Vehicle Rules Must Evolve: Tesla, Wa...
+2026-01-06 14:51:34,398 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:51:34,402 - agents.analyzer - INFO -    分析 36/100: IEEE Elects Lifeng Lai as Fellow...
+2026-01-06 14:51:36,747 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:51:36,750 - agents.analyzer - INFO -    分析 37/100: Carziqo Advances Scalable Autonomous Driving Throu...
+2026-01-06 14:51:39,698 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:51:39,701 - agents.analyzer - INFO -    分析 38/100: Polymer Research Advances With OPoly26, A 6.57 Mil...
+2026-01-06 14:51:43,364 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:51:43,368 - agents.analyzer - INFO -    分析 39/100: Maryam Viqar: Advancing vein analysis and image re...
+2026-01-06 14:51:46,481 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:51:46,485 - agents.analyzer - INFO -    分析 40/100: Researchers Identify Hundreds of Genes Crucial for...
+2026-01-06 14:51:50,131 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:51:50,135 - agents.analyzer - INFO -    分析 41/100: Accuracy Is Not Enough: Reasoning and Reference Re...
+2026-01-06 14:51:53,496 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:51:53,498 - agents.analyzer - INFO -    分析 42/100: Kyivstar and Ukraine’s Ministry of Digital Transfo...
+2026-01-06 14:51:58,382 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:51:58,386 - agents.analyzer - INFO -    分析 43/100: How SoundHound's Hybrid AI Model Beats Pure LLM Pl...
+2026-01-06 14:52:01,029 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:52:01,033 - agents.analyzer - INFO -    分析 44/100: UAE’s Falcon-H1 Arabic tops Open Arabic LLM rankin...
+2026-01-06 14:52:05,164 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:52:05,168 - agents.analyzer - INFO -    分析 45/100: Abu Dhabi’s TII Unveils Falcon-H1 Arabic LLM Ai Mo...
+2026-01-06 14:52:08,201 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:52:08,205 - agents.analyzer - INFO -    分析 46/100: Intel unveils 18A-based Core Ultra 3, boosts LLM p...
+2026-01-06 14:52:12,067 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:52:12,072 - agents.analyzer - INFO -    分析 47/100: LLM-Pruning Collection: A JAX Based Repo For Struc...
+2026-01-06 14:52:15,168 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:52:15,174 - agents.analyzer - INFO -    分析 48/100: A new collaborator appeared on the hospital manage...
+2026-01-06 14:52:18,840 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:52:18,844 - agents.analyzer - INFO -    分析 49/100: Global Mofy AI Limited Establishes U.S. Subsidiary...
+2026-01-06 14:52:22,189 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:52:22,193 - agents.analyzer - INFO -    分析 50/100: The Most Popular Streamer on Twitch Is Now an AI-P...
+2026-01-06 14:52:27,223 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:52:27,228 - agents.analyzer - INFO -    分析 51/100: Ambarella Boosts On-Device Computer Vision Perform...
+2026-01-06 14:52:30,661 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:52:30,666 - agents.analyzer - INFO -    分析 52/100: CES 2026: Hyundai, LG and Samsung push consumer ma...
+2026-01-06 14:52:33,825 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:52:33,829 - agents.analyzer - INFO -    分析 53/100: Feature Detection, Part 3: Harris Corner Detection...
+2026-01-06 14:52:35,921 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:52:35,925 - agents.analyzer - INFO -    分析 54/100: Basler AG Appoints Dr. Kai Jens Stroder as Chief T...
+2026-01-06 14:52:39,624 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:52:39,629 - agents.analyzer - INFO -    分析 55/100: Students Use Data Science Skills to Address USDA A...
+2026-01-06 14:52:42,171 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:52:42,176 - agents.analyzer - INFO -    分析 56/100: AI in Neurology: Everything, Everywhere, All at On...
+2026-01-06 14:52:45,568 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:52:45,572 - agents.analyzer - INFO -    分析 57/100: Intrinsic Decomposition Transformer Enables Single...
+2026-01-06 14:52:49,876 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:52:49,881 - agents.analyzer - INFO -    分析 58/100: CES 2026: What It Tells Us About the Future of Mac...
+2026-01-06 14:52:54,532 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:52:54,536 - agents.analyzer - INFO -    分析 59/100: Ambarella Launches Powerful Edge AI 8K Vision SoC ...
+2026-01-06 14:52:57,784 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:52:57,788 - agents.analyzer - INFO -    分析 60/100: A shared architecture for AI-enabled RAN and edge ...
+2026-01-06 14:53:01,152 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:53:01,156 - agents.analyzer - INFO -    分析 61/100: AI Is No Longer About Training Bigger Models — It’...
+2026-01-06 14:53:04,103 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:53:04,108 - agents.analyzer - INFO -    分析 62/100: AI Advances Safety through Reasoning under Uncerta...
+2026-01-06 14:53:07,025 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:53:07,030 - agents.analyzer - INFO -    分析 63/100: Ray: Distributed Computing for All, Part 1...
+2026-01-06 14:53:09,710 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:53:09,714 - agents.analyzer - INFO -    分析 64/100: Brex bets on ‘less orchestration’ as it builds an ...
+2026-01-06 14:53:13,159 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:53:13,162 - agents.analyzer - INFO -    分析 65/100: Manulife to scale enterprise AI with Adaptive ML...
+2026-01-06 14:53:15,502 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:53:15,506 - agents.analyzer - INFO -    分析 66/100: Tian Yuandong: 2025 Year-End Summary (Part 1)...
+2026-01-06 14:53:17,770 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:53:17,773 - agents.analyzer - INFO -    分析 67/100: Boston Dynamics Partners With Nvidia, Google on Co...
+2026-01-06 14:53:20,385 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:53:20,390 - agents.analyzer - INFO -    分析 68/100: EDM Gadget unveils AI-based data center power and ...
+2026-01-06 14:53:24,261 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:53:24,265 - agents.analyzer - INFO -    分析 69/100: Korea brings AI into the physical world at CES 202...
+2026-01-06 14:53:28,455 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:53:28,459 - agents.analyzer - INFO -    分析 70/100: Tencent Researchers Release Tencent HY-MT1.5: A Ne...
+2026-01-06 14:53:32,484 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:53:32,488 - agents.analyzer - INFO -    分析 71/100: cacaFly 解析 AI Agent 行銷落地關鍵- 生活...
+2026-01-06 14:53:34,682 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:53:34,686 - agents.analyzer - INFO -    分析 72/100: CES 2026現場直擊：全球步入新平台轉型期 黃仁勳點出AI Agent、Physical AI兩...
+2026-01-06 14:53:39,488 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:53:39,492 - agents.analyzer - INFO -    分析 73/100: 解密AI兆元賽道上的隱形冠軍：「上下文圖譜」是什麼？真正的金礦不是AI Agent？...
+2026-01-06 14:53:43,134 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:53:43,138 - agents.analyzer - INFO -    分析 74/100: 國泰金控：AI驅動數位科技人才連4年成長 國泰MA首年挑戰百萬年薪...
+2026-01-06 14:53:47,001 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:53:47,005 - agents.analyzer - INFO -    分析 75/100: 2026生成式 AI 大爆發！雲盛科技助企業從「對話」轉向「行動」，引領代理型 AI 新紀元...
+2026-01-06 14:53:49,303 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:53:49,307 - agents.analyzer - INFO -    分析 76/100: 機器身份數量是人類的 82 倍！傳統 IAM 瀕臨崩潰，如何防堵「AI 代理」成最大破口？...
+2026-01-06 14:53:54,032 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:53:54,036 - agents.analyzer - INFO -    分析 77/100: 存股助理第740期｜精誠與敦陽科是AI Agent概念股｜股池更新...
+2026-01-06 14:53:57,696 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:53:57,700 - agents.analyzer - INFO -    分析 78/100: Noya.ai 研報：預測市場智能體的前瞻...
+2026-01-06 14:54:00,512 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:54:00,516 - agents.analyzer - INFO -    分析 79/100: Giza旗下AI Agent資產管理規模突破4000萬美元，上月漲幅超過60%...
+2026-01-06 14:54:04,973 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:54:04,977 - agents.analyzer - INFO -    分析 80/100: CES 2026：SoundHound AI 推出適用於汽車和電視的代理語音商務功能，搭載可點餐、預...
+2026-01-06 14:54:09,305 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:54:09,311 - agents.analyzer - INFO -    分析 81/100: 英偉達CEO表示新款Rubin晶片進展順利 助力加速AI發展...
+2026-01-06 14:54:13,337 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:54:13,342 - agents.analyzer - INFO -    分析 82/100: 英偉達稱新款Rubin晶片進展順利 助力加速AI發展 (09:55) - 20260106 - 即時...
+2026-01-06 14:54:15,789 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:54:15,794 - agents.analyzer - INFO -    分析 83/100: 苏姿丰：未来五年，将有50亿人每天使用人工智能...
+2026-01-06 14:54:18,615 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:54:18,618 - agents.analyzer - INFO -    分析 84/100: 巴伦：继DeepSeek之后，中国AI新突破或再次震动华尔街...
+2026-01-06 14:54:21,169 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:54:21,173 - agents.analyzer - INFO -    分析 85/100: 人工智能驱动数据创新：应对抗菌素耐药性的可持续解决方案...
+2026-01-06 14:54:24,075 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:54:24,079 - agents.analyzer - INFO -    分析 86/100: “全球科技春晚”上演AI终端大战...
+2026-01-06 14:54:26,401 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:54:26,404 - agents.analyzer - INFO -    分析 87/100: 物理AI迎ChatGPT时刻？英伟达首发自动驾驶新模型，专治各种“疑难杂症”！ 港美股资讯...
+2026-01-06 14:54:29,724 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:54:29,730 - agents.analyzer - INFO -    分析 88/100: 黄仁勋：英伟达新款Rubin芯片进展顺利，助力加速AI进程...
+2026-01-06 14:54:32,471 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:54:32,475 - agents.analyzer - INFO -    分析 89/100: 微软收购 AI 数据平台 Osmos - OSCHINA - 开源 × AI · 开发者生态社区...
+2026-01-06 14:54:35,107 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:54:35,111 - agents.analyzer - INFO -    分析 90/100: 辛治运谈AI转型：聚焦投研与编程场景 呼吁共建行业智能计算基础设施...
+2026-01-06 14:54:37,641 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:54:37,644 - agents.analyzer - INFO -    分析 91/100: 波士顿动力人形机器人Atlas进入工厂执行实际制造任务...
+2026-01-06 14:54:42,225 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:54:42,228 - agents.analyzer - INFO -    分析 92/100: 2025年机器人行业十大新闻...
+2026-01-06 14:54:45,938 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:54:45,942 - agents.analyzer - INFO -    分析 93/100: 机器人“大脑”进化 、氢能“翅膀”轻盈，成都科技企业新年竞逐新赛道...
+2026-01-06 14:54:49,505 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:54:49,509 - agents.analyzer - INFO -    分析 94/100: 2026年人形机器人—— 量产落地迎万亿机遇...
+2026-01-06 14:54:52,982 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:54:52,987 - agents.analyzer - INFO -    分析 95/100: 工业具身智能北京市重点实验室获批成立，灵宝CASBOT成为核心共建力量...
+2026-01-06 14:54:56,689 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:54:56,693 - agents.analyzer - INFO -    分析 96/100: 黄金ETF易方达去年疯狂“吸金”超220亿，普通人如何参与？...
+2026-01-06 14:55:00,043 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:55:00,047 - agents.analyzer - INFO -    分析 97/100: 人形机器人产业2026年迎来首波商业化浪潮...
+2026-01-06 14:55:03,545 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:55:03,549 - agents.analyzer - INFO -    分析 98/100: 国产人形机器人上岗打工 一天干14小时 日赚2万...
+2026-01-06 14:55:05,765 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:55:05,769 - agents.analyzer - INFO -    分析 99/100: 华夏时评：用“创新突破”提振“内需信心”-腾讯新闻...
+2026-01-06 14:55:08,300 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:55:08,304 - agents.analyzer - INFO -    分析 100/100: 上纬启元发起个人机器人共创“探索者计划”...
+2026-01-06 14:55:12,774 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:55:12,780 - agents.orchestrator - INFO -    分析完成，保留 0 条高质量内容
+2026-01-06 14:55:12,781 - agents.orchestrator - INFO - 🔄 阶段3: 语义去重
+2026-01-06 14:55:12,781 - agents.orchestrator - INFO -    去重完成，剩余 0 条独特内容
+2026-01-06 14:55:12,782 - agents.orchestrator - INFO - 📝 阶段4: 生成报告
+2026-01-06 14:55:13,952 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:55:15,956 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:55:19,934 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 14:55:19,936 - agents.orchestrator - INFO -    报告已生成: reports/ai_robot_daily_20260106.md
+2026-01-06 14:55:19,937 - __main__ - INFO - 报告已保存至: reports/ai_robot_daily_20260106.md
+2026-01-06 15:05:53,245 - __main__ - INFO - 配置加载成功
+2026-01-06 15:05:53,245 - __main__ - INFO - 运行时间: 2026-01-06 15:05:53
+2026-01-06 15:05:53,642 - chromadb.config - DEBUG - Starting component System
+2026-01-06 15:05:53,642 - chromadb.config - DEBUG - Starting component Posthog
+2026-01-06 15:05:53,642 - chromadb.config - DEBUG - Starting component OpenTelemetryClient
+2026-01-06 15:05:53,642 - chromadb.config - DEBUG - Starting component SqliteDB
+2026-01-06 15:05:53,643 - chromadb.config - DEBUG - Starting component SimpleQuotaEnforcer
+2026-01-06 15:05:53,643 - chromadb.config - DEBUG - Starting component SimpleRateLimitEnforcer
+2026-01-06 15:05:53,644 - chromadb.config - DEBUG - Starting component LocalSegmentManager
+2026-01-06 15:05:53,644 - chromadb.config - DEBUG - Starting component LocalExecutor
+2026-01-06 15:05:53,644 - chromadb.config - DEBUG - Starting component SegmentAPI
+2026-01-06 15:05:53,644 - chromadb.telemetry.product.posthog - ERROR - Failed to send telemetry event ClientStartEvent: capture() takes 1 positional argument but 3 were given
+2026-01-06 15:05:53,646 - chromadb.api.segment - DEBUG - Collection tech_news already exists, returning existing collection.
+2026-01-06 15:05:53,646 - chromadb.telemetry.product.posthog - ERROR - Failed to send telemetry event ClientCreateCollectionEvent: capture() takes 1 positional argument but 3 were given
+2026-01-06 15:05:53,647 - __main__ - INFO - 开始执行日报生成流程...
+2026-01-06 15:05:53,684 - agents.orchestrator - INFO - 📡 阶段1: 信息采集
+2026-01-06 15:05:53,686 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): www.google.com:443
+2026-01-06 15:05:58,316 - urllib3.connectionpool - DEBUG - https://www.google.com:443 "GET /search?q=AI+breakthrough&tbm=nws&tbs=qdr:d2 HTTP/1.1" 200 None
+2026-01-06 15:06:00,091 - agents.collector - INFO - 从Google搜索 'AI breakthrough' 获取 2 条结果
+2026-01-06 15:06:02,093 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): www.google.com:443
+2026-01-06 15:06:09,653 - urllib3.connectionpool - DEBUG - https://www.google.com:443 "GET /search?q=artificial+intelligence+news&tbm=nws&tbs=qdr:d2 HTTP/1.1" 200 None
+2026-01-06 15:06:10,226 - agents.collector - INFO - 从Google搜索 'artificial intelligence news' 获取 2 条结果
+2026-01-06 15:06:12,228 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): www.google.com:443
+2026-01-06 15:06:19,922 - urllib3.connectionpool - DEBUG - https://www.google.com:443 "GET /search?q=robotics+technology&tbm=nws&tbs=qdr:d2 HTTP/1.1" 200 None
+2026-01-06 15:06:20,392 - agents.collector - INFO - 从Google搜索 'robotics technology' 获取 2 条结果
+2026-01-06 15:06:22,395 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): www.google.com:443
+2026-01-06 15:06:26,004 - urllib3.connectionpool - DEBUG - https://www.google.com:443 "GET /search?q=machine+learning+advancement&tbm=nws&tbs=qdr:d2 HTTP/1.1" 200 None
+2026-01-06 15:06:26,994 - agents.collector - INFO - 从Google搜索 'machine learning advancement' 获取 2 条结果
+2026-01-06 15:06:28,996 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): www.google.com:443
+2026-01-06 15:06:36,913 - urllib3.connectionpool - DEBUG - https://www.google.com:443 "GET /search?q=LLM+large+language+model&tbm=nws&tbs=qdr:d2 HTTP/1.1" 200 None
+2026-01-06 15:06:37,242 - agents.collector - INFO - 从Google搜索 'LLM large language model' 获取 2 条结果
+2026-01-06 15:06:39,244 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): www.google.com:443
+2026-01-06 15:06:47,299 - urllib3.connectionpool - DEBUG - https://www.google.com:443 "GET /search?q=computer+vision&tbm=nws&tbs=qdr:d2 HTTP/1.1" 200 None
+2026-01-06 15:06:47,910 - agents.collector - INFO - 从Google搜索 'computer vision' 获取 2 条结果
+2026-01-06 15:06:49,912 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): www.google.com:443
+2026-01-06 15:06:59,923 - agents.collector - ERROR - Google搜索失败: HTTPSConnectionPool(host='www.google.com', port=443): Read timed out. (read timeout=10)
+2026-01-06 15:07:01,925 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): www.google.com:443
+2026-01-06 15:07:11,936 - agents.collector - ERROR - Google搜索失败: HTTPSConnectionPool(host='www.google.com', port=443): Read timed out. (read timeout=10)
+2026-01-06 15:07:13,938 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): www.google.com:443
+2026-01-06 15:07:20,778 - urllib3.connectionpool - DEBUG - https://www.google.com:443 "GET /search?q=%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E6%9C%80%E6%96%B0%E8%BF%9B%E5%B1%95&tbm=nws&tbs=qdr:d2 HTTP/1.1" 200 None
+2026-01-06 15:07:21,358 - agents.collector - INFO - 从Google搜索 '人工智能最新进展' 获取 2 条结果
+2026-01-06 15:07:23,360 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): www.google.com:443
+2026-01-06 15:07:33,371 - agents.collector - ERROR - Google搜索失败: HTTPSConnectionPool(host='www.google.com', port=443): Read timed out. (read timeout=10)
+2026-01-06 15:07:35,371 - agents.collector - INFO - 总共收集到 14 条信息
+2026-01-06 15:07:35,371 - agents.orchestrator - INFO -    收集到 14 条原始信息
+2026-01-06 15:07:35,372 - agents.orchestrator - INFO - 🔍 阶段2: 内容分析与评分
+2026-01-06 15:07:35,373 - agents.analyzer - INFO -    分析 1/14: XPENG achieves AI breakthrough in autonomous drivi...
+2026-01-06 15:07:35,388 - openai._base_client - DEBUG - Request options: {'method': 'post', 'url': '/chat/completions', 'files': None, 'idempotency_key': 'stainless-python-retry-0f8cf1ae-ebc3-472b-bb4d-cb87c63b524b', 'json_data': {'messages': [{'content': '你是一个AI和机器人技术领域的专家分析师。\n\n你的任务是分析技术资讯的质量和相关性。\n\n评分标准（0-10分）：\n- 信息新鲜度（30%）：是否是最新突破或进展\n- 技术深度（25%）：是否有技术细节和实质内容\n- 来源权威性（20%）：来源是否可靠\n- 内容完整性（15%）：信息是否完整清晰\n- 实用价值（10%）：是否对从业者有参考价值\n\n技术类别：\n- 大语言模型与生成式AI\n- 机器人技术与具身智能\n- 计算机视觉\n- 强化学习与决策智能\n- AI基础设施与工具\n- 行业应用与产品\n- 研究前沿与理论突破\n\n请严格筛选，宁缺毋滥。过时的技术、营销软文、重复内容应给低分。\n\nThe output should be formatted as a JSON instance that conforms to the JSON schema below.\n\nAs an example, for the schema {"properties": {"foo": {"title": "Foo", "description": "a list of strings", "type": "array", "items": {"type": "string"}}}, "required": ["foo"]}\nthe object {"foo": ["bar", "baz"]} is a well-formatted instance of the schema. The object {"properties": {"foo": ["bar", "baz"]}} is not well-formatted.\n\nHere is the output schema:\n```\n{"description": "内容分析结果", "properties": {"category": {"description": "技术类别", "title": "Category", "type": "string"}, "quality_score": {"description": "质量分数(0-10)", "title": "Quality Score", "type": "number"}, "is_relevant": {"description": "是否相关", "title": "Is Relevant", "type": "boolean"}, "reason": {"description": "评分理由", "title": "Reason", "type": "string"}}, "required": ["category", "quality_score", "is_relevant", "reason"]}\n```', 'role': 'system'}, {'content': '请分析以下资讯：\n\n标题：XPENG achieves AI breakthrough in autonomous driving research\n内容：\n来源：Unknown\n\n请给出分类、质量评分和理由。', 'role': 'user'}], 'model': 'qwen-plus', 'max_completion_tokens': 2000, 'n': 1, 'stream': False, 'temperature': 0.7}}
+2026-01-06 15:07:35,391 - openai._base_client - DEBUG - Sending HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+2026-01-06 15:07:35,392 - httpcore.connection - DEBUG - connect_tcp.started host='127.0.0.1' port=7897 local_address=None timeout=None socket_options=None
+2026-01-06 15:07:35,392 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x7223cafee3d0>
+2026-01-06 15:07:35,392 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'CONNECT']>
+2026-01-06 15:07:35,392 - httpcore.http11 - DEBUG - send_request_headers.complete
+2026-01-06 15:07:35,392 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'CONNECT']>
+2026-01-06 15:07:35,392 - httpcore.http11 - DEBUG - send_request_body.complete
+2026-01-06 15:07:35,392 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'CONNECT']>
+2026-01-06 15:07:35,393 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'Connection established', [])
+2026-01-06 15:07:35,393 - httpcore.proxy - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x7223dd12e9f0> server_hostname='dashscope.aliyuncs.com' timeout=None
+2026-01-06 15:07:35,501 - httpcore.proxy - DEBUG - start_tls.complete return_value=<httpcore._backends.sync.SyncStream object at 0x7223bdde2a10>
+2026-01-06 15:07:35,501 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2026-01-06 15:07:35,502 - httpcore.http11 - DEBUG - send_request_headers.complete
+2026-01-06 15:07:35,502 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2026-01-06 15:07:35,502 - httpcore.http11 - DEBUG - send_request_body.complete
+2026-01-06 15:07:35,502 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2026-01-06 15:07:39,006 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'vary', b'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding'), (b'x-request-id', b'b3cff816-7dda-955c-a443-96c839f40ca8'), (b'x-dashscope-call-gateway', b'true'), (b'content-type', b'application/json'), (b'req-cost-time', b'3467'), (b'req-arrive-time', b'1767683255498'), (b'resp-start-time', b'1767683258966'), (b'x-envoy-upstream-service-time', b'3467'), (b'content-encoding', b'gzip'), (b'date', b'Tue, 06 Jan 2026 07:07:38 GMT'), (b'server', b'istio-envoy'), (b'transfer-encoding', b'chunked')])
+2026-01-06 15:07:39,007 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 15:07:39,007 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2026-01-06 15:07:39,007 - httpcore.http11 - DEBUG - receive_response_body.complete
+2026-01-06 15:07:39,007 - httpcore.http11 - DEBUG - response_closed.started
+2026-01-06 15:07:39,007 - httpcore.http11 - DEBUG - response_closed.complete
+2026-01-06 15:07:39,008 - openai._base_client - DEBUG - HTTP Response: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "200 OK" Headers({'vary': 'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding', 'x-request-id': 'b3cff816-7dda-955c-a443-96c839f40ca8', 'x-dashscope-call-gateway': 'true', 'content-type': 'application/json', 'req-cost-time': '3467', 'req-arrive-time': '1767683255498', 'resp-start-time': '1767683258966', 'x-envoy-upstream-service-time': '3467', 'content-encoding': 'gzip', 'date': 'Tue, 06 Jan 2026 07:07:38 GMT', 'server': 'istio-envoy', 'transfer-encoding': 'chunked'})
+2026-01-06 15:07:39,008 - openai._base_client - DEBUG - request_id: b3cff816-7dda-955c-a443-96c839f40ca8
+2026-01-06 15:07:39,021 - agents.analyzer - DEBUG -       ✗ 评分: 3.0 - 已过滤
+2026-01-06 15:07:39,021 - agents.analyzer - INFO -    分析 2/14: AI is humanity's second greatest breakthrough: Tam...
+2026-01-06 15:07:39,023 - openai._base_client - DEBUG - Request options: {'method': 'post', 'url': '/chat/completions', 'files': None, 'idempotency_key': 'stainless-python-retry-bfd6bab8-988a-4e9d-8622-475bef216628', 'json_data': {'messages': [{'content': '你是一个AI和机器人技术领域的专家分析师。\n\n你的任务是分析技术资讯的质量和相关性。\n\n评分标准（0-10分）：\n- 信息新鲜度（30%）：是否是最新突破或进展\n- 技术深度（25%）：是否有技术细节和实质内容\n- 来源权威性（20%）：来源是否可靠\n- 内容完整性（15%）：信息是否完整清晰\n- 实用价值（10%）：是否对从业者有参考价值\n\n技术类别：\n- 大语言模型与生成式AI\n- 机器人技术与具身智能\n- 计算机视觉\n- 强化学习与决策智能\n- AI基础设施与工具\n- 行业应用与产品\n- 研究前沿与理论突破\n\n请严格筛选，宁缺毋滥。过时的技术、营销软文、重复内容应给低分。\n\nThe output should be formatted as a JSON instance that conforms to the JSON schema below.\n\nAs an example, for the schema {"properties": {"foo": {"title": "Foo", "description": "a list of strings", "type": "array", "items": {"type": "string"}}}, "required": ["foo"]}\nthe object {"foo": ["bar", "baz"]} is a well-formatted instance of the schema. The object {"properties": {"foo": ["bar", "baz"]}} is not well-formatted.\n\nHere is the output schema:\n```\n{"description": "内容分析结果", "properties": {"category": {"description": "技术类别", "title": "Category", "type": "string"}, "quality_score": {"description": "质量分数(0-10)", "title": "Quality Score", "type": "number"}, "is_relevant": {"description": "是否相关", "title": "Is Relevant", "type": "boolean"}, "reason": {"description": "评分理由", "title": "Reason", "type": "string"}}, "required": ["category", "quality_score", "is_relevant", "reason"]}\n```', 'role': 'system'}, {'content': "请分析以下资讯：\n\n标题：AI is humanity's second greatest breakthrough: Tamil Nadu CM M.K. Stalin at 'World In Your Hands' Scheme launch\n内容：\n来源：Unknown\n\n请给出分类、质量评分和理由。", 'role': 'user'}], 'model': 'qwen-plus', 'max_completion_tokens': 2000, 'n': 1, 'stream': False, 'temperature': 0.7}}
+2026-01-06 15:07:39,023 - openai._base_client - DEBUG - Sending HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+2026-01-06 15:07:39,023 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2026-01-06 15:07:39,023 - httpcore.http11 - DEBUG - send_request_headers.complete
+2026-01-06 15:07:39,023 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2026-01-06 15:07:39,023 - httpcore.http11 - DEBUG - send_request_body.complete
+2026-01-06 15:07:39,024 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2026-01-06 15:07:41,925 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'vary', b'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding'), (b'x-request-id', b'82c8acc4-8d9f-962e-a3d7-d30fc51c15b4'), (b'x-dashscope-call-gateway', b'true'), (b'content-type', b'application/json'), (b'req-cost-time', b'2867'), (b'req-arrive-time', b'1767683259020'), (b'resp-start-time', b'1767683261887'), (b'x-envoy-upstream-service-time', b'2866'), (b'content-encoding', b'gzip'), (b'date', b'Tue, 06 Jan 2026 07:07:41 GMT'), (b'server', b'istio-envoy'), (b'transfer-encoding', b'chunked')])
+2026-01-06 15:07:41,926 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 15:07:41,926 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2026-01-06 15:07:41,927 - httpcore.http11 - DEBUG - receive_response_body.complete
+2026-01-06 15:07:41,927 - httpcore.http11 - DEBUG - response_closed.started
+2026-01-06 15:07:41,927 - httpcore.http11 - DEBUG - response_closed.complete
+2026-01-06 15:07:41,927 - openai._base_client - DEBUG - HTTP Response: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "200 OK" Headers({'vary': 'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding', 'x-request-id': '82c8acc4-8d9f-962e-a3d7-d30fc51c15b4', 'x-dashscope-call-gateway': 'true', 'content-type': 'application/json', 'req-cost-time': '2867', 'req-arrive-time': '1767683259020', 'resp-start-time': '1767683261887', 'x-envoy-upstream-service-time': '2866', 'content-encoding': 'gzip', 'date': 'Tue, 06 Jan 2026 07:07:41 GMT', 'server': 'istio-envoy', 'transfer-encoding': 'chunked'})
+2026-01-06 15:07:41,927 - openai._base_client - DEBUG - request_id: 82c8acc4-8d9f-962e-a3d7-d30fc51c15b4
+2026-01-06 15:07:41,930 - agents.analyzer - DEBUG -       ✗ 评分: 2.0 - 已过滤
+2026-01-06 15:07:41,930 - agents.analyzer - INFO -    分析 3/14: 誰小時候沒養過電子雞？最受歡迎的口袋寵物回來了 有了AI會記得你的聲音...
+2026-01-06 15:07:41,934 - openai._base_client - DEBUG - Request options: {'method': 'post', 'url': '/chat/completions', 'files': None, 'idempotency_key': 'stainless-python-retry-c45bf0f3-8a0f-4707-a0d0-0f1f065ee46d', 'json_data': {'messages': [{'content': '你是一个AI和机器人技术领域的专家分析师。\n\n你的任务是分析技术资讯的质量和相关性。\n\n评分标准（0-10分）：\n- 信息新鲜度（30%）：是否是最新突破或进展\n- 技术深度（25%）：是否有技术细节和实质内容\n- 来源权威性（20%）：来源是否可靠\n- 内容完整性（15%）：信息是否完整清晰\n- 实用价值（10%）：是否对从业者有参考价值\n\n技术类别：\n- 大语言模型与生成式AI\n- 机器人技术与具身智能\n- 计算机视觉\n- 强化学习与决策智能\n- AI基础设施与工具\n- 行业应用与产品\n- 研究前沿与理论突破\n\n请严格筛选，宁缺毋滥。过时的技术、营销软文、重复内容应给低分。\n\nThe output should be formatted as a JSON instance that conforms to the JSON schema below.\n\nAs an example, for the schema {"properties": {"foo": {"title": "Foo", "description": "a list of strings", "type": "array", "items": {"type": "string"}}}, "required": ["foo"]}\nthe object {"foo": ["bar", "baz"]} is a well-formatted instance of the schema. The object {"properties": {"foo": ["bar", "baz"]}} is not well-formatted.\n\nHere is the output schema:\n```\n{"description": "内容分析结果", "properties": {"category": {"description": "技术类别", "title": "Category", "type": "string"}, "quality_score": {"description": "质量分数(0-10)", "title": "Quality Score", "type": "number"}, "is_relevant": {"description": "是否相关", "title": "Is Relevant", "type": "boolean"}, "reason": {"description": "评分理由", "title": "Reason", "type": "string"}}, "required": ["category", "quality_score", "is_relevant", "reason"]}\n```', 'role': 'system'}, {'content': '请分析以下资讯：\n\n标题：誰小時候沒養過電子雞？最受歡迎的口袋寵物回來了 有了AI會記得你的聲音\n内容：\n来源：Unknown\n\n请给出分类、质量评分和理由。', 'role': 'user'}], 'model': 'qwen-plus', 'max_completion_tokens': 2000, 'n': 1, 'stream': False, 'temperature': 0.7}}
+2026-01-06 15:07:41,934 - openai._base_client - DEBUG - Sending HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+2026-01-06 15:07:41,935 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2026-01-06 15:07:41,935 - httpcore.http11 - DEBUG - send_request_headers.complete
+2026-01-06 15:07:41,935 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2026-01-06 15:07:41,935 - httpcore.http11 - DEBUG - send_request_body.complete
+2026-01-06 15:07:41,935 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2026-01-06 15:07:45,431 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'vary', b'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding'), (b'x-request-id', b'9f5ba34e-ac46-9e80-a589-4029d22ea4aa'), (b'x-dashscope-call-gateway', b'true'), (b'content-type', b'application/json'), (b'req-cost-time', b'3462'), (b'req-arrive-time', b'1767683261931'), (b'resp-start-time', b'1767683265393'), (b'x-envoy-upstream-service-time', b'3461'), (b'content-encoding', b'gzip'), (b'date', b'Tue, 06 Jan 2026 07:07:45 GMT'), (b'server', b'istio-envoy'), (b'transfer-encoding', b'chunked')])
+2026-01-06 15:07:45,432 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 15:07:45,432 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2026-01-06 15:07:45,432 - httpcore.http11 - DEBUG - receive_response_body.complete
+2026-01-06 15:07:45,433 - httpcore.http11 - DEBUG - response_closed.started
+2026-01-06 15:07:45,433 - httpcore.http11 - DEBUG - response_closed.complete
+2026-01-06 15:07:45,433 - openai._base_client - DEBUG - HTTP Response: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "200 OK" Headers({'vary': 'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding', 'x-request-id': '9f5ba34e-ac46-9e80-a589-4029d22ea4aa', 'x-dashscope-call-gateway': 'true', 'content-type': 'application/json', 'req-cost-time': '3462', 'req-arrive-time': '1767683261931', 'resp-start-time': '1767683265393', 'x-envoy-upstream-service-time': '3461', 'content-encoding': 'gzip', 'date': 'Tue, 06 Jan 2026 07:07:45 GMT', 'server': 'istio-envoy', 'transfer-encoding': 'chunked'})
+2026-01-06 15:07:45,433 - openai._base_client - DEBUG - request_id: 9f5ba34e-ac46-9e80-a589-4029d22ea4aa
+2026-01-06 15:07:45,437 - agents.analyzer - DEBUG -       ✗ 评分: 4.0 - 已过滤
+2026-01-06 15:07:45,437 - agents.analyzer - INFO -    分析 4/14: 2025年AI讓投資人談了一場戀愛 2026年該付帳單了...
+2026-01-06 15:07:45,440 - openai._base_client - DEBUG - Request options: {'method': 'post', 'url': '/chat/completions', 'files': None, 'idempotency_key': 'stainless-python-retry-5594670f-4072-4114-8f3b-2334480885a0', 'json_data': {'messages': [{'content': '你是一个AI和机器人技术领域的专家分析师。\n\n你的任务是分析技术资讯的质量和相关性。\n\n评分标准（0-10分）：\n- 信息新鲜度（30%）：是否是最新突破或进展\n- 技术深度（25%）：是否有技术细节和实质内容\n- 来源权威性（20%）：来源是否可靠\n- 内容完整性（15%）：信息是否完整清晰\n- 实用价值（10%）：是否对从业者有参考价值\n\n技术类别：\n- 大语言模型与生成式AI\n- 机器人技术与具身智能\n- 计算机视觉\n- 强化学习与决策智能\n- AI基础设施与工具\n- 行业应用与产品\n- 研究前沿与理论突破\n\n请严格筛选，宁缺毋滥。过时的技术、营销软文、重复内容应给低分。\n\nThe output should be formatted as a JSON instance that conforms to the JSON schema below.\n\nAs an example, for the schema {"properties": {"foo": {"title": "Foo", "description": "a list of strings", "type": "array", "items": {"type": "string"}}}, "required": ["foo"]}\nthe object {"foo": ["bar", "baz"]} is a well-formatted instance of the schema. The object {"properties": {"foo": ["bar", "baz"]}} is not well-formatted.\n\nHere is the output schema:\n```\n{"description": "内容分析结果", "properties": {"category": {"description": "技术类别", "title": "Category", "type": "string"}, "quality_score": {"description": "质量分数(0-10)", "title": "Quality Score", "type": "number"}, "is_relevant": {"description": "是否相关", "title": "Is Relevant", "type": "boolean"}, "reason": {"description": "评分理由", "title": "Reason", "type": "string"}}, "required": ["category", "quality_score", "is_relevant", "reason"]}\n```', 'role': 'system'}, {'content': '请分析以下资讯：\n\n标题：2025年AI讓投資人談了一場戀愛 2026年該付帳單了\n内容：\n来源：Unknown\n\n请给出分类、质量评分和理由。', 'role': 'user'}], 'model': 'qwen-plus', 'max_completion_tokens': 2000, 'n': 1, 'stream': False, 'temperature': 0.7}}
+2026-01-06 15:07:45,441 - openai._base_client - DEBUG - Sending HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+2026-01-06 15:07:45,441 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2026-01-06 15:07:45,442 - httpcore.http11 - DEBUG - send_request_headers.complete
+2026-01-06 15:07:45,442 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2026-01-06 15:07:45,442 - httpcore.http11 - DEBUG - send_request_body.complete
+2026-01-06 15:07:45,442 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2026-01-06 15:07:48,711 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'vary', b'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding'), (b'x-request-id', b'22e2ccd6-a875-9729-b26c-882eedc51794'), (b'x-dashscope-call-gateway', b'true'), (b'content-type', b'application/json'), (b'req-cost-time', b'3235'), (b'req-arrive-time', b'1767683265437'), (b'resp-start-time', b'1767683268673'), (b'x-envoy-upstream-service-time', b'3234'), (b'content-encoding', b'gzip'), (b'date', b'Tue, 06 Jan 2026 07:07:48 GMT'), (b'server', b'istio-envoy'), (b'transfer-encoding', b'chunked')])
+2026-01-06 15:07:48,712 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 15:07:48,712 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2026-01-06 15:07:48,712 - httpcore.http11 - DEBUG - receive_response_body.complete
+2026-01-06 15:07:48,712 - httpcore.http11 - DEBUG - response_closed.started
+2026-01-06 15:07:48,712 - httpcore.http11 - DEBUG - response_closed.complete
+2026-01-06 15:07:48,712 - openai._base_client - DEBUG - HTTP Response: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "200 OK" Headers({'vary': 'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding', 'x-request-id': '22e2ccd6-a875-9729-b26c-882eedc51794', 'x-dashscope-call-gateway': 'true', 'content-type': 'application/json', 'req-cost-time': '3235', 'req-arrive-time': '1767683265437', 'resp-start-time': '1767683268673', 'x-envoy-upstream-service-time': '3234', 'content-encoding': 'gzip', 'date': 'Tue, 06 Jan 2026 07:07:48 GMT', 'server': 'istio-envoy', 'transfer-encoding': 'chunked'})
+2026-01-06 15:07:48,713 - openai._base_client - DEBUG - request_id: 22e2ccd6-a875-9729-b26c-882eedc51794
+2026-01-06 15:07:48,716 - agents.analyzer - DEBUG -       ✗ 评分: 2.0 - 已过滤
+2026-01-06 15:07:48,717 - agents.analyzer - INFO -    分析 5/14: CES 2026: China's tech heavyweights to showcase hu...
+2026-01-06 15:07:48,719 - openai._base_client - DEBUG - Request options: {'method': 'post', 'url': '/chat/completions', 'files': None, 'idempotency_key': 'stainless-python-retry-2d06c33b-f00c-4bd0-8f24-81c11a3b7e5d', 'json_data': {'messages': [{'content': '你是一个AI和机器人技术领域的专家分析师。\n\n你的任务是分析技术资讯的质量和相关性。\n\n评分标准（0-10分）：\n- 信息新鲜度（30%）：是否是最新突破或进展\n- 技术深度（25%）：是否有技术细节和实质内容\n- 来源权威性（20%）：来源是否可靠\n- 内容完整性（15%）：信息是否完整清晰\n- 实用价值（10%）：是否对从业者有参考价值\n\n技术类别：\n- 大语言模型与生成式AI\n- 机器人技术与具身智能\n- 计算机视觉\n- 强化学习与决策智能\n- AI基础设施与工具\n- 行业应用与产品\n- 研究前沿与理论突破\n\n请严格筛选，宁缺毋滥。过时的技术、营销软文、重复内容应给低分。\n\nThe output should be formatted as a JSON instance that conforms to the JSON schema below.\n\nAs an example, for the schema {"properties": {"foo": {"title": "Foo", "description": "a list of strings", "type": "array", "items": {"type": "string"}}}, "required": ["foo"]}\nthe object {"foo": ["bar", "baz"]} is a well-formatted instance of the schema. The object {"properties": {"foo": ["bar", "baz"]}} is not well-formatted.\n\nHere is the output schema:\n```\n{"description": "内容分析结果", "properties": {"category": {"description": "技术类别", "title": "Category", "type": "string"}, "quality_score": {"description": "质量分数(0-10)", "title": "Quality Score", "type": "number"}, "is_relevant": {"description": "是否相关", "title": "Is Relevant", "type": "boolean"}, "reason": {"description": "评分理由", "title": "Reason", "type": "string"}}, "required": ["category", "quality_score", "is_relevant", "reason"]}\n```', 'role': 'system'}, {'content': "请分析以下资讯：\n\n标题：CES 2026: China's tech heavyweights to showcase humanoid robots and next-gen displays\n内容：\n来源：Unknown\n\n请给出分类、质量评分和理由。", 'role': 'user'}], 'model': 'qwen-plus', 'max_completion_tokens': 2000, 'n': 1, 'stream': False, 'temperature': 0.7}}
+2026-01-06 15:07:48,719 - openai._base_client - DEBUG - Sending HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+2026-01-06 15:07:48,720 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2026-01-06 15:07:48,720 - httpcore.http11 - DEBUG - send_request_headers.complete
+2026-01-06 15:07:48,720 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2026-01-06 15:07:48,720 - httpcore.http11 - DEBUG - send_request_body.complete
+2026-01-06 15:07:48,720 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2026-01-06 15:07:52,412 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'vary', b'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding'), (b'x-request-id', b'd0f425cf-e2b6-90a3-8c86-d96edcdaf227'), (b'x-dashscope-call-gateway', b'true'), (b'content-type', b'application/json'), (b'req-cost-time', b'3656'), (b'req-arrive-time', b'1767683268717'), (b'resp-start-time', b'1767683272373'), (b'x-envoy-upstream-service-time', b'3656'), (b'content-encoding', b'gzip'), (b'date', b'Tue, 06 Jan 2026 07:07:52 GMT'), (b'server', b'istio-envoy'), (b'transfer-encoding', b'chunked')])
+2026-01-06 15:07:52,412 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 15:07:52,413 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2026-01-06 15:07:52,413 - httpcore.http11 - DEBUG - receive_response_body.complete
+2026-01-06 15:07:52,413 - httpcore.http11 - DEBUG - response_closed.started
+2026-01-06 15:07:52,413 - httpcore.http11 - DEBUG - response_closed.complete
+2026-01-06 15:07:52,413 - openai._base_client - DEBUG - HTTP Response: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "200 OK" Headers({'vary': 'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding', 'x-request-id': 'd0f425cf-e2b6-90a3-8c86-d96edcdaf227', 'x-dashscope-call-gateway': 'true', 'content-type': 'application/json', 'req-cost-time': '3656', 'req-arrive-time': '1767683268717', 'resp-start-time': '1767683272373', 'x-envoy-upstream-service-time': '3656', 'content-encoding': 'gzip', 'date': 'Tue, 06 Jan 2026 07:07:52 GMT', 'server': 'istio-envoy', 'transfer-encoding': 'chunked'})
+2026-01-06 15:07:52,414 - openai._base_client - DEBUG - request_id: d0f425cf-e2b6-90a3-8c86-d96edcdaf227
+2026-01-06 15:07:52,418 - agents.analyzer - DEBUG -       ✗ 评分: 4.0 - 已过滤
+2026-01-06 15:07:52,418 - agents.analyzer - INFO -    分析 6/14: Nvidia announces humanoid robot plans, self-drivin...
+2026-01-06 15:07:52,421 - openai._base_client - DEBUG - Request options: {'method': 'post', 'url': '/chat/completions', 'files': None, 'idempotency_key': 'stainless-python-retry-d18f988b-8cc9-44b6-a69d-a3cc09fe15cd', 'json_data': {'messages': [{'content': '你是一个AI和机器人技术领域的专家分析师。\n\n你的任务是分析技术资讯的质量和相关性。\n\n评分标准（0-10分）：\n- 信息新鲜度（30%）：是否是最新突破或进展\n- 技术深度（25%）：是否有技术细节和实质内容\n- 来源权威性（20%）：来源是否可靠\n- 内容完整性（15%）：信息是否完整清晰\n- 实用价值（10%）：是否对从业者有参考价值\n\n技术类别：\n- 大语言模型与生成式AI\n- 机器人技术与具身智能\n- 计算机视觉\n- 强化学习与决策智能\n- AI基础设施与工具\n- 行业应用与产品\n- 研究前沿与理论突破\n\n请严格筛选，宁缺毋滥。过时的技术、营销软文、重复内容应给低分。\n\nThe output should be formatted as a JSON instance that conforms to the JSON schema below.\n\nAs an example, for the schema {"properties": {"foo": {"title": "Foo", "description": "a list of strings", "type": "array", "items": {"type": "string"}}}, "required": ["foo"]}\nthe object {"foo": ["bar", "baz"]} is a well-formatted instance of the schema. The object {"properties": {"foo": ["bar", "baz"]}} is not well-formatted.\n\nHere is the output schema:\n```\n{"description": "内容分析结果", "properties": {"category": {"description": "技术类别", "title": "Category", "type": "string"}, "quality_score": {"description": "质量分数(0-10)", "title": "Quality Score", "type": "number"}, "is_relevant": {"description": "是否相关", "title": "Is Relevant", "type": "boolean"}, "reason": {"description": "评分理由", "title": "Reason", "type": "string"}}, "required": ["category", "quality_score", "is_relevant", "reason"]}\n```', 'role': 'system'}, {'content': '请分析以下资讯：\n\n标题：Nvidia announces humanoid robot plans, self-driving car technologies at CES 2026\n内容：\n来源：Unknown\n\n请给出分类、质量评分和理由。', 'role': 'user'}], 'model': 'qwen-plus', 'max_completion_tokens': 2000, 'n': 1, 'stream': False, 'temperature': 0.7}}
+2026-01-06 15:07:52,422 - openai._base_client - DEBUG - Sending HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+2026-01-06 15:07:52,422 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2026-01-06 15:07:52,422 - httpcore.http11 - DEBUG - send_request_headers.complete
+2026-01-06 15:07:52,422 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2026-01-06 15:07:52,422 - httpcore.http11 - DEBUG - send_request_body.complete
+2026-01-06 15:07:52,423 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2026-01-06 15:07:55,239 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'vary', b'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding'), (b'x-request-id', b'd98d1809-c8d7-96ea-9d05-276d3c420939'), (b'x-dashscope-call-gateway', b'true'), (b'content-type', b'application/json'), (b'req-cost-time', b'2781'), (b'req-arrive-time', b'1767683272419'), (b'resp-start-time', b'1767683275200'), (b'x-envoy-upstream-service-time', b'2780'), (b'content-encoding', b'gzip'), (b'date', b'Tue, 06 Jan 2026 07:07:54 GMT'), (b'server', b'istio-envoy'), (b'transfer-encoding', b'chunked')])
+2026-01-06 15:07:55,240 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 15:07:55,240 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2026-01-06 15:07:55,240 - httpcore.http11 - DEBUG - receive_response_body.complete
+2026-01-06 15:07:55,240 - httpcore.http11 - DEBUG - response_closed.started
+2026-01-06 15:07:55,240 - httpcore.http11 - DEBUG - response_closed.complete
+2026-01-06 15:07:55,240 - openai._base_client - DEBUG - HTTP Response: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "200 OK" Headers({'vary': 'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding', 'x-request-id': 'd98d1809-c8d7-96ea-9d05-276d3c420939', 'x-dashscope-call-gateway': 'true', 'content-type': 'application/json', 'req-cost-time': '2781', 'req-arrive-time': '1767683272419', 'resp-start-time': '1767683275200', 'x-envoy-upstream-service-time': '2780', 'content-encoding': 'gzip', 'date': 'Tue, 06 Jan 2026 07:07:54 GMT', 'server': 'istio-envoy', 'transfer-encoding': 'chunked'})
+2026-01-06 15:07:55,240 - openai._base_client - DEBUG - request_id: d98d1809-c8d7-96ea-9d05-276d3c420939
+2026-01-06 15:07:55,244 - agents.analyzer - DEBUG -       ✗ 评分: 2.0 - 已过滤
+2026-01-06 15:07:55,245 - agents.analyzer - INFO -    分析 7/14: Frequency-guided Structure Learning Advances Graph...
+2026-01-06 15:07:55,248 - openai._base_client - DEBUG - Request options: {'method': 'post', 'url': '/chat/completions', 'files': None, 'idempotency_key': 'stainless-python-retry-7741eba8-88dc-41ac-8db8-c8fa91917062', 'json_data': {'messages': [{'content': '你是一个AI和机器人技术领域的专家分析师。\n\n你的任务是分析技术资讯的质量和相关性。\n\n评分标准（0-10分）：\n- 信息新鲜度（30%）：是否是最新突破或进展\n- 技术深度（25%）：是否有技术细节和实质内容\n- 来源权威性（20%）：来源是否可靠\n- 内容完整性（15%）：信息是否完整清晰\n- 实用价值（10%）：是否对从业者有参考价值\n\n技术类别：\n- 大语言模型与生成式AI\n- 机器人技术与具身智能\n- 计算机视觉\n- 强化学习与决策智能\n- AI基础设施与工具\n- 行业应用与产品\n- 研究前沿与理论突破\n\n请严格筛选，宁缺毋滥。过时的技术、营销软文、重复内容应给低分。\n\nThe output should be formatted as a JSON instance that conforms to the JSON schema below.\n\nAs an example, for the schema {"properties": {"foo": {"title": "Foo", "description": "a list of strings", "type": "array", "items": {"type": "string"}}}, "required": ["foo"]}\nthe object {"foo": ["bar", "baz"]} is a well-formatted instance of the schema. The object {"properties": {"foo": ["bar", "baz"]}} is not well-formatted.\n\nHere is the output schema:\n```\n{"description": "内容分析结果", "properties": {"category": {"description": "技术类别", "title": "Category", "type": "string"}, "quality_score": {"description": "质量分数(0-10)", "title": "Quality Score", "type": "number"}, "is_relevant": {"description": "是否相关", "title": "Is Relevant", "type": "boolean"}, "reason": {"description": "评分理由", "title": "Reason", "type": "string"}}, "required": ["category", "quality_score", "is_relevant", "reason"]}\n```', 'role': 'system'}, {'content': '请分析以下资讯：\n\n标题：Frequency-guided Structure Learning Advances Graph Neural Networks for Heterophilic Data Challenges\n内容：\n来源：Unknown\n\n请给出分类、质量评分和理由。', 'role': 'user'}], 'model': 'qwen-plus', 'max_completion_tokens': 2000, 'n': 1, 'stream': False, 'temperature': 0.7}}
+2026-01-06 15:07:55,248 - openai._base_client - DEBUG - Sending HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+2026-01-06 15:07:55,249 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2026-01-06 15:07:55,249 - httpcore.http11 - DEBUG - send_request_headers.complete
+2026-01-06 15:07:55,249 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2026-01-06 15:07:55,249 - httpcore.http11 - DEBUG - send_request_body.complete
+2026-01-06 15:07:55,249 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2026-01-06 15:07:59,890 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'vary', b'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding'), (b'x-request-id', b'd54c4dfa-1894-90bb-9b55-fc1a3332a890'), (b'x-dashscope-call-gateway', b'true'), (b'content-type', b'application/json'), (b'req-cost-time', b'4603'), (b'req-arrive-time', b'1767683275248'), (b'resp-start-time', b'1767683279851'), (b'x-envoy-upstream-service-time', b'4600'), (b'content-encoding', b'gzip'), (b'date', b'Tue, 06 Jan 2026 07:07:59 GMT'), (b'server', b'istio-envoy'), (b'transfer-encoding', b'chunked')])
+2026-01-06 15:07:59,891 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 15:07:59,891 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2026-01-06 15:07:59,891 - httpcore.http11 - DEBUG - receive_response_body.complete
+2026-01-06 15:07:59,891 - httpcore.http11 - DEBUG - response_closed.started
+2026-01-06 15:07:59,891 - httpcore.http11 - DEBUG - response_closed.complete
+2026-01-06 15:07:59,892 - openai._base_client - DEBUG - HTTP Response: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "200 OK" Headers({'vary': 'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding', 'x-request-id': 'd54c4dfa-1894-90bb-9b55-fc1a3332a890', 'x-dashscope-call-gateway': 'true', 'content-type': 'application/json', 'req-cost-time': '4603', 'req-arrive-time': '1767683275248', 'resp-start-time': '1767683279851', 'x-envoy-upstream-service-time': '4600', 'content-encoding': 'gzip', 'date': 'Tue, 06 Jan 2026 07:07:59 GMT', 'server': 'istio-envoy', 'transfer-encoding': 'chunked'})
+2026-01-06 15:07:59,892 - openai._base_client - DEBUG - request_id: d54c4dfa-1894-90bb-9b55-fc1a3332a890
+2026-01-06 15:07:59,898 - agents.analyzer - DEBUG -       ✓ 评分: 5.0 - 标题表明该资讯涉及图神经网络（GNN）在异配性数据（heterophilic data）上的结构学习新方法，属于AI领域特别是图表示学习的前沿研究方向。然而，来源标注为'Unknown'，缺乏权威出处（如顶会论文、知名机构或预印本平台），严重影响可信度和完整性。内容仅提供标题，无技术细节、实验结果或方法描述，导致技术深度不足。因此虽主题相关且有一定新颖性潜力，但因信息不完整和来源不明，评分中等。
+2026-01-06 15:07:59,898 - agents.analyzer - INFO -    分析 8/14: Is AI Hype in Drug Development About to Turn Into ...
+2026-01-06 15:07:59,901 - openai._base_client - DEBUG - Request options: {'method': 'post', 'url': '/chat/completions', 'files': None, 'idempotency_key': 'stainless-python-retry-a8239de0-2681-4beb-ad4b-e7950e584cb4', 'json_data': {'messages': [{'content': '你是一个AI和机器人技术领域的专家分析师。\n\n你的任务是分析技术资讯的质量和相关性。\n\n评分标准（0-10分）：\n- 信息新鲜度（30%）：是否是最新突破或进展\n- 技术深度（25%）：是否有技术细节和实质内容\n- 来源权威性（20%）：来源是否可靠\n- 内容完整性（15%）：信息是否完整清晰\n- 实用价值（10%）：是否对从业者有参考价值\n\n技术类别：\n- 大语言模型与生成式AI\n- 机器人技术与具身智能\n- 计算机视觉\n- 强化学习与决策智能\n- AI基础设施与工具\n- 行业应用与产品\n- 研究前沿与理论突破\n\n请严格筛选，宁缺毋滥。过时的技术、营销软文、重复内容应给低分。\n\nThe output should be formatted as a JSON instance that conforms to the JSON schema below.\n\nAs an example, for the schema {"properties": {"foo": {"title": "Foo", "description": "a list of strings", "type": "array", "items": {"type": "string"}}}, "required": ["foo"]}\nthe object {"foo": ["bar", "baz"]} is a well-formatted instance of the schema. The object {"properties": {"foo": ["bar", "baz"]}} is not well-formatted.\n\nHere is the output schema:\n```\n{"description": "内容分析结果", "properties": {"category": {"description": "技术类别", "title": "Category", "type": "string"}, "quality_score": {"description": "质量分数(0-10)", "title": "Quality Score", "type": "number"}, "is_relevant": {"description": "是否相关", "title": "Is Relevant", "type": "boolean"}, "reason": {"description": "评分理由", "title": "Reason", "type": "string"}}, "required": ["category", "quality_score", "is_relevant", "reason"]}\n```', 'role': 'system'}, {'content': '请分析以下资讯：\n\n标题：Is AI Hype in Drug Development About to Turn Into Reality?\n内容：\n来源：Unknown\n\n请给出分类、质量评分和理由。', 'role': 'user'}], 'model': 'qwen-plus', 'max_completion_tokens': 2000, 'n': 1, 'stream': False, 'temperature': 0.7}}
+2026-01-06 15:07:59,903 - openai._base_client - DEBUG - Sending HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+2026-01-06 15:07:59,903 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2026-01-06 15:07:59,903 - httpcore.http11 - DEBUG - send_request_headers.complete
+2026-01-06 15:07:59,903 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2026-01-06 15:07:59,903 - httpcore.http11 - DEBUG - send_request_body.complete
+2026-01-06 15:07:59,903 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2026-01-06 15:08:02,694 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'vary', b'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding'), (b'x-request-id', b'aa929587-45f2-9289-90b9-4a006b2e5a57'), (b'x-dashscope-call-gateway', b'true'), (b'content-type', b'application/json'), (b'req-cost-time', b'2755'), (b'req-arrive-time', b'1767683279900'), (b'resp-start-time', b'1767683282656'), (b'x-envoy-upstream-service-time', b'2755'), (b'content-encoding', b'gzip'), (b'date', b'Tue, 06 Jan 2026 07:08:02 GMT'), (b'server', b'istio-envoy'), (b'transfer-encoding', b'chunked')])
+2026-01-06 15:08:02,695 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 15:08:02,695 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2026-01-06 15:08:02,696 - httpcore.http11 - DEBUG - receive_response_body.complete
+2026-01-06 15:08:02,696 - httpcore.http11 - DEBUG - response_closed.started
+2026-01-06 15:08:02,696 - httpcore.http11 - DEBUG - response_closed.complete
+2026-01-06 15:08:02,696 - openai._base_client - DEBUG - HTTP Response: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "200 OK" Headers({'vary': 'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding', 'x-request-id': 'aa929587-45f2-9289-90b9-4a006b2e5a57', 'x-dashscope-call-gateway': 'true', 'content-type': 'application/json', 'req-cost-time': '2755', 'req-arrive-time': '1767683279900', 'resp-start-time': '1767683282656', 'x-envoy-upstream-service-time': '2755', 'content-encoding': 'gzip', 'date': 'Tue, 06 Jan 2026 07:08:02 GMT', 'server': 'istio-envoy', 'transfer-encoding': 'chunked'})
+2026-01-06 15:08:02,696 - openai._base_client - DEBUG - request_id: aa929587-45f2-9289-90b9-4a006b2e5a57
+2026-01-06 15:08:02,699 - agents.analyzer - DEBUG -       ✗ 评分: 3.0 - 已过滤
+2026-01-06 15:08:02,699 - agents.analyzer - INFO -    分析 9/14: Samsung leverages Gemini models as global AI devic...
+2026-01-06 15:08:02,702 - openai._base_client - DEBUG - Request options: {'method': 'post', 'url': '/chat/completions', 'files': None, 'idempotency_key': 'stainless-python-retry-7a7c0bc1-d08a-42de-a081-d347a6dc9f4e', 'json_data': {'messages': [{'content': '你是一个AI和机器人技术领域的专家分析师。\n\n你的任务是分析技术资讯的质量和相关性。\n\n评分标准（0-10分）：\n- 信息新鲜度（30%）：是否是最新突破或进展\n- 技术深度（25%）：是否有技术细节和实质内容\n- 来源权威性（20%）：来源是否可靠\n- 内容完整性（15%）：信息是否完整清晰\n- 实用价值（10%）：是否对从业者有参考价值\n\n技术类别：\n- 大语言模型与生成式AI\n- 机器人技术与具身智能\n- 计算机视觉\n- 强化学习与决策智能\n- AI基础设施与工具\n- 行业应用与产品\n- 研究前沿与理论突破\n\n请严格筛选，宁缺毋滥。过时的技术、营销软文、重复内容应给低分。\n\nThe output should be formatted as a JSON instance that conforms to the JSON schema below.\n\nAs an example, for the schema {"properties": {"foo": {"title": "Foo", "description": "a list of strings", "type": "array", "items": {"type": "string"}}}, "required": ["foo"]}\nthe object {"foo": ["bar", "baz"]} is a well-formatted instance of the schema. The object {"properties": {"foo": ["bar", "baz"]}} is not well-formatted.\n\nHere is the output schema:\n```\n{"description": "内容分析结果", "properties": {"category": {"description": "技术类别", "title": "Category", "type": "string"}, "quality_score": {"description": "质量分数(0-10)", "title": "Quality Score", "type": "number"}, "is_relevant": {"description": "是否相关", "title": "Is Relevant", "type": "boolean"}, "reason": {"description": "评分理由", "title": "Reason", "type": "string"}}, "required": ["category", "quality_score", "is_relevant", "reason"]}\n```', 'role': 'system'}, {'content': '请分析以下资讯：\n\n标题：Samsung leverages Gemini models as global AI device race heats up\n内容：\n来源：Unknown\n\n请给出分类、质量评分和理由。', 'role': 'user'}], 'model': 'qwen-plus', 'max_completion_tokens': 2000, 'n': 1, 'stream': False, 'temperature': 0.7}}
+2026-01-06 15:08:02,702 - openai._base_client - DEBUG - Sending HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+2026-01-06 15:08:02,702 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2026-01-06 15:08:02,703 - httpcore.http11 - DEBUG - send_request_headers.complete
+2026-01-06 15:08:02,703 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2026-01-06 15:08:02,703 - httpcore.http11 - DEBUG - send_request_body.complete
+2026-01-06 15:08:02,703 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2026-01-06 15:08:06,111 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'vary', b'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding'), (b'x-request-id', b'e8f8315d-e3b8-994d-a0bb-9e8a7b8800d7'), (b'x-dashscope-call-gateway', b'true'), (b'content-type', b'application/json'), (b'req-cost-time', b'3374'), (b'req-arrive-time', b'1767683282698'), (b'resp-start-time', b'1767683286073'), (b'x-envoy-upstream-service-time', b'3373'), (b'content-encoding', b'gzip'), (b'date', b'Tue, 06 Jan 2026 07:08:05 GMT'), (b'server', b'istio-envoy'), (b'transfer-encoding', b'chunked')])
+2026-01-06 15:08:06,112 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 15:08:06,112 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2026-01-06 15:08:06,112 - httpcore.http11 - DEBUG - receive_response_body.complete
+2026-01-06 15:08:06,113 - httpcore.http11 - DEBUG - response_closed.started
+2026-01-06 15:08:06,113 - httpcore.http11 - DEBUG - response_closed.complete
+2026-01-06 15:08:06,113 - openai._base_client - DEBUG - HTTP Response: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "200 OK" Headers({'vary': 'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding', 'x-request-id': 'e8f8315d-e3b8-994d-a0bb-9e8a7b8800d7', 'x-dashscope-call-gateway': 'true', 'content-type': 'application/json', 'req-cost-time': '3374', 'req-arrive-time': '1767683282698', 'resp-start-time': '1767683286073', 'x-envoy-upstream-service-time': '3373', 'content-encoding': 'gzip', 'date': 'Tue, 06 Jan 2026 07:08:05 GMT', 'server': 'istio-envoy', 'transfer-encoding': 'chunked'})
+2026-01-06 15:08:06,113 - openai._base_client - DEBUG - request_id: e8f8315d-e3b8-994d-a0bb-9e8a7b8800d7
+2026-01-06 15:08:06,116 - agents.analyzer - DEBUG -       ✗ 评分: 3.0 - 已过滤
+2026-01-06 15:08:06,116 - agents.analyzer - INFO -    分析 10/14: Accuracy Is Not Enough: Reasoning and Reference Re...
+2026-01-06 15:08:06,119 - openai._base_client - DEBUG - Request options: {'method': 'post', 'url': '/chat/completions', 'files': None, 'idempotency_key': 'stainless-python-retry-52d0c855-fb17-48cf-9dc0-27c47408185e', 'json_data': {'messages': [{'content': '你是一个AI和机器人技术领域的专家分析师。\n\n你的任务是分析技术资讯的质量和相关性。\n\n评分标准（0-10分）：\n- 信息新鲜度（30%）：是否是最新突破或进展\n- 技术深度（25%）：是否有技术细节和实质内容\n- 来源权威性（20%）：来源是否可靠\n- 内容完整性（15%）：信息是否完整清晰\n- 实用价值（10%）：是否对从业者有参考价值\n\n技术类别：\n- 大语言模型与生成式AI\n- 机器人技术与具身智能\n- 计算机视觉\n- 强化学习与决策智能\n- AI基础设施与工具\n- 行业应用与产品\n- 研究前沿与理论突破\n\n请严格筛选，宁缺毋滥。过时的技术、营销软文、重复内容应给低分。\n\nThe output should be formatted as a JSON instance that conforms to the JSON schema below.\n\nAs an example, for the schema {"properties": {"foo": {"title": "Foo", "description": "a list of strings", "type": "array", "items": {"type": "string"}}}, "required": ["foo"]}\nthe object {"foo": ["bar", "baz"]} is a well-formatted instance of the schema. The object {"properties": {"foo": ["bar", "baz"]}} is not well-formatted.\n\nHere is the output schema:\n```\n{"description": "内容分析结果", "properties": {"category": {"description": "技术类别", "title": "Category", "type": "string"}, "quality_score": {"description": "质量分数(0-10)", "title": "Quality Score", "type": "number"}, "is_relevant": {"description": "是否相关", "title": "Is Relevant", "type": "boolean"}, "reason": {"description": "评分理由", "title": "Reason", "type": "string"}}, "required": ["category", "quality_score", "is_relevant", "reason"]}\n```', 'role': 'system'}, {'content': '请分析以下资讯：\n\n标题：Accuracy Is Not Enough: Reasoning and Reference Reliability in Orthopaedic Large Language Model (LLM) Applications\n内容：\n来源：Unknown\n\n请给出分类、质量评分和理由。', 'role': 'user'}], 'model': 'qwen-plus', 'max_completion_tokens': 2000, 'n': 1, 'stream': False, 'temperature': 0.7}}
+2026-01-06 15:08:06,120 - openai._base_client - DEBUG - Sending HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+2026-01-06 15:08:06,120 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2026-01-06 15:08:06,120 - httpcore.http11 - DEBUG - send_request_headers.complete
+2026-01-06 15:08:06,120 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2026-01-06 15:08:06,121 - httpcore.http11 - DEBUG - send_request_body.complete
+2026-01-06 15:08:06,121 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2026-01-06 15:08:08,525 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'vary', b'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding'), (b'x-request-id', b'94c052e7-94fb-9820-b426-fbcb0206ecc3'), (b'x-dashscope-call-gateway', b'true'), (b'content-type', b'application/json'), (b'req-cost-time', b'2369'), (b'req-arrive-time', b'1767683286117'), (b'resp-start-time', b'1767683288486'), (b'x-envoy-upstream-service-time', b'2369'), (b'content-encoding', b'gzip'), (b'date', b'Tue, 06 Jan 2026 07:08:08 GMT'), (b'server', b'istio-envoy'), (b'transfer-encoding', b'chunked')])
+2026-01-06 15:08:08,526 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 15:08:08,526 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2026-01-06 15:08:08,526 - httpcore.http11 - DEBUG - receive_response_body.complete
+2026-01-06 15:08:08,526 - httpcore.http11 - DEBUG - response_closed.started
+2026-01-06 15:08:08,526 - httpcore.http11 - DEBUG - response_closed.complete
+2026-01-06 15:08:08,526 - openai._base_client - DEBUG - HTTP Response: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "200 OK" Headers({'vary': 'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding', 'x-request-id': '94c052e7-94fb-9820-b426-fbcb0206ecc3', 'x-dashscope-call-gateway': 'true', 'content-type': 'application/json', 'req-cost-time': '2369', 'req-arrive-time': '1767683286117', 'resp-start-time': '1767683288486', 'x-envoy-upstream-service-time': '2369', 'content-encoding': 'gzip', 'date': 'Tue, 06 Jan 2026 07:08:08 GMT', 'server': 'istio-envoy', 'transfer-encoding': 'chunked'})
+2026-01-06 15:08:08,526 - openai._base_client - DEBUG - request_id: 94c052e7-94fb-9820-b426-fbcb0206ecc3
+2026-01-06 15:08:08,530 - agents.analyzer - DEBUG -       ✓ 评分: 5.0 - 标题表明该资讯关注大语言模型在骨科应用中的推理能力与参考可靠性，涉及医疗AI的质量评估，属于研究前沿。但来源标注为'Unknown'，缺乏权威性和信息完整性，严重影响可信度与实用性，因此评分中等。
+2026-01-06 15:08:08,530 - agents.analyzer - INFO -    分析 11/14: Ambarella Boosts On-Device Computer Vision Perform...
+2026-01-06 15:08:08,533 - openai._base_client - DEBUG - Request options: {'method': 'post', 'url': '/chat/completions', 'files': None, 'idempotency_key': 'stainless-python-retry-28008068-7318-45d6-9101-7b32b7bfe006', 'json_data': {'messages': [{'content': '你是一个AI和机器人技术领域的专家分析师。\n\n你的任务是分析技术资讯的质量和相关性。\n\n评分标准（0-10分）：\n- 信息新鲜度（30%）：是否是最新突破或进展\n- 技术深度（25%）：是否有技术细节和实质内容\n- 来源权威性（20%）：来源是否可靠\n- 内容完整性（15%）：信息是否完整清晰\n- 实用价值（10%）：是否对从业者有参考价值\n\n技术类别：\n- 大语言模型与生成式AI\n- 机器人技术与具身智能\n- 计算机视觉\n- 强化学习与决策智能\n- AI基础设施与工具\n- 行业应用与产品\n- 研究前沿与理论突破\n\n请严格筛选，宁缺毋滥。过时的技术、营销软文、重复内容应给低分。\n\nThe output should be formatted as a JSON instance that conforms to the JSON schema below.\n\nAs an example, for the schema {"properties": {"foo": {"title": "Foo", "description": "a list of strings", "type": "array", "items": {"type": "string"}}}, "required": ["foo"]}\nthe object {"foo": ["bar", "baz"]} is a well-formatted instance of the schema. The object {"properties": {"foo": ["bar", "baz"]}} is not well-formatted.\n\nHere is the output schema:\n```\n{"description": "内容分析结果", "properties": {"category": {"description": "技术类别", "title": "Category", "type": "string"}, "quality_score": {"description": "质量分数(0-10)", "title": "Quality Score", "type": "number"}, "is_relevant": {"description": "是否相关", "title": "Is Relevant", "type": "boolean"}, "reason": {"description": "评分理由", "title": "Reason", "type": "string"}}, "required": ["category", "quality_score", "is_relevant", "reason"]}\n```', 'role': 'system'}, {'content': '请分析以下资讯：\n\n标题：Ambarella Boosts On-Device Computer Vision Performance, Efficiency With the New CV7\n内容：\n来源：Unknown\n\n请给出分类、质量评分和理由。', 'role': 'user'}], 'model': 'qwen-plus', 'max_completion_tokens': 2000, 'n': 1, 'stream': False, 'temperature': 0.7}}
+2026-01-06 15:08:08,534 - openai._base_client - DEBUG - Sending HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+2026-01-06 15:08:08,534 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2026-01-06 15:08:08,534 - httpcore.http11 - DEBUG - send_request_headers.complete
+2026-01-06 15:08:08,534 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2026-01-06 15:08:08,534 - httpcore.http11 - DEBUG - send_request_body.complete
+2026-01-06 15:08:08,534 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2026-01-06 15:08:11,260 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'vary', b'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding'), (b'x-request-id', b'942ec06e-f92b-9d92-88ee-8246345d7c8a'), (b'x-dashscope-call-gateway', b'true'), (b'content-type', b'application/json'), (b'req-cost-time', b'2690'), (b'req-arrive-time', b'1767683288531'), (b'resp-start-time', b'1767683291222'), (b'x-envoy-upstream-service-time', b'2690'), (b'content-encoding', b'gzip'), (b'date', b'Tue, 06 Jan 2026 07:08:10 GMT'), (b'server', b'istio-envoy'), (b'transfer-encoding', b'chunked')])
+2026-01-06 15:08:11,261 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 15:08:11,261 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2026-01-06 15:08:11,261 - httpcore.http11 - DEBUG - receive_response_body.complete
+2026-01-06 15:08:11,261 - httpcore.http11 - DEBUG - response_closed.started
+2026-01-06 15:08:11,261 - httpcore.http11 - DEBUG - response_closed.complete
+2026-01-06 15:08:11,261 - openai._base_client - DEBUG - HTTP Response: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "200 OK" Headers({'vary': 'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding', 'x-request-id': '942ec06e-f92b-9d92-88ee-8246345d7c8a', 'x-dashscope-call-gateway': 'true', 'content-type': 'application/json', 'req-cost-time': '2690', 'req-arrive-time': '1767683288531', 'resp-start-time': '1767683291222', 'x-envoy-upstream-service-time': '2690', 'content-encoding': 'gzip', 'date': 'Tue, 06 Jan 2026 07:08:10 GMT', 'server': 'istio-envoy', 'transfer-encoding': 'chunked'})
+2026-01-06 15:08:11,262 - openai._base_client - DEBUG - request_id: 942ec06e-f92b-9d92-88ee-8246345d7c8a
+2026-01-06 15:08:11,265 - agents.analyzer - DEBUG -       ✓ 评分: 5.0 - 该资讯提及Ambarella推出CV7芯片以提升设备端计算机视觉的性能与能效，技术方向明确，属于计算机视觉领域。然而，来源未知，缺乏详细技术参数、发布日期或具体应用场景，信息新鲜度与权威性不足，影响整体质量评分。
+2026-01-06 15:08:11,265 - agents.analyzer - INFO -    分析 12/14: CES 2026: Hyundai, LG and Samsung push consumer ma...
+2026-01-06 15:08:11,268 - openai._base_client - DEBUG - Request options: {'method': 'post', 'url': '/chat/completions', 'files': None, 'idempotency_key': 'stainless-python-retry-75a5af3b-4541-4320-b324-8c966ed16c3e', 'json_data': {'messages': [{'content': '你是一个AI和机器人技术领域的专家分析师。\n\n你的任务是分析技术资讯的质量和相关性。\n\n评分标准（0-10分）：\n- 信息新鲜度（30%）：是否是最新突破或进展\n- 技术深度（25%）：是否有技术细节和实质内容\n- 来源权威性（20%）：来源是否可靠\n- 内容完整性（15%）：信息是否完整清晰\n- 实用价值（10%）：是否对从业者有参考价值\n\n技术类别：\n- 大语言模型与生成式AI\n- 机器人技术与具身智能\n- 计算机视觉\n- 强化学习与决策智能\n- AI基础设施与工具\n- 行业应用与产品\n- 研究前沿与理论突破\n\n请严格筛选，宁缺毋滥。过时的技术、营销软文、重复内容应给低分。\n\nThe output should be formatted as a JSON instance that conforms to the JSON schema below.\n\nAs an example, for the schema {"properties": {"foo": {"title": "Foo", "description": "a list of strings", "type": "array", "items": {"type": "string"}}}, "required": ["foo"]}\nthe object {"foo": ["bar", "baz"]} is a well-formatted instance of the schema. The object {"properties": {"foo": ["bar", "baz"]}} is not well-formatted.\n\nHere is the output schema:\n```\n{"description": "内容分析结果", "properties": {"category": {"description": "技术类别", "title": "Category", "type": "string"}, "quality_score": {"description": "质量分数(0-10)", "title": "Quality Score", "type": "number"}, "is_relevant": {"description": "是否相关", "title": "Is Relevant", "type": "boolean"}, "reason": {"description": "评分理由", "title": "Reason", "type": "string"}}, "required": ["category", "quality_score", "is_relevant", "reason"]}\n```', 'role': 'system'}, {'content': '请分析以下资讯：\n\n标题：CES 2026: Hyundai, LG and Samsung push consumer machine vision\n内容：\n来源：Unknown\n\n请给出分类、质量评分和理由。', 'role': 'user'}], 'model': 'qwen-plus', 'max_completion_tokens': 2000, 'n': 1, 'stream': False, 'temperature': 0.7}}
+2026-01-06 15:08:11,269 - openai._base_client - DEBUG - Sending HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+2026-01-06 15:08:11,269 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2026-01-06 15:08:11,269 - httpcore.http11 - DEBUG - send_request_headers.complete
+2026-01-06 15:08:11,269 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2026-01-06 15:08:11,269 - httpcore.http11 - DEBUG - send_request_body.complete
+2026-01-06 15:08:11,270 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2026-01-06 15:08:14,081 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'vary', b'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding'), (b'x-request-id', b'5fba9169-eb87-9dba-aa3f-b12fcfe3d199'), (b'x-dashscope-call-gateway', b'true'), (b'content-type', b'application/json'), (b'req-cost-time', b'2777'), (b'req-arrive-time', b'1767683291265'), (b'resp-start-time', b'1767683294043'), (b'x-envoy-upstream-service-time', b'2776'), (b'content-encoding', b'gzip'), (b'date', b'Tue, 06 Jan 2026 07:08:13 GMT'), (b'server', b'istio-envoy'), (b'transfer-encoding', b'chunked')])
+2026-01-06 15:08:14,082 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 15:08:14,082 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2026-01-06 15:08:14,083 - httpcore.http11 - DEBUG - receive_response_body.complete
+2026-01-06 15:08:14,083 - httpcore.http11 - DEBUG - response_closed.started
+2026-01-06 15:08:14,083 - httpcore.http11 - DEBUG - response_closed.complete
+2026-01-06 15:08:14,083 - openai._base_client - DEBUG - HTTP Response: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "200 OK" Headers({'vary': 'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding', 'x-request-id': '5fba9169-eb87-9dba-aa3f-b12fcfe3d199', 'x-dashscope-call-gateway': 'true', 'content-type': 'application/json', 'req-cost-time': '2777', 'req-arrive-time': '1767683291265', 'resp-start-time': '1767683294043', 'x-envoy-upstream-service-time': '2776', 'content-encoding': 'gzip', 'date': 'Tue, 06 Jan 2026 07:08:13 GMT', 'server': 'istio-envoy', 'transfer-encoding': 'chunked'})
+2026-01-06 15:08:14,083 - openai._base_client - DEBUG - request_id: 5fba9169-eb87-9dba-aa3f-b12fcfe3d199
+2026-01-06 15:08:14,087 - agents.analyzer - DEBUG -       ✗ 评分: 3.0 - 已过滤
+2026-01-06 15:08:14,087 - agents.analyzer - INFO -    分析 13/14: 英偉達CEO表示新款Rubin晶片進展順利 助力加速AI發展...
+2026-01-06 15:08:14,090 - openai._base_client - DEBUG - Request options: {'method': 'post', 'url': '/chat/completions', 'files': None, 'idempotency_key': 'stainless-python-retry-bc7721eb-57a9-41b5-8ba5-23feeafa1cd1', 'json_data': {'messages': [{'content': '你是一个AI和机器人技术领域的专家分析师。\n\n你的任务是分析技术资讯的质量和相关性。\n\n评分标准（0-10分）：\n- 信息新鲜度（30%）：是否是最新突破或进展\n- 技术深度（25%）：是否有技术细节和实质内容\n- 来源权威性（20%）：来源是否可靠\n- 内容完整性（15%）：信息是否完整清晰\n- 实用价值（10%）：是否对从业者有参考价值\n\n技术类别：\n- 大语言模型与生成式AI\n- 机器人技术与具身智能\n- 计算机视觉\n- 强化学习与决策智能\n- AI基础设施与工具\n- 行业应用与产品\n- 研究前沿与理论突破\n\n请严格筛选，宁缺毋滥。过时的技术、营销软文、重复内容应给低分。\n\nThe output should be formatted as a JSON instance that conforms to the JSON schema below.\n\nAs an example, for the schema {"properties": {"foo": {"title": "Foo", "description": "a list of strings", "type": "array", "items": {"type": "string"}}}, "required": ["foo"]}\nthe object {"foo": ["bar", "baz"]} is a well-formatted instance of the schema. The object {"properties": {"foo": ["bar", "baz"]}} is not well-formatted.\n\nHere is the output schema:\n```\n{"description": "内容分析结果", "properties": {"category": {"description": "技术类别", "title": "Category", "type": "string"}, "quality_score": {"description": "质量分数(0-10)", "title": "Quality Score", "type": "number"}, "is_relevant": {"description": "是否相关", "title": "Is Relevant", "type": "boolean"}, "reason": {"description": "评分理由", "title": "Reason", "type": "string"}}, "required": ["category", "quality_score", "is_relevant", "reason"]}\n```', 'role': 'system'}, {'content': '请分析以下资讯：\n\n标题：英偉達CEO表示新款Rubin晶片進展順利 助力加速AI發展\n内容：\n来源：Unknown\n\n请给出分类、质量评分和理由。', 'role': 'user'}], 'model': 'qwen-plus', 'max_completion_tokens': 2000, 'n': 1, 'stream': False, 'temperature': 0.7}}
+2026-01-06 15:08:14,090 - openai._base_client - DEBUG - Sending HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+2026-01-06 15:08:14,091 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2026-01-06 15:08:14,091 - httpcore.http11 - DEBUG - send_request_headers.complete
+2026-01-06 15:08:14,091 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2026-01-06 15:08:14,091 - httpcore.http11 - DEBUG - send_request_body.complete
+2026-01-06 15:08:14,091 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2026-01-06 15:08:17,244 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'vary', b'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding'), (b'x-request-id', b'e8177ea0-9bf7-9b8a-ae37-c33214cf7125'), (b'x-dashscope-call-gateway', b'true'), (b'content-type', b'application/json'), (b'req-cost-time', b'3118'), (b'req-arrive-time', b'1767683294087'), (b'resp-start-time', b'1767683297206'), (b'x-envoy-upstream-service-time', b'3118'), (b'content-encoding', b'gzip'), (b'date', b'Tue, 06 Jan 2026 07:08:16 GMT'), (b'server', b'istio-envoy'), (b'transfer-encoding', b'chunked')])
+2026-01-06 15:08:17,245 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 15:08:17,245 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2026-01-06 15:08:17,246 - httpcore.http11 - DEBUG - receive_response_body.complete
+2026-01-06 15:08:17,246 - httpcore.http11 - DEBUG - response_closed.started
+2026-01-06 15:08:17,246 - httpcore.http11 - DEBUG - response_closed.complete
+2026-01-06 15:08:17,246 - openai._base_client - DEBUG - HTTP Response: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "200 OK" Headers({'vary': 'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding', 'x-request-id': 'e8177ea0-9bf7-9b8a-ae37-c33214cf7125', 'x-dashscope-call-gateway': 'true', 'content-type': 'application/json', 'req-cost-time': '3118', 'req-arrive-time': '1767683294087', 'resp-start-time': '1767683297206', 'x-envoy-upstream-service-time': '3118', 'content-encoding': 'gzip', 'date': 'Tue, 06 Jan 2026 07:08:16 GMT', 'server': 'istio-envoy', 'transfer-encoding': 'chunked'})
+2026-01-06 15:08:17,246 - openai._base_client - DEBUG - request_id: e8177ea0-9bf7-9b8a-ae37-c33214cf7125
+2026-01-06 15:08:17,250 - agents.analyzer - DEBUG -       ✗ 评分: 4.0 - 已过滤
+2026-01-06 15:08:17,250 - agents.analyzer - INFO -    分析 14/14: 英偉達稱新款Rubin晶片進展順利 助力加速AI發展 (09:55) - 20260106 - 即時...
+2026-01-06 15:08:17,253 - openai._base_client - DEBUG - Request options: {'method': 'post', 'url': '/chat/completions', 'files': None, 'idempotency_key': 'stainless-python-retry-38a914dd-dbbe-451e-8c48-62571b342e57', 'json_data': {'messages': [{'content': '你是一个AI和机器人技术领域的专家分析师。\n\n你的任务是分析技术资讯的质量和相关性。\n\n评分标准（0-10分）：\n- 信息新鲜度（30%）：是否是最新突破或进展\n- 技术深度（25%）：是否有技术细节和实质内容\n- 来源权威性（20%）：来源是否可靠\n- 内容完整性（15%）：信息是否完整清晰\n- 实用价值（10%）：是否对从业者有参考价值\n\n技术类别：\n- 大语言模型与生成式AI\n- 机器人技术与具身智能\n- 计算机视觉\n- 强化学习与决策智能\n- AI基础设施与工具\n- 行业应用与产品\n- 研究前沿与理论突破\n\n请严格筛选，宁缺毋滥。过时的技术、营销软文、重复内容应给低分。\n\nThe output should be formatted as a JSON instance that conforms to the JSON schema below.\n\nAs an example, for the schema {"properties": {"foo": {"title": "Foo", "description": "a list of strings", "type": "array", "items": {"type": "string"}}}, "required": ["foo"]}\nthe object {"foo": ["bar", "baz"]} is a well-formatted instance of the schema. The object {"properties": {"foo": ["bar", "baz"]}} is not well-formatted.\n\nHere is the output schema:\n```\n{"description": "内容分析结果", "properties": {"category": {"description": "技术类别", "title": "Category", "type": "string"}, "quality_score": {"description": "质量分数(0-10)", "title": "Quality Score", "type": "number"}, "is_relevant": {"description": "是否相关", "title": "Is Relevant", "type": "boolean"}, "reason": {"description": "评分理由", "title": "Reason", "type": "string"}}, "required": ["category", "quality_score", "is_relevant", "reason"]}\n```', 'role': 'system'}, {'content': '请分析以下资讯：\n\n标题：英偉達稱新款Rubin晶片進展順利 助力加速AI發展 (09:55) - 20260106 - 即時財經新聞\n内容：\n来源：Unknown\n\n请给出分类、质量评分和理由。', 'role': 'user'}], 'model': 'qwen-plus', 'max_completion_tokens': 2000, 'n': 1, 'stream': False, 'temperature': 0.7}}
+2026-01-06 15:08:17,254 - openai._base_client - DEBUG - Sending HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+2026-01-06 15:08:17,254 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2026-01-06 15:08:17,254 - httpcore.http11 - DEBUG - send_request_headers.complete
+2026-01-06 15:08:17,254 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2026-01-06 15:08:17,254 - httpcore.http11 - DEBUG - send_request_body.complete
+2026-01-06 15:08:17,255 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2026-01-06 15:08:20,374 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'vary', b'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding'), (b'x-request-id', b'f91b56af-658f-9477-9c09-c95e0a9f6b86'), (b'x-dashscope-call-gateway', b'true'), (b'content-type', b'application/json'), (b'req-cost-time', b'3085'), (b'req-arrive-time', b'1767683297250'), (b'resp-start-time', b'1767683300336'), (b'x-envoy-upstream-service-time', b'3085'), (b'content-encoding', b'gzip'), (b'date', b'Tue, 06 Jan 2026 07:08:20 GMT'), (b'server', b'istio-envoy'), (b'transfer-encoding', b'chunked')])
+2026-01-06 15:08:20,375 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 15:08:20,375 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2026-01-06 15:08:20,375 - httpcore.http11 - DEBUG - receive_response_body.complete
+2026-01-06 15:08:20,376 - httpcore.http11 - DEBUG - response_closed.started
+2026-01-06 15:08:20,376 - httpcore.http11 - DEBUG - response_closed.complete
+2026-01-06 15:08:20,376 - openai._base_client - DEBUG - HTTP Response: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "200 OK" Headers({'vary': 'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding', 'x-request-id': 'f91b56af-658f-9477-9c09-c95e0a9f6b86', 'x-dashscope-call-gateway': 'true', 'content-type': 'application/json', 'req-cost-time': '3085', 'req-arrive-time': '1767683297250', 'resp-start-time': '1767683300336', 'x-envoy-upstream-service-time': '3085', 'content-encoding': 'gzip', 'date': 'Tue, 06 Jan 2026 07:08:20 GMT', 'server': 'istio-envoy', 'transfer-encoding': 'chunked'})
+2026-01-06 15:08:20,376 - openai._base_client - DEBUG - request_id: f91b56af-658f-9477-9c09-c95e0a9f6b86
+2026-01-06 15:08:20,379 - agents.analyzer - DEBUG -       ✗ 评分: 4.0 - 已过滤
+2026-01-06 15:08:20,380 - agents.orchestrator - INFO -    分析完成，保留 3 条高质量内容
+2026-01-06 15:08:20,381 - agents.orchestrator - INFO - 🔄 阶段3: 语义去重
+2026-01-06 15:08:20,381 - agents.deduplicator - INFO -    检查 1/3: Frequency-guided Structure Learning Advances Graph...
+2026-01-06 15:08:20,387 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): openaipublic.blob.core.windows.net:443
+2026-01-06 15:08:21,989 - urllib3.connectionpool - DEBUG - https://openaipublic.blob.core.windows.net:443 "GET /encodings/cl100k_base.tiktoken HTTP/1.1" 200 1681126
+2026-01-06 15:08:55,933 - openai._base_client - DEBUG - Request options: {'method': 'post', 'url': '/embeddings', 'files': None, 'idempotency_key': 'stainless-python-retry-dbe61a20-f06e-46f9-a873-9edd061cc74d', 'post_parser': <function Embeddings.create.<locals>.parser at 0x7224025ce0c0>, 'json_data': {'input': [[39714, 84792, 291, 29696, 21579, 91958, 12441, 61577, 39810, 369, 473, 1430, 98635, 292, 2956, 69778, 220]], 'model': 'text-embedding-v3', 'encoding_format': 'base64'}}
+2026-01-06 15:08:55,933 - openai._base_client - DEBUG - Sending HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/embeddings
+2026-01-06 15:08:55,933 - httpcore.connection - DEBUG - connect_tcp.started host='127.0.0.1' port=7897 local_address=None timeout=None socket_options=None
+2026-01-06 15:08:55,933 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x7223bdde2210>
+2026-01-06 15:08:55,933 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'CONNECT']>
+2026-01-06 15:08:55,933 - httpcore.http11 - DEBUG - send_request_headers.complete
+2026-01-06 15:08:55,933 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'CONNECT']>
+2026-01-06 15:08:55,933 - httpcore.http11 - DEBUG - send_request_body.complete
+2026-01-06 15:08:55,934 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'CONNECT']>
+2026-01-06 15:08:55,934 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'Connection established', [])
+2026-01-06 15:08:55,934 - httpcore.proxy - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x7223dd1abc80> server_hostname='dashscope.aliyuncs.com' timeout=None
+2026-01-06 15:08:56,040 - httpcore.proxy - DEBUG - start_tls.complete return_value=<httpcore._backends.sync.SyncStream object at 0x7223bdd3a350>
+2026-01-06 15:08:56,040 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2026-01-06 15:08:56,041 - httpcore.http11 - DEBUG - send_request_headers.complete
+2026-01-06 15:08:56,041 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2026-01-06 15:08:56,041 - httpcore.http11 - DEBUG - send_request_body.complete
+2026-01-06 15:08:56,041 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2026-01-06 15:08:56,393 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 400, b'Bad Request', [(b'vary', b'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding'), (b'x-request-id', b'12de5fb3-f7aa-9cd5-b048-e8a52ccb9b33'), (b'content-type', b'application/json'), (b'x-dashscope-call-gateway', b'true'), (b'req-cost-time', b'319'), (b'req-arrive-time', b'1767683336040'), (b'resp-start-time', b'1767683336360'), (b'x-envoy-upstream-service-time', b'319'), (b'content-encoding', b'gzip'), (b'date', b'Tue, 06 Jan 2026 07:08:56 GMT'), (b'server', b'istio-envoy'), (b'transfer-encoding', b'chunked')])
+2026-01-06 15:08:56,394 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/embeddings "HTTP/1.1 400 Bad Request"
+2026-01-06 15:08:56,394 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2026-01-06 15:08:56,395 - httpcore.http11 - DEBUG - receive_response_body.complete
+2026-01-06 15:08:56,395 - httpcore.http11 - DEBUG - response_closed.started
+2026-01-06 15:08:56,395 - httpcore.http11 - DEBUG - response_closed.complete
+2026-01-06 15:08:56,395 - openai._base_client - DEBUG - HTTP Response: POST https://dashscope.aliyuncs.com/compatible-mode/v1/embeddings "400 Bad Request" Headers({'vary': 'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding', 'x-request-id': '12de5fb3-f7aa-9cd5-b048-e8a52ccb9b33', 'content-type': 'application/json', 'x-dashscope-call-gateway': 'true', 'req-cost-time': '319', 'req-arrive-time': '1767683336040', 'resp-start-time': '1767683336360', 'x-envoy-upstream-service-time': '319', 'content-encoding': 'gzip', 'date': 'Tue, 06 Jan 2026 07:08:56 GMT', 'server': 'istio-envoy', 'transfer-encoding': 'chunked'})
+2026-01-06 15:08:56,395 - openai._base_client - DEBUG - request_id: 12de5fb3-f7aa-9cd5-b048-e8a52ccb9b33
+2026-01-06 15:08:56,395 - openai._base_client - DEBUG - Encountered httpx.HTTPStatusError
+Traceback (most recent call last):
+  File "/home/zhs/miniconda3/envs/daily_agent/lib/python3.11/site-packages/openai/_base_client.py", line 1027, in request
+    response.raise_for_status()
+  File "/home/zhs/miniconda3/envs/daily_agent/lib/python3.11/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '400 Bad Request' for url 'https://dashscope.aliyuncs.com/compatible-mode/v1/embeddings'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400
+2026-01-06 15:08:56,400 - openai._base_client - DEBUG - Not retrying
+2026-01-06 15:08:56,400 - openai._base_client - DEBUG - Re-raising status error
+2026-01-06 15:08:56,400 - agents.deduplicator - WARNING -    去重检查失败: Error code: 400 - {'error': {'message': '<400> InternalError.Algo.InvalidParameter: Value error, contents is neither str nor list of str.: input.contents', 'type': 'InvalidParameter', 'param': None, 'code': 'InvalidParameter'}, 'id': '12de5fb3-f7aa-9cd5-b048-e8a52ccb9b33', 'request_id': '12de5fb3-f7aa-9cd5-b048-e8a52ccb9b33'}
+2026-01-06 15:08:56,400 - agents.deduplicator - INFO -    检查 2/3: Accuracy Is Not Enough: Reasoning and Reference Re...
+2026-01-06 15:08:56,401 - openai._base_client - DEBUG - Request options: {'method': 'post', 'url': '/embeddings', 'files': None, 'idempotency_key': 'stainless-python-retry-ae7b8151-8272-48e5-b999-4ad8a196bc2b', 'post_parser': <function Embeddings.create.<locals>.parser at 0x7224025ce0c0>, 'json_data': {'input': [[46922, 2209, 2876, 62692, 25, 27857, 287, 323, 17650, 6649, 79443, 304, 32210, 40952, 34383, 20902, 11688, 5008, 320, 4178, 44, 8, 32625, 220]], 'model': 'text-embedding-v3', 'encoding_format': 'base64'}}
+2026-01-06 15:08:56,402 - openai._base_client - DEBUG - Sending HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/embeddings
+2026-01-06 15:08:56,402 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2026-01-06 15:08:56,402 - httpcore.http11 - DEBUG - send_request_headers.complete
+2026-01-06 15:08:56,402 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2026-01-06 15:08:56,402 - httpcore.http11 - DEBUG - send_request_body.complete
+2026-01-06 15:08:56,403 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2026-01-06 15:08:56,716 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 400, b'Bad Request', [(b'vary', b'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding'), (b'x-request-id', b'26ac7b21-6d5c-9f55-8bc5-4c8456b7fa56'), (b'content-type', b'application/json'), (b'x-dashscope-call-gateway', b'true'), (b'req-cost-time', b'278'), (b'req-arrive-time', b'1767683336403'), (b'resp-start-time', b'1767683336682'), (b'x-envoy-upstream-service-time', b'278'), (b'content-encoding', b'gzip'), (b'date', b'Tue, 06 Jan 2026 07:08:56 GMT'), (b'server', b'istio-envoy'), (b'transfer-encoding', b'chunked')])
+2026-01-06 15:08:56,716 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/embeddings "HTTP/1.1 400 Bad Request"
+2026-01-06 15:08:56,717 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2026-01-06 15:08:56,717 - httpcore.http11 - DEBUG - receive_response_body.complete
+2026-01-06 15:08:56,717 - httpcore.http11 - DEBUG - response_closed.started
+2026-01-06 15:08:56,717 - httpcore.http11 - DEBUG - response_closed.complete
+2026-01-06 15:08:56,717 - openai._base_client - DEBUG - HTTP Response: POST https://dashscope.aliyuncs.com/compatible-mode/v1/embeddings "400 Bad Request" Headers({'vary': 'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding', 'x-request-id': '26ac7b21-6d5c-9f55-8bc5-4c8456b7fa56', 'content-type': 'application/json', 'x-dashscope-call-gateway': 'true', 'req-cost-time': '278', 'req-arrive-time': '1767683336403', 'resp-start-time': '1767683336682', 'x-envoy-upstream-service-time': '278', 'content-encoding': 'gzip', 'date': 'Tue, 06 Jan 2026 07:08:56 GMT', 'server': 'istio-envoy', 'transfer-encoding': 'chunked'})
+2026-01-06 15:08:56,717 - openai._base_client - DEBUG - request_id: 26ac7b21-6d5c-9f55-8bc5-4c8456b7fa56
+2026-01-06 15:08:56,717 - openai._base_client - DEBUG - Encountered httpx.HTTPStatusError
+Traceback (most recent call last):
+  File "/home/zhs/miniconda3/envs/daily_agent/lib/python3.11/site-packages/openai/_base_client.py", line 1027, in request
+    response.raise_for_status()
+  File "/home/zhs/miniconda3/envs/daily_agent/lib/python3.11/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '400 Bad Request' for url 'https://dashscope.aliyuncs.com/compatible-mode/v1/embeddings'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400
+2026-01-06 15:08:56,718 - openai._base_client - DEBUG - Not retrying
+2026-01-06 15:08:56,718 - openai._base_client - DEBUG - Re-raising status error
+2026-01-06 15:08:56,718 - agents.deduplicator - WARNING -    去重检查失败: Error code: 400 - {'error': {'message': '<400> InternalError.Algo.InvalidParameter: Value error, contents is neither str nor list of str.: input.contents', 'type': 'InvalidParameter', 'param': None, 'code': 'InvalidParameter'}, 'id': '26ac7b21-6d5c-9f55-8bc5-4c8456b7fa56', 'request_id': '26ac7b21-6d5c-9f55-8bc5-4c8456b7fa56'}
+2026-01-06 15:08:56,718 - agents.deduplicator - INFO -    检查 3/3: Ambarella Boosts On-Device Computer Vision Perform...
+2026-01-06 15:08:56,719 - openai._base_client - DEBUG - Request options: {'method': 'post', 'url': '/embeddings', 'files': None, 'idempotency_key': 'stainless-python-retry-d780367e-9e9b-408c-b03c-c3adfc7ab437', 'post_parser': <function Embeddings.create.<locals>.parser at 0x7224025ce0c0>, 'json_data': {'input': [[55132, 76031, 34507, 82, 1952, 12, 7130, 17863, 31541, 21304, 11, 67667, 3161, 279, 1561, 14499, 22, 220]], 'model': 'text-embedding-v3', 'encoding_format': 'base64'}}
+2026-01-06 15:08:56,720 - openai._base_client - DEBUG - Sending HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/embeddings
+2026-01-06 15:08:56,720 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2026-01-06 15:08:56,720 - httpcore.http11 - DEBUG - send_request_headers.complete
+2026-01-06 15:08:56,720 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2026-01-06 15:08:56,720 - httpcore.http11 - DEBUG - send_request_body.complete
+2026-01-06 15:08:56,720 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2026-01-06 15:08:57,039 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 400, b'Bad Request', [(b'vary', b'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding'), (b'x-request-id', b'02b9d39c-578d-9352-b550-71243036b3cc'), (b'content-type', b'application/json'), (b'x-dashscope-call-gateway', b'true'), (b'req-cost-time', b'288'), (b'req-arrive-time', b'1767683336716'), (b'resp-start-time', b'1767683337004'), (b'x-envoy-upstream-service-time', b'287'), (b'content-encoding', b'gzip'), (b'date', b'Tue, 06 Jan 2026 07:08:56 GMT'), (b'server', b'istio-envoy'), (b'transfer-encoding', b'chunked')])
+2026-01-06 15:08:57,040 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/embeddings "HTTP/1.1 400 Bad Request"
+2026-01-06 15:08:57,040 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2026-01-06 15:08:57,040 - httpcore.http11 - DEBUG - receive_response_body.complete
+2026-01-06 15:08:57,040 - httpcore.http11 - DEBUG - response_closed.started
+2026-01-06 15:08:57,040 - httpcore.http11 - DEBUG - response_closed.complete
+2026-01-06 15:08:57,041 - openai._base_client - DEBUG - HTTP Response: POST https://dashscope.aliyuncs.com/compatible-mode/v1/embeddings "400 Bad Request" Headers({'vary': 'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding', 'x-request-id': '02b9d39c-578d-9352-b550-71243036b3cc', 'content-type': 'application/json', 'x-dashscope-call-gateway': 'true', 'req-cost-time': '288', 'req-arrive-time': '1767683336716', 'resp-start-time': '1767683337004', 'x-envoy-upstream-service-time': '287', 'content-encoding': 'gzip', 'date': 'Tue, 06 Jan 2026 07:08:56 GMT', 'server': 'istio-envoy', 'transfer-encoding': 'chunked'})
+2026-01-06 15:08:57,041 - openai._base_client - DEBUG - request_id: 02b9d39c-578d-9352-b550-71243036b3cc
+2026-01-06 15:08:57,041 - openai._base_client - DEBUG - Encountered httpx.HTTPStatusError
+Traceback (most recent call last):
+  File "/home/zhs/miniconda3/envs/daily_agent/lib/python3.11/site-packages/openai/_base_client.py", line 1027, in request
+    response.raise_for_status()
+  File "/home/zhs/miniconda3/envs/daily_agent/lib/python3.11/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '400 Bad Request' for url 'https://dashscope.aliyuncs.com/compatible-mode/v1/embeddings'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400
+2026-01-06 15:08:57,042 - openai._base_client - DEBUG - Not retrying
+2026-01-06 15:08:57,042 - openai._base_client - DEBUG - Re-raising status error
+2026-01-06 15:08:57,042 - agents.deduplicator - WARNING -    去重检查失败: Error code: 400 - {'error': {'message': '<400> InternalError.Algo.InvalidParameter: Value error, contents is neither str nor list of str.: input.contents', 'type': 'InvalidParameter', 'param': None, 'code': 'InvalidParameter'}, 'id': '02b9d39c-578d-9352-b550-71243036b3cc', 'request_id': '02b9d39c-578d-9352-b550-71243036b3cc'}
+2026-01-06 15:08:57,042 - agents.orchestrator - INFO -    去重完成，剩余 3 条独特内容
+2026-01-06 15:08:57,044 - agents.orchestrator - INFO - 📝 阶段4: 生成报告
+2026-01-06 15:08:57,048 - openai._base_client - DEBUG - Request options: {'method': 'post', 'url': '/chat/completions', 'files': None, 'idempotency_key': 'stainless-python-retry-0d8c642f-fbfc-4e9f-8f07-1ba754d5a26a', 'json_data': {'messages': [{'content': '你是一个技术博主，擅长用简洁幽默的语言点评技术新闻。\n\n要求：\n1. 一句话概括核心内容（20-40字）\n2. 可以带一点幽默或调侃\n3. 要专业但不枯燥\n4. 避免过度夸张\n\n示例：\n- "又一个声称超越GPT-4的模型，不过这次好像是真的有点东西"\n- "机器人终于学会开门了，距离统治人类又近了一步（笑）"\n- "这个优化让训练速度提升3倍，钱包终于可以松口气了"\n', 'role': 'system'}, {'content': '标题：Frequency-guided Structure Learning Advances Graph Neural Networks for Heterophilic Data Challenges\n内容：\n\n请生成一句点评：', 'role': 'user'}], 'model': 'qwen-plus', 'max_completion_tokens': 2000, 'n': 1, 'stream': False, 'temperature': 0.7}}
+2026-01-06 15:08:57,049 - openai._base_client - DEBUG - Sending HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+2026-01-06 15:08:57,049 - httpcore.connection - DEBUG - connect_tcp.started host='127.0.0.1' port=7897 local_address=None timeout=None socket_options=None
+2026-01-06 15:08:57,049 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x7223bb30e3d0>
+2026-01-06 15:08:57,049 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'CONNECT']>
+2026-01-06 15:08:57,050 - httpcore.http11 - DEBUG - send_request_headers.complete
+2026-01-06 15:08:57,050 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'CONNECT']>
+2026-01-06 15:08:57,050 - httpcore.http11 - DEBUG - send_request_body.complete
+2026-01-06 15:08:57,050 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'CONNECT']>
+2026-01-06 15:08:57,050 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'Connection established', [])
+2026-01-06 15:08:57,050 - httpcore.proxy - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x7223dd12e9f0> server_hostname='dashscope.aliyuncs.com' timeout=None
+2026-01-06 15:08:57,162 - httpcore.proxy - DEBUG - start_tls.complete return_value=<httpcore._backends.sync.SyncStream object at 0x7223dd17cf50>
+2026-01-06 15:08:57,163 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2026-01-06 15:08:57,163 - httpcore.http11 - DEBUG - send_request_headers.complete
+2026-01-06 15:08:57,163 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2026-01-06 15:08:57,163 - httpcore.http11 - DEBUG - send_request_body.complete
+2026-01-06 15:08:57,163 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2026-01-06 15:08:58,407 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'vary', b'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding'), (b'x-request-id', b'd933ad1b-614d-98ba-a067-9a3302261b27'), (b'x-dashscope-call-gateway', b'true'), (b'content-type', b'application/json'), (b'req-cost-time', b'1207'), (b'req-arrive-time', b'1767683337165'), (b'resp-start-time', b'1767683338372'), (b'x-envoy-upstream-service-time', b'1204'), (b'content-encoding', b'gzip'), (b'date', b'Tue, 06 Jan 2026 07:08:57 GMT'), (b'server', b'istio-envoy'), (b'transfer-encoding', b'chunked')])
+2026-01-06 15:08:58,407 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 15:08:58,408 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2026-01-06 15:08:58,408 - httpcore.http11 - DEBUG - receive_response_body.complete
+2026-01-06 15:08:58,408 - httpcore.http11 - DEBUG - response_closed.started
+2026-01-06 15:08:58,408 - httpcore.http11 - DEBUG - response_closed.complete
+2026-01-06 15:08:58,408 - openai._base_client - DEBUG - HTTP Response: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "200 OK" Headers({'vary': 'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding', 'x-request-id': 'd933ad1b-614d-98ba-a067-9a3302261b27', 'x-dashscope-call-gateway': 'true', 'content-type': 'application/json', 'req-cost-time': '1207', 'req-arrive-time': '1767683337165', 'resp-start-time': '1767683338372', 'x-envoy-upstream-service-time': '1204', 'content-encoding': 'gzip', 'date': 'Tue, 06 Jan 2026 07:08:57 GMT', 'server': 'istio-envoy', 'transfer-encoding': 'chunked'})
+2026-01-06 15:08:58,408 - openai._base_client - DEBUG - request_id: d933ad1b-614d-98ba-a067-9a3302261b27
+2026-01-06 15:08:58,413 - openai._base_client - DEBUG - Request options: {'method': 'post', 'url': '/chat/completions', 'files': None, 'idempotency_key': 'stainless-python-retry-bfacf1f5-4e35-441d-923f-7dfdc8b8175c', 'json_data': {'messages': [{'content': '你是一个技术博主，擅长用简洁幽默的语言点评技术新闻。\n\n要求：\n1. 一句话概括核心内容（20-40字）\n2. 可以带一点幽默或调侃\n3. 要专业但不枯燥\n4. 避免过度夸张\n\n示例：\n- "又一个声称超越GPT-4的模型，不过这次好像是真的有点东西"\n- "机器人终于学会开门了，距离统治人类又近了一步（笑）"\n- "这个优化让训练速度提升3倍，钱包终于可以松口气了"\n', 'role': 'system'}, {'content': '标题：Accuracy Is Not Enough: Reasoning and Reference Reliability in Orthopaedic Large Language Model (LLM) Applications\n内容：\n\n请生成一句点评：', 'role': 'user'}], 'model': 'qwen-plus', 'max_completion_tokens': 2000, 'n': 1, 'stream': False, 'temperature': 0.7}}
+2026-01-06 15:08:58,414 - openai._base_client - DEBUG - Sending HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+2026-01-06 15:08:58,414 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2026-01-06 15:08:58,415 - httpcore.http11 - DEBUG - send_request_headers.complete
+2026-01-06 15:08:58,415 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2026-01-06 15:08:58,415 - httpcore.http11 - DEBUG - send_request_body.complete
+2026-01-06 15:08:58,415 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2026-01-06 15:08:59,920 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'vary', b'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding'), (b'x-request-id', b'95e9be01-82a0-9549-a4b1-4a79116a19d7'), (b'x-dashscope-call-gateway', b'true'), (b'content-type', b'application/json'), (b'req-cost-time', b'1466'), (b'req-arrive-time', b'1767683338417'), (b'resp-start-time', b'1767683339883'), (b'x-envoy-upstream-service-time', b'1464'), (b'content-encoding', b'gzip'), (b'date', b'Tue, 06 Jan 2026 07:08:59 GMT'), (b'server', b'istio-envoy'), (b'transfer-encoding', b'chunked')])
+2026-01-06 15:08:59,920 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 15:08:59,920 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2026-01-06 15:08:59,921 - httpcore.http11 - DEBUG - receive_response_body.complete
+2026-01-06 15:08:59,921 - httpcore.http11 - DEBUG - response_closed.started
+2026-01-06 15:08:59,921 - httpcore.http11 - DEBUG - response_closed.complete
+2026-01-06 15:08:59,921 - openai._base_client - DEBUG - HTTP Response: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "200 OK" Headers({'vary': 'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding', 'x-request-id': '95e9be01-82a0-9549-a4b1-4a79116a19d7', 'x-dashscope-call-gateway': 'true', 'content-type': 'application/json', 'req-cost-time': '1466', 'req-arrive-time': '1767683338417', 'resp-start-time': '1767683339883', 'x-envoy-upstream-service-time': '1464', 'content-encoding': 'gzip', 'date': 'Tue, 06 Jan 2026 07:08:59 GMT', 'server': 'istio-envoy', 'transfer-encoding': 'chunked'})
+2026-01-06 15:08:59,921 - openai._base_client - DEBUG - request_id: 95e9be01-82a0-9549-a4b1-4a79116a19d7
+2026-01-06 15:08:59,925 - openai._base_client - DEBUG - Request options: {'method': 'post', 'url': '/chat/completions', 'files': None, 'idempotency_key': 'stainless-python-retry-e3b938d1-2cc1-40dd-860e-1d8f5bd36b8b', 'json_data': {'messages': [{'content': '你是一个技术博主，擅长用简洁幽默的语言点评技术新闻。\n\n要求：\n1. 一句话概括核心内容（20-40字）\n2. 可以带一点幽默或调侃\n3. 要专业但不枯燥\n4. 避免过度夸张\n\n示例：\n- "又一个声称超越GPT-4的模型，不过这次好像是真的有点东西"\n- "机器人终于学会开门了，距离统治人类又近了一步（笑）"\n- "这个优化让训练速度提升3倍，钱包终于可以松口气了"\n', 'role': 'system'}, {'content': '标题：Ambarella Boosts On-Device Computer Vision Performance, Efficiency With the New CV7\n内容：\n\n请生成一句点评：', 'role': 'user'}], 'model': 'qwen-plus', 'max_completion_tokens': 2000, 'n': 1, 'stream': False, 'temperature': 0.7}}
+2026-01-06 15:08:59,926 - openai._base_client - DEBUG - Sending HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+2026-01-06 15:08:59,926 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2026-01-06 15:08:59,926 - httpcore.http11 - DEBUG - send_request_headers.complete
+2026-01-06 15:08:59,926 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2026-01-06 15:08:59,926 - httpcore.http11 - DEBUG - send_request_body.complete
+2026-01-06 15:08:59,926 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2026-01-06 15:09:01,477 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'vary', b'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding'), (b'x-request-id', b'392b94d1-8f5d-966f-a6ec-853329491dff'), (b'x-dashscope-call-gateway', b'true'), (b'content-type', b'application/json'), (b'req-cost-time', b'1514'), (b'req-arrive-time', b'1767683339928'), (b'resp-start-time', b'1767683341443'), (b'x-envoy-upstream-service-time', b'1512'), (b'content-encoding', b'gzip'), (b'date', b'Tue, 06 Jan 2026 07:09:00 GMT'), (b'server', b'istio-envoy'), (b'transfer-encoding', b'chunked')])
+2026-01-06 15:09:01,478 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 15:09:01,479 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2026-01-06 15:09:01,479 - httpcore.http11 - DEBUG - receive_response_body.complete
+2026-01-06 15:09:01,479 - httpcore.http11 - DEBUG - response_closed.started
+2026-01-06 15:09:01,479 - httpcore.http11 - DEBUG - response_closed.complete
+2026-01-06 15:09:01,479 - openai._base_client - DEBUG - HTTP Response: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "200 OK" Headers({'vary': 'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding', 'x-request-id': '392b94d1-8f5d-966f-a6ec-853329491dff', 'x-dashscope-call-gateway': 'true', 'content-type': 'application/json', 'req-cost-time': '1514', 'req-arrive-time': '1767683339928', 'resp-start-time': '1767683341443', 'x-envoy-upstream-service-time': '1512', 'content-encoding': 'gzip', 'date': 'Tue, 06 Jan 2026 07:09:00 GMT', 'server': 'istio-envoy', 'transfer-encoding': 'chunked'})
+2026-01-06 15:09:01,479 - openai._base_client - DEBUG - request_id: 392b94d1-8f5d-966f-a6ec-853329491dff
+2026-01-06 15:09:01,483 - openai._base_client - DEBUG - Request options: {'method': 'post', 'url': '/chat/completions', 'files': None, 'idempotency_key': 'stainless-python-retry-22e425b7-0492-4098-975e-7406eca2c7ba', 'json_data': {'messages': [{'content': '你是一个技术趋势分析专家。基于今日收集的技术资讯，分析当前的技术趋势。\n\n要求：\n1. 识别热点话题和技术方向\n2. 分析技术发展趋势\n3. 3-5个要点，每个2-3句话\n4. 专业但易懂\n', 'role': 'system'}, {'content': '今日资讯标题：\n- Frequency-guided Structure Learning Advances Graph Neural Networks for Heterophilic Data Challenges\n- Accuracy Is Not Enough: Reasoning and Reference Reliability in Orthopaedic Large Language Model (LLM) Applications\n- Ambarella Boosts On-Device Computer Vision Performance, Efficiency With the New CV7\n\n请分析技术趋势：', 'role': 'user'}], 'model': 'qwen-plus', 'max_completion_tokens': 2000, 'n': 1, 'stream': False, 'temperature': 0.7}}
+2026-01-06 15:09:01,484 - openai._base_client - DEBUG - Sending HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+2026-01-06 15:09:01,484 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2026-01-06 15:09:01,484 - httpcore.http11 - DEBUG - send_request_headers.complete
+2026-01-06 15:09:01,484 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2026-01-06 15:09:01,485 - httpcore.http11 - DEBUG - send_request_body.complete
+2026-01-06 15:09:01,485 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2026-01-06 15:09:08,290 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'vary', b'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding'), (b'x-request-id', b'50e24a90-d74c-9b9b-8dcd-2b9de2d3392e'), (b'x-dashscope-call-gateway', b'true'), (b'content-type', b'application/json'), (b'req-cost-time', b'6772'), (b'req-arrive-time', b'1767683341483'), (b'resp-start-time', b'1767683348256'), (b'x-envoy-upstream-service-time', b'6772'), (b'content-encoding', b'gzip'), (b'date', b'Tue, 06 Jan 2026 07:09:07 GMT'), (b'server', b'istio-envoy'), (b'transfer-encoding', b'chunked')])
+2026-01-06 15:09:08,291 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 15:09:08,291 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2026-01-06 15:09:08,291 - httpcore.http11 - DEBUG - receive_response_body.complete
+2026-01-06 15:09:08,291 - httpcore.http11 - DEBUG - response_closed.started
+2026-01-06 15:09:08,291 - httpcore.http11 - DEBUG - response_closed.complete
+2026-01-06 15:09:08,291 - openai._base_client - DEBUG - HTTP Response: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "200 OK" Headers({'vary': 'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding', 'x-request-id': '50e24a90-d74c-9b9b-8dcd-2b9de2d3392e', 'x-dashscope-call-gateway': 'true', 'content-type': 'application/json', 'req-cost-time': '6772', 'req-arrive-time': '1767683341483', 'resp-start-time': '1767683348256', 'x-envoy-upstream-service-time': '6772', 'content-encoding': 'gzip', 'date': 'Tue, 06 Jan 2026 07:09:07 GMT', 'server': 'istio-envoy', 'transfer-encoding': 'chunked'})
+2026-01-06 15:09:08,291 - openai._base_client - DEBUG - request_id: 50e24a90-d74c-9b9b-8dcd-2b9de2d3392e
+2026-01-06 15:09:08,293 - openai._base_client - DEBUG - Request options: {'method': 'post', 'url': '/chat/completions', 'files': None, 'idempotency_key': 'stainless-python-retry-c056386e-807b-4586-8faf-e9a9b9266a2b', 'json_data': {'messages': [{'content': '你是一个技术洞察专家。基于今日资讯，提供前沿洞察。\n\n要求：\n1. 发现不明显但重要的信号\n2. 连接不同领域的技术\n3. 提出独特观点\n4. 2-4个洞察，每个2-3句话\n', 'role': 'system'}, {'content': '今日资讯：\n- [研究前沿与理论突破] Frequency-guided Structure Learning Advances Graph Neural Networks for Heterophilic Data Challenges\n- [研究前沿与理论突破] Accuracy Is Not Enough: Reasoning and Reference Reliability in Orthopaedic Large Language Model (LLM) Applications\n- [计算机视觉] Ambarella Boosts On-Device Computer Vision Performance, Efficiency With the New CV7\n\n请提供前沿洞察：', 'role': 'user'}], 'model': 'qwen-plus', 'max_completion_tokens': 2000, 'n': 1, 'stream': False, 'temperature': 0.7}}
+2026-01-06 15:09:08,294 - openai._base_client - DEBUG - Sending HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+2026-01-06 15:09:08,294 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2026-01-06 15:09:08,294 - httpcore.http11 - DEBUG - send_request_headers.complete
+2026-01-06 15:09:08,294 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2026-01-06 15:09:08,294 - httpcore.http11 - DEBUG - send_request_body.complete
+2026-01-06 15:09:08,294 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2026-01-06 15:09:18,329 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'vary', b'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding'), (b'x-request-id', b'e46e25d3-78b8-92d2-94d9-79dca0e2000c'), (b'x-dashscope-call-gateway', b'true'), (b'content-type', b'application/json'), (b'req-cost-time', b'10002'), (b'req-arrive-time', b'1767683348292'), (b'resp-start-time', b'1767683358295'), (b'x-envoy-upstream-service-time', b'10002'), (b'content-encoding', b'gzip'), (b'date', b'Tue, 06 Jan 2026 07:09:18 GMT'), (b'server', b'istio-envoy'), (b'transfer-encoding', b'chunked')])
+2026-01-06 15:09:18,330 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 15:09:18,330 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2026-01-06 15:09:18,330 - httpcore.http11 - DEBUG - receive_response_body.complete
+2026-01-06 15:09:18,330 - httpcore.http11 - DEBUG - response_closed.started
+2026-01-06 15:09:18,330 - httpcore.http11 - DEBUG - response_closed.complete
+2026-01-06 15:09:18,330 - openai._base_client - DEBUG - HTTP Response: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "200 OK" Headers({'vary': 'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding', 'x-request-id': 'e46e25d3-78b8-92d2-94d9-79dca0e2000c', 'x-dashscope-call-gateway': 'true', 'content-type': 'application/json', 'req-cost-time': '10002', 'req-arrive-time': '1767683348292', 'resp-start-time': '1767683358295', 'x-envoy-upstream-service-time': '10002', 'content-encoding': 'gzip', 'date': 'Tue, 06 Jan 2026 07:09:18 GMT', 'server': 'istio-envoy', 'transfer-encoding': 'chunked'})
+2026-01-06 15:09:18,330 - openai._base_client - DEBUG - request_id: e46e25d3-78b8-92d2-94d9-79dca0e2000c
+2026-01-06 15:09:18,332 - openai._base_client - DEBUG - Request options: {'method': 'post', 'url': '/chat/completions', 'files': None, 'idempotency_key': 'stainless-python-retry-896cc083-763e-4f86-b6d3-09dd784b3b07', 'json_data': {'messages': [{'content': '你是一个技术预测专家。基于今日资讯，预测未来技术方向。\n\n要求：\n1. 基于当前趋势推测未来发展\n2. 关注3-6个月的短期预测\n3. 2-3个预测方向\n4. 有理有据，避免空泛\n', 'role': 'system'}, {'content': '今日资讯类别分布：\n- 研究前沿与理论突破: 2条\n- 计算机视觉: 1条\n\n请预测技术方向：', 'role': 'user'}], 'model': 'qwen-plus', 'max_completion_tokens': 2000, 'n': 1, 'stream': False, 'temperature': 0.7}}
+2026-01-06 15:09:18,332 - openai._base_client - DEBUG - Sending HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+2026-01-06 15:09:18,332 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2026-01-06 15:09:18,332 - httpcore.http11 - DEBUG - send_request_headers.complete
+2026-01-06 15:09:18,332 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2026-01-06 15:09:18,332 - httpcore.http11 - DEBUG - send_request_body.complete
+2026-01-06 15:09:18,332 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2026-01-06 15:09:33,457 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'vary', b'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding'), (b'x-request-id', b'ca993425-0ce1-9735-9b89-0a7ce205cb4e'), (b'x-dashscope-call-gateway', b'true'), (b'content-type', b'application/json'), (b'req-cost-time', b'15090'), (b'req-arrive-time', b'1767683358331'), (b'resp-start-time', b'1767683373422'), (b'x-envoy-upstream-service-time', b'15089'), (b'content-encoding', b'gzip'), (b'date', b'Tue, 06 Jan 2026 07:09:33 GMT'), (b'server', b'istio-envoy'), (b'transfer-encoding', b'chunked')])
+2026-01-06 15:09:33,457 - httpx - INFO - HTTP Request: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 15:09:33,458 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2026-01-06 15:09:33,458 - httpcore.http11 - DEBUG - receive_response_body.complete
+2026-01-06 15:09:33,458 - httpcore.http11 - DEBUG - response_closed.started
+2026-01-06 15:09:33,458 - httpcore.http11 - DEBUG - response_closed.complete
+2026-01-06 15:09:33,458 - openai._base_client - DEBUG - HTTP Response: POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions "200 OK" Headers({'vary': 'Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding', 'x-request-id': 'ca993425-0ce1-9735-9b89-0a7ce205cb4e', 'x-dashscope-call-gateway': 'true', 'content-type': 'application/json', 'req-cost-time': '15090', 'req-arrive-time': '1767683358331', 'resp-start-time': '1767683373422', 'x-envoy-upstream-service-time': '15089', 'content-encoding': 'gzip', 'date': 'Tue, 06 Jan 2026 07:09:33 GMT', 'server': 'istio-envoy', 'transfer-encoding': 'chunked'})
+2026-01-06 15:09:33,458 - openai._base_client - DEBUG - request_id: ca993425-0ce1-9735-9b89-0a7ce205cb4e
+2026-01-06 15:09:33,459 - agents.orchestrator - INFO -    报告已生成: reports/ai_robot_daily_20260106.md
+2026-01-06 15:09:33,460 - __main__ - INFO - 报告已保存至: reports/ai_robot_daily_20260106.md
