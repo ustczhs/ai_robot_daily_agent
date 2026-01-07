@@ -23,6 +23,7 @@ python-dateutil==2.9.0
 feedparser==6.0.11
 newspaper3k==0.2.8
 trafilatura==1.12.2
+newsapi-python==0.2.7
 
 # 已预装但确保版本
 numpy>=1.24.0

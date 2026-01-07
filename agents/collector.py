@@ -7,10 +7,14 @@ import os
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
-from typing import List, Dict
+from typing import List, Dict, Optional
 from urllib.parse import quote_plus
 import time
 import html2text
+
+from newsapi import NewsApiClient
+import newspaper
+from trafilatura import fetch_url, extract
 
 from utils.state import NewsItem
 
@@ -24,6 +28,15 @@ class CollectorAgent:
         self.logger = logging.getLogger(__name__)
         self.html_converter = html2text.HTML2Text()
         self.html_converter.ignore_links = False
+
+        # 初始化NewsAPI客户端
+        newsapi_key = os.getenv(self.config['search']['newsapi']['api_key_env'])
+        if newsapi_key:
+            self.newsapi = NewsApiClient(api_key=newsapi_key)
+            self.logger.info("NewsAPI客户端初始化成功")
+        else:
+            self.newsapi = None
+            self.logger.warning("未找到NEWS_API_KEY环境变量，NewsAPI功能将被禁用")
         
     def collect(self) -> List[NewsItem]:
         """收集信息"""
@@ -34,10 +47,12 @@ class CollectorAgent:
         for keyword in self.config['sources']['keywords']:
             keyword_items = []
 
-            # 尝试每个搜索引擎
+            # 尝试每个搜索引擎（全部执行，提高覆盖面）
             for engine in engines:
                 try:
-                    if engine.lower() == 'google':
+                    if engine.lower() == 'newsapi':
+                        items = self._search_newsapi(keyword)
+                    elif engine.lower() == 'google':
                         items = self._search_google(keyword)
                     elif engine.lower() == 'bing':
                         items = self._search_bing(keyword)
@@ -48,7 +63,7 @@ class CollectorAgent:
                     if items:  # 如果该引擎返回了结果
                         keyword_items.extend(items)
                         self.logger.info(f"从{engine}搜索 '{keyword}' 获取 {len(items)} 条结果")
-                        break  # 成功获取结果后，不再尝试其他引擎
+                        # 继续尝试其他引擎，提高覆盖面
 
                 except Exception as e:
                     self.logger.warning(f"{engine}搜索 '{keyword}' 失败: {str(e)}")
@@ -67,6 +82,14 @@ class CollectorAgent:
             all_items.extend(website_items)
         except Exception as e:
             self.logger.warning(f"网站收集失败: {str(e)}")
+
+        # 获取完整网页内容
+        try:
+            self.logger.info("开始获取完整网页内容...")
+            all_items = self._fetch_all_full_content(all_items)
+            self.logger.info("完整网页内容获取完成")
+        except Exception as e:
+            self.logger.warning(f"获取完整网页内容失败: {str(e)}")
 
         self.logger.info(f"总共收集到 {len(all_items)} 条信息")
         return all_items
@@ -513,4 +536,143 @@ class CollectorAgent:
         items = []
         # Reddit API需要特殊处理，这里先返回空列表
         self.logger.debug("Reddit收集暂未实现")
+        return items
+
+    def _fetch_all_full_content(self, items: List[NewsItem]) -> List[NewsItem]:
+        """为所有新闻条目获取完整网页内容"""
+        updated_items = []
+
+        for i, item in enumerate(items):
+            try:
+                self.logger.debug(f"获取完整内容 {i+1}/{len(items)}: {item['url'][:50]}...")
+                full_content = self._fetch_article_content(item['url'])
+                item['full_content'] = full_content
+                updated_items.append(item)
+
+                # 添加短暂延迟，避免请求过快
+                time.sleep(0.5)
+
+            except Exception as e:
+                self.logger.warning(f"获取完整内容失败 {item['url']}: {str(e)}")
+                # 即使失败也保留item，但full_content为None
+                item['full_content'] = None
+                updated_items.append(item)
+                continue
+
+        return updated_items
+
+    def _fetch_article_content(self, url: str) -> Optional[str]:
+        """使用newspaper3k和trafilatura获取文章完整内容"""
+        if not url or not url.startswith(('http://', 'https://')):
+            return None
+
+        # 尝试使用newspaper3k（适合新闻网站）
+        try:
+            self.logger.debug(f"使用newspaper3k抓取: {url}")
+            article = newspaper.Article(url, language='en')
+            article.download()
+            article.parse()
+
+            if article.text and len(article.text.strip()) > 100:
+                content = article.text.strip()
+                # 限制长度，避免过长
+                return content[:5000] if len(content) > 5000 else content
+
+        except Exception as e:
+            self.logger.debug(f"newspaper3k失败: {str(e)}")
+
+        # newspaper3k失败，尝试trafilatura
+        try:
+            self.logger.debug(f"使用trafilatura抓取: {url}")
+            downloaded = fetch_url(url)
+            if downloaded:
+                content = extract(downloaded, include_comments=False, include_tables=False)
+                if content and len(content.strip()) > 100:
+                    # 清理内容
+                    content = content.strip()
+                    return content[:5000] if len(content) > 5000 else content
+
+        except Exception as e:
+            self.logger.debug(f"trafilatura失败: {str(e)}")
+
+        # 两个工具都失败，返回None
+        return None
+
+    def _search_newsapi(self, keyword: str) -> List[NewsItem]:
+        """通过NewsAPI收集信息"""
+        items = []
+
+        if not self.newsapi:
+            self.logger.warning("NewsAPI客户端未初始化")
+            return items
+
+        # 测试阶段：每个关键词只调用1次
+        calls_per_keyword = self.config['search']['newsapi']['calls_per_keyword']
+        if calls_per_keyword <= 0:
+            self.logger.debug(f"NewsAPI调用次数限制为0，跳过关键词: {keyword}")
+            return items
+
+        max_results = self.config['search']['max_results_per_query']
+        language = self.config['search']['newsapi']['language']
+        sort_by = self.config['search']['newsapi']['sort_by']
+
+        try:
+            # 调用NewsAPI - 只调用1次
+            self.logger.debug(f"调用NewsAPI搜索关键词: {keyword}")
+            response = self.newsapi.get_everything(
+                q=keyword,
+                language=language,
+                sort_by=sort_by,
+                page_size=min(max_results, 10),  # 限制每次最多10条
+                page=1
+            )
+
+            if response['status'] != 'ok':
+                self.logger.warning(f"NewsAPI返回错误: {response.get('message', 'Unknown error')}")
+                return items
+
+            articles = response.get('articles', [])
+            self.logger.debug(f"NewsAPI返回 {len(articles)} 条结果")
+
+            for article in articles:
+                try:
+                    title = article.get('title', '').strip()
+                    url = article.get('url', '').strip()
+                    description = article.get('description', '').strip()
+                    source_name = article.get('source', {}).get('name', 'NewsAPI')
+
+                    # 解析发布时间
+                    published_at = article.get('publishedAt', '')
+                    try:
+                        published_date = datetime.fromisoformat(published_at.replace('Z', '+00:00'))
+                    except:
+                        published_date = datetime.now()
+
+                    if title and url and (description or len(title) > 10):
+                        # 清理描述
+                        content = description if description else title
+
+                        items.append(NewsItem(
+                            title=title,
+                            url=url,
+                            content=content[:500],  # 限制长度
+                            source=source_name,
+                            published_date=published_date,
+                            category=None,
+                            quality_score=None,
+                            embedding=None
+                        ))
+
+                except Exception as e:
+                    self.logger.debug(f"解析NewsAPI文章失败: {str(e)}")
+                    continue
+
+            # 限制结果数量
+            items = items[:max_results]
+
+        except Exception as e:
+            self.logger.warning(f"NewsAPI搜索失败: {str(e)}")
+            return []
+
+        self.logger.info(f"从NewsAPI搜索 '{keyword}' 获取 {len(items)} 条结果")
         return items

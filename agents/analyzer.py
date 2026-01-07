@@ -134,9 +134,18 @@ class AnalyzerAgent:
         """分析单个条目"""
         chain = self.prompt | self.llm | self.parser
 
+        # 优先使用完整网页内容，如果没有则使用摘要
+        content_to_analyze = item.get('full_content')
+        if not content_to_analyze or len(content_to_analyze.strip()) < 50:
+            # 回退到原有content字段
+            content_to_analyze = item.get('content', '')
+            self.logger.debug(f"使用摘要内容进行分析: {len(content_to_analyze)} 字符")
+        else:
+            self.logger.debug(f"使用完整网页内容进行分析: {len(content_to_analyze)} 字符")
+
         response = chain.invoke({
             "title": item['title'],
-            "content": item['content'][:500],  # 限制长度
+            "content": content_to_analyze[:1000],  # 增加长度限制，因为现在有完整内容
             "source": item['source'],
             "categories": "\n".join(f"- {cat}" for cat in self.categories),
             "format_instructions": self.parser.get_format_instructions()

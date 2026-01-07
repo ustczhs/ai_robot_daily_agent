@@ -11,6 +11,7 @@ class NewsItem(TypedDict):
     title: str
     url: str
     content: str
+    full_content: Optional[str]  # 完整网页内容
     source: str
     published_date: Optional[datetime]
     category: Optional[str]
@@ -21,6 +22,7 @@ class NewsItem(TypedDict):
 class AgentState(TypedDict):
     """Agent工作流状态"""
     raw_items: List[NewsItem]
+    checked_items: List[NewsItem]
     analyzed_items: List[NewsItem]
     unique_items: List[NewsItem]
     stage: str

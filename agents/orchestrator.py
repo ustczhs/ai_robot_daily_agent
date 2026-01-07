@@ -15,6 +15,7 @@ from agents.collector import CollectorAgent
 from agents.analyzer import AnalyzerAgent
 from agents.deduplicator import DeduplicatorAgent
 from agents.reporter import ReporterAgent
+from agents.fact_checker import FactCheckerAgent
 from utils.state import AgentState
 
 
@@ -60,6 +61,7 @@ class DailyReportOrchestrator:
         
         # 初始化各个Agent
         self.collector = CollectorAgent(config, self.llm)
+        self.fact_checker = FactCheckerAgent(config, self.llm)
         self.analyzer = AnalyzerAgent(config, self.llm)
         self.deduplicator = DeduplicatorAgent(config, self.embeddings)
         self.reporter = ReporterAgent(config, self.llm)
@@ -70,20 +72,21 @@ class DailyReportOrchestrator:
     def _build_workflow(self) -> StateGraph:
         """构建Agent工作流"""
         workflow = StateGraph(AgentState)
-        
+
         # 添加节点
         workflow.add_node("collect", self._collect_node)
+        # workflow.add_node("fact_check", self._fact_check_node)  # 暂时禁用
         workflow.add_node("analyze", self._analyze_node)
         workflow.add_node("deduplicate", self._deduplicate_node)
         workflow.add_node("report", self._report_node)
-        
-        # 定义流程
+
+        # 定义流程：collect -> analyze -> deduplicate -> report (暂时跳过fact_check)
         workflow.set_entry_point("collect")
         workflow.add_edge("collect", "analyze")
         workflow.add_edge("analyze", "deduplicate")
         workflow.add_edge("deduplicate", "report")
         workflow.add_edge("report", END)
-        
+
         return workflow.compile()
     
     def _collect_node(self, state: AgentState) -> AgentState:
@@ -94,7 +97,16 @@ class DailyReportOrchestrator:
         state['stage'] = 'collected'
         self.logger.info(f"   收集到 {len(raw_items)} 条原始信息")
         return state
-    
+
+    def _fact_check_node(self, state: AgentState) -> AgentState:
+        """事实检查节点"""
+        self.logger.info("✅ 阶段2: 事实检查与验证")
+        checked_items = self.fact_checker.check_facts(state['raw_items'])
+        state['checked_items'] = checked_items
+        state['stage'] = 'fact_checked'
+        self.logger.info(f"   事实检查完成，保留 {len(checked_items)} 条真实内容")
+        return state
+
     def _analyze_node(self, state: AgentState) -> AgentState:
         """内容分析节点"""
         self.logger.info("🔍 阶段2: 内容分析与评分")
@@ -112,7 +124,7 @@ class DailyReportOrchestrator:
         state['stage'] = 'deduplicated'
         self.logger.info(f"   去重完成，剩余 {len(unique_items)} 条独特内容")
         return state
-    
+
     def _report_node(self, state: AgentState) -> AgentState:
         """报告生成节点"""
         self.logger.info("📝 阶段4: 生成报告")
@@ -127,14 +139,15 @@ class DailyReportOrchestrator:
         # 初始化状态
         initial_state = AgentState(
             raw_items=[],
+            checked_items=[],
             analyzed_items=[],
             unique_items=[],
             stage='initialized',
             report_path='',
             timestamp=datetime.now()
         )
-        
+
         # 执行工作流
         final_state = self.workflow.invoke(initial_state)
-        
+
         return final_state['report_path']
