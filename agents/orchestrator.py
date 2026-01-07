@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Dict, List
 
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain_ollama import OllamaLLM
 from langgraph.graph import StateGraph, END
 
 from agents.collector import CollectorAgent
@@ -24,14 +25,31 @@ class DailyReportOrchestrator:
         self.config = config
         self.logger = logging.getLogger(__name__)
         
-        # 初始化LLM
-        self.llm = ChatOpenAI(
-            model=config['llm']['model'],
-            temperature=config['llm']['temperature'],
-            max_tokens=config['llm']['max_tokens'],
-            openai_api_base=config['llm'].get('base_url'),
-            openai_api_key=os.getenv('DASHSCOPE_API_KEY') or os.getenv('OPENAI_API_KEY')
-        )
+        # 根据配置初始化LLM
+        provider = config['llm']['provider'].lower()
+
+        if provider == 'ollama':
+            # 使用本地Ollama模型
+            self.llm = OllamaLLM(
+                model=config['llm']['model'],
+                base_url=config['llm'].get('ollama_base_url', 'http://localhost:11434'),
+                temperature=config['llm']['temperature']
+            )
+            self.logger.info(f"使用本地Ollama模型: {config['llm']['model']}")
+
+        elif provider in ['dashscope', 'openai']:
+            # 使用远程API
+            self.llm = ChatOpenAI(
+                model=config['llm']['model'],
+                temperature=config['llm']['temperature'],
+                max_tokens=config['llm']['max_tokens'],
+                openai_api_base=config['llm'].get('base_url'),
+                openai_api_key=os.getenv('DASHSCOPE_API_KEY') or os.getenv('OPENAI_API_KEY')
+            )
+            self.logger.info(f"使用远程API模型: {config['llm']['model']} ({provider})")
+
+        else:
+            raise ValueError(f"不支持的LLM提供商: {provider}。支持: dashscope, openai, ollama")
         
         # 初始化嵌入模型
         self.embeddings = OpenAIEmbeddings(

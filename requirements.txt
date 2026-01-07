@@ -2,6 +2,7 @@
 langchain==0.3.13
 langchain-openai==0.2.14
 langchain-community==0.3.13
+langchain-ollama==0.2.0
 langgraph==0.2.59
 
 # 向量数据库

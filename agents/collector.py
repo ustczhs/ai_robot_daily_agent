@@ -29,14 +29,37 @@ class CollectorAgent:
         """收集信息"""
         all_items = []
 
-        # 从Google搜索收集
+        # 从搜索引擎收集
+        engines = self.config['search'].get('engines', ['google'])
         for keyword in self.config['sources']['keywords']:
-            try:
-                items = self._search_google(keyword)
-                all_items.extend(items)
-                time.sleep(2)  # 避免请求过快
-            except Exception as e:
-                self.logger.warning(f"搜索 '{keyword}' 失败: {str(e)}")
+            keyword_items = []
+
+            # 尝试每个搜索引擎
+            for engine in engines:
+                try:
+                    if engine.lower() == 'google':
+                        items = self._search_google(keyword)
+                    elif engine.lower() == 'bing':
+                        items = self._search_bing(keyword)
+                    else:
+                        self.logger.warning(f"不支持的搜索引擎: {engine}")
+                        continue
+
+                    if items:  # 如果该引擎返回了结果
+                        keyword_items.extend(items)
+                        self.logger.info(f"从{engine}搜索 '{keyword}' 获取 {len(items)} 条结果")
+                        break  # 成功获取结果后，不再尝试其他引擎
+
+                except Exception as e:
+                    self.logger.warning(f"{engine}搜索 '{keyword}' 失败: {str(e)}")
+                    continue
+
+            # 如果所有引擎都失败，至少记录警告
+            if not keyword_items:
+                self.logger.warning(f"所有搜索引擎对 '{keyword}' 都失败了")
+
+            all_items.extend(keyword_items)
+            time.sleep(2)  # 避免请求过快
 
         # 从指定网站收集
         try:
@@ -169,7 +192,141 @@ class CollectorAgent:
 
         self.logger.info(f"从Google搜索 '{keyword}' 获取 {len(items)} 条结果")
         return items
-    
+
+    def _search_bing(self, keyword: str) -> List[NewsItem]:
+        """通过Bing搜索收集信息"""
+        items = []
+        max_results = self.config['search']['max_results_per_query']
+
+        # Bing新闻搜索URL - 使用国际版而不是中国版
+        search_url = f"https://www.bing.com/news/search?q={quote_plus(keyword)}&form=TNSA02"
+
+        # 使用更真实的浏览器头
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'Accept-Language': 'en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'DNT': '1',
+            'Connection': 'keep-alive',
+            'Upgrade-Insecure-Requests': '1',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'none',
+            'Sec-Fetch-User': '?1',
+            'Cache-Control': 'max-age=0',
+        }
+
+        # 配置代理
+        proxies = {
+            'http': os.getenv('http_proxy'),
+            'https': os.getenv('https_proxy')
+        }
+
+        try:
+            self.logger.debug(f"Bing搜索URL: {search_url}")
+            response = requests.get(search_url, headers=headers, timeout=15, proxies=proxies)
+            response.raise_for_status()
+
+            soup = BeautifulSoup(response.text, 'html.parser')
+            all_items = []
+
+            # 检查是否被重定向到验证码页面
+            if 'sorry' in response.url.lower() or 'captcha' in response.text.lower():
+                self.logger.warning("Bing返回验证码页面")
+                return []
+
+            # 解析Bing新闻搜索结果 - 使用多种选择器
+            selectors = [
+                'div.news-card',
+                'div.caption',
+                '.newsitem',
+                'a[href*="/news/"]',
+                'div.t_s',
+                'div.t_t',
+            ]
+
+            for selector in selectors:
+                for result in soup.select(selector):
+                    try:
+                        # 提取标题
+                        title_elem = result.select_one('a.title, .title a, h2 a, a, .t_t a')
+                        if not title_elem:
+                            continue
+
+                        title = title_elem.get_text(strip=True)
+                        url = title_elem.get('href', '')
+
+                        # 如果URL是相对路径，转换为绝对路径
+                        if url and not url.startswith('http'):
+                            url = f"https://www.bing.com{url}"
+
+                        # 跳过非新闻链接
+                        if not ('news' in url.lower() or any(domain in url.lower() for domain in ['.com', '.org', '.net', '.edu', '.gov'])):
+                            continue
+
+                        # 提取摘要
+                        snippet = ""
+                        snippet_selectors = ['div.snippet', '.news_snippet', 'p', '.t_d', '.caption']
+                        for snip_sel in snippet_selectors:
+                            snippet_elem = result.select_one(snip_sel)
+                            if snippet_elem:
+                                snippet = snippet_elem.get_text(strip=True)
+                                break
+
+                        # 提取来源
+                        source = "Bing News"
+                        source_selectors = ['span.source', '.source', '.news_source', '.t_s']
+                        for src_sel in source_selectors:
+                            source_elem = result.select_one(src_sel)
+                            if source_elem:
+                                source_text = source_elem.get_text(strip=True)
+                                if source_text and len(source_text) < 100:
+                                    source = source_text
+                                    break
+
+                        # 如果标题和URL都存在，且内容不为空
+                        if title and url and (snippet or len(title) > 10):
+                            # 清理摘要
+                            if not snippet:
+                                snippet = title  # 使用标题作为摘要
+
+                            all_items.append(NewsItem(
+                                title=title,
+                                url=url,
+                                content=snippet[:500],  # 限制长度
+                                source=source,
+                                published_date=datetime.now(),
+                                category=None,
+                                quality_score=None,
+                                embedding=None
+                            ))
+
+                    except Exception as e:
+                        self.logger.debug(f"解析Bing搜索结果失败: {str(e)}")
+                        continue
+
+                # 如果找到结果，停止尝试其他选择器
+                if all_items:
+                    break
+
+            # 去重（按标题去重）
+            unique_items = []
+            seen_titles = set()
+            for item in all_items:
+                if item['title'] not in seen_titles and len(item['title']) > 5:
+                    unique_items.append(item)
+                    seen_titles.add(item['title'])
+
+            items = unique_items[:max_results]
+
+        except Exception as e:
+            self.logger.warning(f"Bing搜索失败: {str(e)}")
+            return []
+
+        self.logger.info(f"从Bing搜索 '{keyword}' 获取 {len(items)} 条结果")
+        return items
+
     def _fetch_full_content(self, url: str) -> str:
         """获取完整内容（可选功能）"""
         try:

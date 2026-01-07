@@ -40,14 +40,18 @@ def test_google_parsing_and_analysis():
         config = load_config()
         print("✅ 配置文件加载成功")
 
-        # 检查环境变量
+        # 检查环境变量（ollama不需要API密钥）
+        provider = config['llm']['provider'].lower()
         api_key = os.getenv('DASHSCOPE_API_KEY') or os.getenv('OPENAI_API_KEY')
-        if not api_key:
+        if provider in ['dashscope', 'openai'] and not api_key:
             print("❌ 未找到API密钥，请设置环境变量")
             print("   export DASHSCOPE_API_KEY='your-key'")
             return False
 
-        print("✅ API密钥已设置")
+        if provider in ['dashscope', 'openai']:
+            print("✅ API密钥已设置")
+        else:
+            print("✅ 使用本地ollama，无需API密钥")
 
         # 检查代理设置
         http_proxy = os.getenv('http_proxy')
@@ -65,21 +69,26 @@ def test_google_parsing_and_analysis():
         collector = CollectorAgent(config, mock_llm)
         print("✅ CollectorAgent实例创建成功")
 
-        # 测试Google搜索 - 使用一个简单的关键词
+        # 测试搜索引擎 - 使用多引擎并行搜索
         test_keyword = "CES 2026"
-        print(f"\n🔍 测试Google搜索关键词: '{test_keyword}'")
+        print(f"\n🔍 测试搜索引擎关键词: '{test_keyword}'")
 
         search_results = []
         try:
-            search_results = collector._search_google(test_keyword)
-            print(f"📊 Google搜索返回 {len(search_results)} 条结果")
+            # 使用collect方法测试多引擎搜索
+            all_items = collector.collect()
+            # 过滤出测试关键词的结果
+            search_results = [item for item in all_items if test_keyword.lower() in item['title'].lower() or test_keyword.lower() in str(item.get('content', '')).lower()]
 
             if len(search_results) == 0:
-                print("❌ Google搜索失败，可能的原因:")
+                print("❌ 所有搜索引擎都失败，可能的原因:")
                 print("   - 代理设置问题")
                 print("   - 网络连接问题")
-                print("   - Google服务屏蔽")
+                print("   - 搜索引擎服务屏蔽")
+                print("   - 搜索关键词过于具体")
                 return False
+            else:
+                print(f"📊 搜索引擎返回 {len(search_results)} 条结果")
 
             # 验证搜索结果结构
             print("\n📋 验证搜索结果结构:")
@@ -110,15 +119,26 @@ def test_google_parsing_and_analysis():
             return False
 
         # 创建真实的LLM用于分析
-        from langchain_openai import ChatOpenAI
+        provider = config['llm']['provider'].lower()
 
-        real_llm = ChatOpenAI(
-            model=config['llm']['model'],
-            temperature=config['llm']['temperature'],
-            max_tokens=config['llm']['max_tokens'],
-            openai_api_base=config['llm'].get('base_url'),
-            openai_api_key=api_key
-        )
+        if provider == 'ollama':
+            from langchain_ollama import OllamaLLM
+            real_llm = OllamaLLM(
+                model=config['llm']['model'],
+                base_url=config['llm'].get('ollama_base_url', 'http://localhost:11434'),
+                temperature=config['llm']['temperature']
+            )
+        elif provider in ['dashscope', 'openai']:
+            from langchain_openai import ChatOpenAI
+            real_llm = ChatOpenAI(
+                model=config['llm']['model'],
+                temperature=config['llm']['temperature'],
+                max_tokens=config['llm']['max_tokens'],
+                openai_api_base=config['llm'].get('base_url'),
+                openai_api_key=api_key
+            )
+        else:
+            raise ValueError(f"不支持的LLM提供商: {provider}")
 
         # 测试内容分析
         print("\n🔍 测试内容分析功能...")
@@ -148,10 +168,18 @@ def test_google_parsing_and_analysis():
                         "format_instructions": analyzer.parser.get_format_instructions()
                     })
 
-                    print(f"   🔍 LLM原始响应: {response.content}")
+                    # 处理响应格式
+                    if analyzer.is_ollama:
+                        raw_response = response
+                        content = response
+                    else:
+                        raw_response = response.content
+                        content = response.content
+
+                    print(f"   🔍 LLM原始响应: {raw_response}")
 
                     # 尝试解析
-                    analysis = analyzer.parser.parse(response.content)
+                    analysis = analyzer.parser.parse(content)
                     print(f"   📊 解析结果: 评分={analysis.quality_score}, 相关={analysis.is_relevant}, 分类={analysis.category}")
                     print(f"   💬 理由: {analysis.reason}")
 

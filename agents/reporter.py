@@ -14,13 +14,17 @@ from utils.state import NewsItem
 
 class ReporterAgent:
     """报告生成Agent"""
-    
+
     def __init__(self, config: dict, llm):
         self.config = config
         self.llm = llm
         self.logger = logging.getLogger(__name__)
         self.output_dir = Path(config['report']['output_dir'])
         self.output_dir.mkdir(parents=True, exist_ok=True)
+
+        # 检查LLM类型，适配不同的提示词格式
+        llm_type = type(llm).__name__
+        self.is_ollama = 'Ollama' in llm_type
         
     def generate_report(self, items: List[NewsItem]) -> str:
         """生成报告"""
@@ -111,8 +115,35 @@ class ReporterAgent:
     
     def _generate_comment(self, item: NewsItem) -> str:
         """生成详细点评和内容介绍"""
-        prompt = ChatPromptTemplate.from_messages([
-            ("system", """你是一个专业的技术内容分析师，擅长深入解读技术资讯。
+        if self.is_ollama:
+            # Ollama使用简单的字符串提示词
+            from langchain.prompts import PromptTemplate
+            prompt = PromptTemplate.from_template("""你是一个专业的技术内容分析师，擅长深入解读技术资讯。
+
+要求：
+1. 先用1-2句话概括核心技术内容和创新点
+2. 分析这项技术的实际意义和应用前景（2-3句话）
+3. 保持专业性，突出技术价值
+4. 总长度控制在100-150字
+
+示例：
+"OpenAI发布了GPT-4的优化版本，通过改进注意力机制将推理能力提升了25%。这项技术主要改进了多步骤推理任务的准确性，对于复杂问题解决和代码生成有显著帮助。预计将在自动编程和科学研究领域带来新的突破。"
+
+重点关注：
+- 技术创新的具体内容
+- 性能提升的数据
+- 实际应用场景
+- 潜在影响
+
+标题：{title}
+内容：{content}
+来源：{source}
+
+请生成详细的技术点评：""")
+        else:
+            # 其他LLM使用ChatPromptTemplate
+            prompt = ChatPromptTemplate.from_messages([
+                ("system", """你是一个专业的技术内容分析师，擅长深入解读技术资讯。
 
 要求：
 1. 先用1-2句话概括核心技术内容和创新点
@@ -129,9 +160,9 @@ class ReporterAgent:
 - 实际应用场景
 - 潜在影响
 """),
-            ("user", "标题：{title}\n内容：{content}\n来源：{source}\n\n请生成详细的技术点评：")
-        ])
-        
+                ("user", "标题：{title}\n内容：{content}\n来源：{source}\n\n请生成详细的技术点评：")
+            ])
+
         try:
             chain = prompt | self.llm
             response = chain.invoke({
@@ -144,16 +175,27 @@ class ReporterAgent:
             self.logger.debug(f"LLM点评响应类型: {type(response)}")
             self.logger.debug(f"LLM点评响应内容: {response}")
 
-            if hasattr(response, 'content') and response.content:
-                content = response.content.strip()
-                if content:
-                    return content
+            # 处理ollama和openai的不同响应格式
+            if self.is_ollama:
+                # Ollama返回字符串
+                if isinstance(response, str):
+                    content = response.strip()
+                elif hasattr(response, 'content') and response.content:
+                    content = response.content.strip()
                 else:
-                    self.logger.warning("LLM返回内容为空")
+                    content = str(response).strip()
             else:
-                self.logger.warning(f"LLM响应没有content属性: {response}")
+                # OpenAI返回对象
+                if hasattr(response, 'content') and response.content:
+                    content = response.content.strip()
+                else:
+                    content = ""
 
-            return "值得关注的技术进展"
+            if content:
+                return content
+            else:
+                self.logger.warning("LLM返回内容为空")
+                return "值得关注的技术进展"
 
         except Exception as e:
             self.logger.error(f"生成点评失败: {str(e)}")
@@ -161,8 +203,23 @@ class ReporterAgent:
     
     def _generate_trend_analysis(self, items: List[NewsItem]) -> str:
         """生成趋势分析"""
-        prompt = ChatPromptTemplate.from_messages([
-            ("system", """你是一个技术趋势分析专家。基于今日收集的技术资讯，分析当前的技术趋势。
+        if self.is_ollama:
+            from langchain.prompts import PromptTemplate
+            prompt = PromptTemplate.from_template("""你是一个技术趋势分析专家。基于今日收集的技术资讯，分析当前的技术趋势。
+
+要求：
+1. 识别热点话题和技术方向
+2. 分析技术发展趋势
+3. 3-5个要点，每个2-3句话
+4. 专业但易懂
+
+今日资讯标题：
+{titles}
+
+请分析技术趋势：""")
+        else:
+            prompt = ChatPromptTemplate.from_messages([
+                ("system", """你是一个技术趋势分析专家。基于今日收集的技术资讯，分析当前的技术趋势。
 
 要求：
 1. 识别热点话题和技术方向
@@ -170,23 +227,44 @@ class ReporterAgent:
 3. 3-5个要点，每个2-3句话
 4. 专业但易懂
 """),
-            ("user", "今日资讯标题：\n{titles}\n\n请分析技术趋势：")
-        ])
-        
+                ("user", "今日资讯标题：\n{titles}\n\n请分析技术趋势：")
+            ])
+
         try:
             titles = "\n".join(f"- {item['title']}" for item in items[:20])
             chain = prompt | self.llm
             response = chain.invoke({"titles": titles})
-            
-            return f"## 📈 趋势分析\n\n{response.content.strip()}\n"
+
+            # 处理响应格式
+            if self.is_ollama:
+                content = response.strip() if isinstance(response, str) else str(response).strip()
+            else:
+                content = response.content.strip()
+
+            return f"## 📈 趋势分析\n\n{content}\n"
         except Exception as e:
             self.logger.warning(f"生成趋势分析失败: {str(e)}")
             return ""
     
     def _generate_insights(self, items: List[NewsItem]) -> str:
         """生成前沿洞察"""
-        prompt = ChatPromptTemplate.from_messages([
-            ("system", """你是一个技术洞察专家。基于今日资讯，提供前沿洞察。
+        if self.is_ollama:
+            from langchain.prompts import PromptTemplate
+            prompt = PromptTemplate.from_template("""你是一个技术洞察专家。基于今日资讯，提供前沿洞察。
+
+要求：
+1. 发现不明显但重要的信号
+2. 连接不同领域的技术
+3. 提出独特观点
+4. 2-4个洞察，每个2-3句话
+
+今日资讯：
+{summaries}
+
+请提供前沿洞察：""")
+        else:
+            prompt = ChatPromptTemplate.from_messages([
+                ("system", """你是一个技术洞察专家。基于今日资讯，提供前沿洞察。
 
 要求：
 1. 发现不明显但重要的信号
@@ -194,9 +272,9 @@ class ReporterAgent:
 3. 提出独特观点
 4. 2-4个洞察，每个2-3句话
 """),
-            ("user", "今日资讯：\n{summaries}\n\n请提供前沿洞察：")
-        ])
-        
+                ("user", "今日资讯：\n{summaries}\n\n请提供前沿洞察：")
+            ])
+
         try:
             summaries = "\n".join(
                 f"- [{item.get('category', '未分类')}] {item['title']}"
@@ -204,16 +282,37 @@ class ReporterAgent:
             )
             chain = prompt | self.llm
             response = chain.invoke({"summaries": summaries})
-            
-            return f"## 🔮 前沿洞察\n\n{response.content.strip()}\n"
+
+            # 处理响应格式
+            if self.is_ollama:
+                content = response.strip() if isinstance(response, str) else str(response).strip()
+            else:
+                content = response.content.strip()
+
+            return f"## 🔮 前沿洞察\n\n{content}\n"
         except Exception as e:
             self.logger.warning(f"生成前沿洞察失败: {str(e)}")
             return ""
     
     def _generate_predictions(self, items: List[NewsItem]) -> str:
         """生成方向预测"""
-        prompt = ChatPromptTemplate.from_messages([
-            ("system", """你是一个技术预测专家。基于今日资讯，预测未来技术方向。
+        if self.is_ollama:
+            from langchain.prompts import PromptTemplate
+            prompt = PromptTemplate.from_template("""你是一个技术预测专家。基于今日资讯，预测未来技术方向。
+
+要求：
+1. 基于当前趋势推测未来发展
+2. 关注3-6个月的短期预测
+3. 2-3个预测方向
+4. 有理有据，避免空泛
+
+今日资讯类别分布：
+{categories}
+
+请预测技术方向：""")
+        else:
+            prompt = ChatPromptTemplate.from_messages([
+                ("system", """你是一个技术预测专家。基于今日资讯，预测未来技术方向。
 
 要求：
 1. 基于当前趋势推测未来发展
@@ -221,24 +320,30 @@ class ReporterAgent:
 3. 2-3个预测方向
 4. 有理有据，避免空泛
 """),
-            ("user", "今日资讯类别分布：\n{categories}\n\n请预测技术方向：")
-        ])
-        
+                ("user", "今日资讯类别分布：\n{categories}\n\n请预测技术方向：")
+            ])
+
         try:
             # 统计类别分布
             category_count = defaultdict(int)
             for item in items:
                 category_count[item.get('category', '其他')] += 1
-            
+
             categories = "\n".join(
                 f"- {cat}: {count}条"
                 for cat, count in sorted(category_count.items(), key=lambda x: x[1], reverse=True)
             )
-            
+
             chain = prompt | self.llm
             response = chain.invoke({"categories": categories})
-            
-            return f"## 🎯 方向预测\n\n{response.content.strip()}\n"
+
+            # 处理响应格式
+            if self.is_ollama:
+                content = response.strip() if isinstance(response, str) else str(response).strip()
+            else:
+                content = response.content.strip()
+
+            return f"## 🎯 方向预测\n\n{content}\n"
         except Exception as e:
             self.logger.warning(f"生成方向预测失败: {str(e)}")
             return ""

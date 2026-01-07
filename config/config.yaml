@@ -2,9 +2,10 @@
 
 # LLM配置
 llm:
-  provider: "dashscope"  # 阿里百炼
-  model: "qwen-plus"     # 推荐使用 qwen-plus 或 qwen-max
-  base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+  provider: "ollama"     # dashscope, openai, ollama
+  model: "qwen3:4b-instruct"      # 远程: qwen-plus/qwen-max; 本地: qwen2.5:7b等
+  base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"  # 远程API地址
+  ollama_base_url: "http://localhost:11434"  # Ollama服务地址
   temperature: 0.7
   max_tokens: 2000
 
@@ -20,21 +21,24 @@ search:
   engines:
     - "google"
     - "bing"
-  max_results_per_query: 100
+  max_results_per_query: 50
   
 # 信息源配置
 sources:
   keywords:
-    - "AI breakthrough"
-    - "artificial intelligence news"
-    - "robotics technology"
-    - "machine learning advancement"
-    - "LLM large language model"
-    - "computer vision"
-    - "reinforcement learning"
-    - "AI agent"
-    - "人工智能最新进展"
-    - "机器人技术突破"
+    # - "AI breakthrough"
+    # - "artificial intelligence news"
+    # - "robotics technology"
+    # - "machine learning advancement"
+    # - "LLM large language model"
+    # - "computer vision"
+    # - "reinforcement learning"
+    # - "AI agent"
+    # - "人工智能最新进展"
+    # - "机器人技术突破"
+    - "CES 2026"
+    - "CES 2026 CHINA"
+    - "CES 2026 ROBOT"
   
   # 可选：特定网站（作为补充）
   websites:
@@ -47,7 +51,7 @@ filtering:
   min_quality_score: 0.0  # 最低质量分数（0-10）
   max_age_hours: 48  # 最大内容年龄（小时）
   similarity_threshold: 0.85  # 去重相似度阈值
-  min_content_length: 100  # 最小内容长度（字符）
+  min_content_length: 30  # 最小内容长度（字符）
 
 # 分类配置
 categories:
@@ -77,7 +81,7 @@ database:
 
 # 日志配置
 logging:
-  level: "DEBUG"
+  level: "INFO"
   file: "./logs/agent.log"
   max_size_mb: 10
   backup_count: 5
