@@ -11,6 +11,7 @@ from typing import List, Dict, Optional
 from urllib.parse import quote_plus
 import time
 import html2text
+import re
 
 from newsapi import NewsApiClient
 import newspaper
@@ -37,6 +38,37 @@ class CollectorAgent:
         else:
             self.newsapi = None
             self.logger.warning("未找到NEWS_API_KEY环境变量，NewsAPI功能将被禁用")
+
+    def _parse_relative_time(self, time_text: str) -> Optional[datetime]:
+        """解析相对时间字符串，返回实际发布时间"""
+        if not time_text:
+            return None
+
+        time_text = time_text.lower().strip()
+
+        # 匹配各种时间格式
+        patterns = [
+            (r'(\d+)\s*秒前', lambda m: timedelta(seconds=int(m.group(1)))),
+            (r'(\d+)\s*分钟前', lambda m: timedelta(minutes=int(m.group(1)))),
+            (r'(\d+)\s*小时前', lambda m: timedelta(hours=int(m.group(1)))),
+            (r'(\d+)\s*天前', lambda m: timedelta(days=int(m.group(1)))),
+            (r'(\d+)\s*周前', lambda m: timedelta(weeks=int(m.group(1)))),
+            (r'(\d+)\s*月前', lambda m: timedelta(days=int(m.group(1)) * 30)),  # 近似
+            (r'(\d+)\s*年前', lambda m: timedelta(days=int(m.group(1)) * 365)),  # 近似
+        ]
+
+        for pattern, delta_func in patterns:
+            match = re.search(pattern, time_text)
+            if match:
+                try:
+                    delta = delta_func(match)
+                    return datetime.now() - delta
+                except Exception as e:
+                    self.logger.debug(f"解析时间失败: {time_text}, {str(e)}")
+                    continue
+
+        # 如果无法解析，返回None
+        return None
         
     def collect(self) -> List[NewsItem]:
         """收集信息"""
@@ -162,15 +194,27 @@ class CollectorAgent:
                             # 限制长度
                             snippet = snippet[:300] if snippet else ""
 
-                        # 提取来源 - 尝试多种选择器
+                        # 提取来源和时间 - 尝试多种选择器
                         source = "Unknown"
+                        published_date = datetime.now()  # 默认使用当前时间
+
                         for src_selector in ['div.CEMjEf span', 'span:not([class])', 'cite', 'span[data-ved]']:
                             source_elem = result.select_one(src_selector)
                             if source_elem:
                                 src_text = source_elem.get_text(strip=True)
-                                if src_text and len(src_text) < 50:  # 合理的来源长度
-                                    source = src_text
-                                    break
+                                if src_text:
+                                    # 尝试解析相对时间
+                                    parsed_time = self._parse_relative_time(src_text)
+                                    if parsed_time:
+                                        published_date = parsed_time
+                                        # 移除时间部分，只保留来源
+                                        src_text = re.sub(r'\d+\s*(秒|分钟|小时|天|周|月|年)前', '', src_text).strip()
+                                        if not src_text or len(src_text) > 50:
+                                            src_text = "Google News"
+                                    else:
+                                        # 不是时间，可能是来源
+                                        if len(src_text) < 50:
+                                            source = src_text
 
                         if title and url:
                             strategy_items.append(NewsItem(
@@ -178,7 +222,7 @@ class CollectorAgent:
                                 url=url,
                                 content=snippet,
                                 source=source,
-                                published_date=datetime.now(),
+                                published_date=published_date,
                                 category=None,
                                 quality_score=None,
                                 embedding=None
@@ -390,7 +434,8 @@ class CollectorAgent:
         for website in websites:
             try:
                 if 'arxiv.org' in website:
-                    website_items = self._collect_from_arxiv()
+                    # 对每个arxiv URL分别处理，支持多条arxiv网页
+                    website_items = self._collect_from_arxiv(website)
                 elif 'news.ycombinator.com' in website:
                     website_items = self._collect_from_hackernews()
                 elif 'reddit.com' in website:
@@ -408,10 +453,10 @@ class CollectorAgent:
         self.logger.info(f"从网站收集到 {len(items)} 条信息")
         return items
 
-    def _collect_from_arxiv(self) -> List[NewsItem]:
-        """从arXiv收集AI论文"""
+    def _collect_from_arxiv(self, arxiv_url: str) -> List[NewsItem]:
+        """从arXiv收集AI/机器人论文"""
         items = []
-        url = "https://arxiv.org/list/cs.AI/recent"
+        url = arxiv_url  # 使用传入的URL参数
 
         headers = {
             'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36'
@@ -425,11 +470,13 @@ class CollectorAgent:
         try:
             response = requests.get(url, headers=headers, timeout=10, proxies=proxies)
             response.raise_for_status()
-
+            # 调试url，查看返回内容
+            self.logger.info(f"ArXiv url: {url}")
             soup = BeautifulSoup(response.text, 'html.parser')
 
             # 解析论文列表
-            for entry in soup.select('div.list-title')[:10]:  # 最近10篇
+            # for entry in soup.select('div.list-title')[:10]:  # 最近10篇
+            for entry in soup.select('div.list-title'):  # 最近所有论文
                 try:
                     # 获取标题文本（去掉"Title:"前缀）
                     full_text = entry.get_text(strip=True)
@@ -539,14 +586,20 @@ class CollectorAgent:
         return items
 
     def _fetch_all_full_content(self, items: List[NewsItem]) -> List[NewsItem]:
-        """为所有新闻条目获取完整网页内容"""
+        """为所有新闻条目获取完整网页内容和发布时间"""
         updated_items = []
 
         for i, item in enumerate(items):
             try:
                 self.logger.debug(f"获取完整内容 {i+1}/{len(items)}: {item['url'][:50]}...")
-                full_content = self._fetch_article_content(item['url'])
+                full_content, publish_date = self._fetch_article_content(item['url'])
                 item['full_content'] = full_content
+
+                # 如果从网页提取到了发布时间，更新published_date
+                if publish_date and isinstance(publish_date, datetime):
+                    item['published_date'] = publish_date
+                    self.logger.debug(f"更新发布时间为网页发布日期: {publish_date}")
+
                 updated_items.append(item)
 
                 # 添加短暂延迟，避免请求过快
@@ -561,22 +614,361 @@ class CollectorAgent:
 
         return updated_items
 
-    def _fetch_article_content(self, url: str) -> Optional[str]:
-        """使用newspaper3k和trafilatura获取文章完整内容"""
-        if not url or not url.startswith(('http://', 'https://')):
+    def _extract_publish_date_from_text(self, text: str) -> Optional[datetime]:
+        """从文本中提取日期（支持中英文格式）"""
+        if not text:
             return None
 
-        # 尝试使用newspaper3k（适合新闻网站）
+        # 中英文月份映射
+        months_en = {
+            'january': 1, 'february': 2, 'march': 3, 'april': 4, 'may': 5, 'june': 6,
+            'july': 7, 'august': 8, 'september': 9, 'october': 10, 'november': 11, 'december': 12
+        }
+        months_short = {
+            'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
+            'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12
+        }
+        months_zh = {
+            '一月': 1, '二月': 2, '三月': 3, '四月': 4, '五月': 5, '六月': 6,
+            '七月': 7, '八月': 8, '九月': 9, '十月': 10, '十一月': 11, '十二月': 12
+        }
+
+        text_lower = text.lower()
+
+        # 优先级1: 英文缩写格式 "Jan 07, 2026" 或 "Jan 7, 2026"
+        for month_short, month_num in months_short.items():
+            # 匹配 "Jan 07, 2026" 格式
+            pattern = rf'\b{month_short}\.?\s+(\d{{1,2}}),?\s+(\d{{4}})\b'
+            match = re.search(pattern, text_lower)
+            if match:
+                try:
+                    day = int(match.group(1))
+                    year = int(match.group(2))
+                    if year >= 2000 and 1 <= day <= 31:
+                        return datetime(year, month_num, day)
+                except:
+                    continue
+
+        # 优先级2: 英文完整格式 "January 07, 2026"
+        for month_name, month_num in months_en.items():
+            pattern = rf'\b{month_name}\s+(\d{{1,2}}),?\s+(\d{{4}})\b'
+            match = re.search(pattern, text_lower)
+            if match:
+                try:
+                    day = int(match.group(1))
+                    year = int(match.group(2))
+                    if year >= 2000 and 1 <= day <= 31:
+                        return datetime(year, month_num, day)
+                except:
+                    continue
+
+        # 优先级3: "Published January 07, 2026" 格式
+        match = re.search(r'published\s+(\w+)\s+(\d{1,2}),?\s+(\d{4})', text_lower)
+        if match:
+            month_name = match.group(1)
+            day = int(match.group(2))
+            year = int(match.group(3))
+            if month_name in months_en and year >= 2000 and 1 <= day <= 31:
+                try:
+                    return datetime(year, months_en[month_name], day)
+                except:
+                    pass
+
+        # 优先级4: YYYY-MM-DD 或 YYYY/MM/DD
+        match = re.search(r'(\d{4})[-/](\d{1,2})[-/](\d{1,2})', text)
+        if match:
+            try:
+                return datetime(int(match.group(1)), int(match.group(2)), int(match.group(3)))
+            except:
+                pass
+
+        # 优先级5: MM/DD/YYYY 或 DD/MM/YYYY (美国/欧洲格式)
+        match = re.search(r'(\d{1,2})/(\d{1,2})/(\d{4})', text)
+        if match:
+            try:
+                # 尝试美国格式 (MM/DD/YYYY)
+                month, day, year = int(match.group(1)), int(match.group(2)), int(match.group(3))
+                if 1 <= month <= 12 and 1 <= day <= 31 and year >= 2000:
+                    return datetime(year, month, day)
+            except:
+                pass
+
+        # 优先级6: DD Month YYYY (欧洲格式)
+        for month_name, month_num in months_en.items():
+            pattern = rf'\b(\d{{1,2}})\s+{month_name}\s+(\d{{4}})\b'
+            match = re.search(pattern, text_lower)
+            if match:
+                try:
+                    day = int(match.group(1))
+                    year = int(match.group(2))
+                    return datetime(year, month_num, day)
+                except:
+                    continue
+
+        # 优先级7: 中文格式 YYYY年MM月DD日
+        match = re.search(r'(\d{4})年(\d{1,2})月(\d{1,2})日', text)
+        if match:
+            try:
+                return datetime(int(match.group(1)), int(match.group(2)), int(match.group(3)))
+            except:
+                pass
+
+        # 优先级8: YYYY年MM月 (中文年月格式，取当月1日)
+        match = re.search(r'(\d{4})年(\d{1,2})月', text)
+        if match:
+            try:
+                return datetime(int(match.group(1)), int(match.group(2)), 1)
+            except:
+                pass
+
+        return None
+
+    def _extract_publish_date_with_llm(self, text: str, llm) -> Optional[datetime]:
+        """使用LLM智能提取日期"""
+        if not text or not llm:
+            return None
+
+        # 准备prompt - 只提取前1000字符的关键文本
+        text_sample = text[:1000]
+
+        prompt = f"""你是一个专业的日期提取专家。请从以下网页文本中找出文章的发布日期。
+
+要求：
+1. 只返回日期，格式为 YYYY-MM-DD
+2. 如果找不到明确的发布日期，返回 "NO_DATE"
+3. 忽略所有时间部分（小时、分钟），只返回日期
+4. 日期必须是文章的原始发布日期，不是更新日期
+
+网页文本：
+{text_sample}
+
+请返回日期（只返回 YYYY-MM-DD 或 NO_DATE）："""
+
+        try:
+            response = llm.invoke(prompt)
+            result = response.content.strip() if hasattr(response, 'content') else str(response).strip()
+            print(f"LLM日期提取响应: {result}")
+            # 清理响应
+            result = result.replace('```', '').strip()
+            if result == "NO_DATE" or len(result) < 8:
+                return None
+
+            # 尝试解析日期
+            try:
+                return datetime.strptime(result, '%Y-%m-%d')
+            except:
+                self.logger.debug(f"LLM返回的日期格式无效: {result}")
+                return None
+
+        except Exception as e:
+            self.logger.debug(f"LLM日期提取失败: {str(e)}")
+            return None
+
+    def _extract_publish_date_from_url(self, url: str) -> Optional[datetime]:
+        """从URL路径中提取日期"""
+        if not url:
+            return None
+
+        # 匹配常见的URL日期模式
+        patterns = [
+            r'/(\d{4})/(\d{1,2})/(\d{1,2})/',  # /2026/01/08/
+            r'/(\d{4})-(\d{1,2})-(\d{1,2})/',  # /2026-01-08/
+            r'/(\d{4})/(\d{2})(\d{2})/',       # /20260108/
+        ]
+
+        for pattern in patterns:
+            match = re.search(pattern, url)
+            if match:
+                try:
+                    year = int(match.group(1))
+                    month = int(match.group(2))
+                    day = int(match.group(3))
+                    if 2000 <= year <= 2030 and 1 <= month <= 12 and 1 <= day <= 31:
+                        return datetime(year, month, day)
+                except:
+                    continue
+
+        return None
+
+    def _extract_publish_date_from_html(self, html_content: str) -> Optional[datetime]:
+        """从HTML内容中提取发布时间"""
+        if not html_content:
+            return None
+
+        soup = BeautifulSoup(html_content, 'html.parser')
+
+        # 优先级1: Open Graph article:published_time
+        meta_published = soup.find('meta', property='article:published_time')
+        if meta_published and meta_published.get('content'):
+            try:
+                content = meta_published['content']
+                # 处理ISO格式和常见格式
+                if 'T' in content:
+                    return datetime.fromisoformat(content.replace('Z', '+00:00'))
+                else:
+                    return datetime.strptime(content, '%Y-%m-%d')
+            except:
+                pass
+
+        # 优先级2: 其他常见的meta标签
+        meta_tags = [
+            ('name', 'publishdate'),
+            ('name', 'date'),
+            ('name', 'pubdate'),
+            ('property', 'og:article:published_time'),
+            ('itemprop', 'datePublished')
+        ]
+
+        for attr, value in meta_tags:
+            meta = soup.find('meta', {attr: value})
+            if meta and meta.get('content'):
+                try:
+                    content = meta['content']
+                    # 尝试不同的时间格式
+                    formats = ['%Y-%m-%dT%H:%M:%S%z', '%Y-%m-%dT%H:%M:%S', '%Y-%m-%d %H:%M:%S', '%Y-%m-%d']
+                    for fmt in formats:
+                        try:
+                            return datetime.strptime(content, fmt)
+                        except:
+                            continue
+                except:
+                    continue
+
+        # 优先级3: <time>标签
+        time_elem = soup.find('time')
+        if time_elem:
+            datetime_attr = time_elem.get('datetime') or time_elem.get('pubdate')
+            if datetime_attr:
+                try:
+                    if 'T' in datetime_attr:
+                        return datetime.fromisoformat(datetime_attr.replace('Z', '+00:00'))
+                    else:
+                        return datetime.strptime(datetime_attr, '%Y-%m-%d')
+                except:
+                    pass
+
+        # 优先级4: JSON-LD结构化数据
+        script_tags = soup.find_all('script', type='application/ld+json')
+        for script in script_tags:
+            try:
+                import json
+                data = json.loads(script.string)
+                if isinstance(data, dict):
+                    # 处理单个对象
+                    date_published = data.get('datePublished')
+                    if date_published:
+                        try:
+                            if 'T' in date_published:
+                                return datetime.fromisoformat(date_published.replace('Z', '+00:00'))
+                            else:
+                                return datetime.strptime(date_published, '%Y-%m-%d')
+                        except:
+                            pass
+                elif isinstance(data, list):
+                    # 处理数组
+                    for item in data:
+                        if isinstance(item, dict):
+                            date_published = item.get('datePublished')
+                            if date_published:
+                                try:
+                                    if 'T' in date_published:
+                                        return datetime.fromisoformat(date_published.replace('Z', '+00:00'))
+                                    else:
+                                        return datetime.strptime(date_published, '%Y-%m-%d')
+                                except:
+                                    pass
+            except:
+                continue
+
+        return None
+
+    def _fetch_article_content(self, url: str) -> tuple[Optional[str], Optional[datetime]]:
+        """使用htmldate、newspaper3k和trafilatura获取文章完整内容和发布时间"""
+        if not url or not url.startswith(('http://', 'https://')):
+            return None, None
+
+        publish_date = None
+        html_content = None
+
+        # 首先获取原始HTML
+        try:
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36'
+            }
+            proxies = {
+                'http': os.getenv('http_proxy'),
+                'https': os.getenv('https_proxy')
+            }
+            response = requests.get(url, headers=headers, timeout=10, proxies=proxies)
+            response.raise_for_status()
+            html_content = response.text
+
+        except Exception as e:
+            self.logger.debug(f"获取HTML内容失败: {str(e)}")
+            return None, None
+
+        # 优先级1: 使用htmldate提取日期（最准确）
+        try:
+            from htmldate import find_date
+            date_str = find_date(html_content, extensive_search=True, original_date=True)
+            if date_str:
+                try:
+                    # htmldate返回YYYY-MM-DD格式
+                    publish_date = datetime.strptime(date_str, '%Y-%m-%d')
+                    self.logger.debug(f"从htmldate提取到发布时间: {publish_date}")
+                except:
+                    pass
+        except Exception as e:
+            self.logger.debug(f"htmldate提取失败: {str(e)}")
+
+        # 优先级2: 如果htmldate失败，从URL提取日期
+        if not publish_date:
+            publish_date = self._extract_publish_date_from_url(url)
+            if publish_date:
+                self.logger.debug(f"从URL提取到发布时间: {publish_date}")
+
+        # 优先级3: 使用HTML元数据提取
+        if not publish_date:
+            publish_date = self._extract_publish_date_from_html(html_content)
+            if publish_date:
+                self.logger.debug(f"从HTML元数据提取到发布时间: {publish_date}")
+
+        # 优先级4: 使用LLM智能提取日期
+        if not publish_date:
+            publish_date = self._extract_publish_date_with_llm(html_content, self.llm)
+            if publish_date:
+                self.logger.debug(f"从LLM提取到发布时间: {publish_date}")
+
+        # 优先级5: 从页面文本提取日期（regex作为最后fallback）
+        if not publish_date:
+            # 提取页面开头部分的文本来搜索日期
+            soup = BeautifulSoup(html_content, 'html.parser')
+            # 移除脚本和样式
+            for script in soup(["script", "style"]):
+                script.decompose()
+            page_text = soup.get_text()[:2000]  # 只检查前2000字符
+            publish_date = self._extract_publish_date_from_text(page_text)
+            if publish_date:
+                self.logger.debug(f"从页面文本(regex)提取到发布时间: {publish_date}")
+
+        # 尝试使用newspaper3k获取内容
         try:
             self.logger.debug(f"使用newspaper3k抓取: {url}")
             article = newspaper.Article(url, language='en')
-            article.download()
+            article.set_html(html_content)
             article.parse()
 
             if article.text and len(article.text.strip()) > 100:
                 content = article.text.strip()
                 # 限制长度，避免过长
-                return content[:5000] if len(content) > 5000 else content
+                content = content[:5000] if len(content) > 5000 else content
+
+                # 如果还没提取到时间，使用newspaper3k的时间作为备选
+                if not publish_date and article.publish_date:
+                    publish_date = article.publish_date
+                    self.logger.debug(f"从newspaper3k提取到发布时间: {publish_date}")
+
+                return content, publish_date
 
         except Exception as e:
             self.logger.debug(f"newspaper3k失败: {str(e)}")
@@ -584,19 +976,20 @@ class CollectorAgent:
         # newspaper3k失败，尝试trafilatura
         try:
             self.logger.debug(f"使用trafilatura抓取: {url}")
-            downloaded = fetch_url(url)
-            if downloaded:
-                content = extract(downloaded, include_comments=False, include_tables=False)
-                if content and len(content.strip()) > 100:
-                    # 清理内容
-                    content = content.strip()
-                    return content[:5000] if len(content) > 5000 else content
+            content = extract(html_content, include_comments=False, include_tables=False,
+                            date_extraction_params={'extensive_search': True, 'original_date': True})
+            if content and len(content.strip()) > 100:
+                # 清理内容
+                content = content.strip()
+                content = content[:5000] if len(content) > 5000 else content
+
+                return content, publish_date
 
         except Exception as e:
             self.logger.debug(f"trafilatura失败: {str(e)}")
 
-        # 两个工具都失败，返回None
-        return None
+        # 所有方法都失败，返回None
+        return None, publish_date
 
     def _search_newsapi(self, keyword: str) -> List[NewsItem]:
         """通过NewsAPI收集信息"""

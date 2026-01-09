@@ -22,7 +22,7 @@ search:
     - "newsapi"  # 新增：NewsAPI (需要API key)
     - "google"
     - "bing"
-  max_results_per_query: 1
+  max_results_per_query: 20 # 每个查询返回的最大结果数
   # NewsAPI配置
   newsapi:
     api_key_env: "NEWS_API_KEY"  # 环境变量名
@@ -36,29 +36,33 @@ sources:
   keywords:
     # CES相关（保持原有）
     - "CES 2026"
-    - "CES 2026 CHINA"
+    # - "CES 2026 CHINA"
     - "CES 2026 ROBOT"
-    # AI/机器人通用关键词（英文）
+    # # AI/机器人通用关键词（英文）
     - "AI breakthrough"
     - "artificial intelligence news"
-    - "robotics technology"
-    # 限制关键词数量进行测试
-    # - "machine learning advancement"
-    # - "LLM large language model"
-    # - "computer vision"
-    # - "reinforcement learning"
-    # - "AI agent"
-    # 中文关键词
-    # - "人工智能最新进展"
-    # - "机器人技术突破"
-    # - "AI新闻"
-    # - "机器学习进展"
+    - "machine learning advancement"
+    - "LLM large language model"
+    - "computer vision"
+    - "reinforcement learning"
+    - "AI agent"
+    # # 中文关键词
+    - "人工智能最新进展"
+    - "机器人技术突破"
+    - "AI最新新闻"
+    - "机器学习进展"
+    - "家庭陪伴机器人"
+    - "companion robot"
+    - "social robot"
+    - "具身智能 机器人"
+    - "embodied intelligence robot"
   
   # 可选：特定网站（作为补充）
   websites:
-    # - "https://arxiv.org/list/cs.AI/recent"
-    - "https://news.ycombinator.com/"
-    - "https://www.reddit.com/r/MachineLearning/"
+    # - "https://arxiv.org/list/cs.AI/recent?skip=0&show=2000"
+    # - "https://arxiv.org/list/cs.RO/recent?skip=0&show=2000"
+    # - "https://news.ycombinator.com/"
+    # - "https://www.reddit.com/r/MachineLearning/"
 
 # 内容过滤配置
 filtering:
