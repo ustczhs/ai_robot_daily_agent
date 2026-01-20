@@ -13,6 +13,7 @@ import time
 import html2text
 import re
 
+import chardet
 from newsapi import NewsApiClient
 import newspaper
 from trafilatura import fetch_url, extract
@@ -74,46 +75,68 @@ class CollectorAgent:
         """收集信息"""
         all_items = []
 
-        # 从搜索引擎收集
-        engines = self.config['search'].get('engines', ['google'])
-        for keyword in self.config['sources']['keywords']:
-            keyword_items = []
+        # 全局URL去重集合，避免不同关键词返回相同新闻
+        seen_urls = set()
 
-            # 尝试每个搜索引擎（全部执行，提高覆盖面）
-            for engine in engines:
-                try:
-                    if engine.lower() == 'newsapi':
-                        items = self._search_newsapi(keyword)
-                    elif engine.lower() == 'google':
-                        items = self._search_google(keyword)
-                    elif engine.lower() == 'bing':
-                        items = self._search_bing(keyword)
-                    else:
-                        self.logger.warning(f"不支持的搜索引擎: {engine}")
+        # 从搜索引擎收集（只有在配置了关键词时才执行）
+        keywords = self.config['sources'].get('keywords', [])
+        if keywords:
+            engines = self.config['search'].get('engines', ['google'])
+            for keyword in keywords:
+                keyword_items = []
+
+                # 尝试每个搜索引擎（全部执行，提高覆盖面）
+                for engine in engines:
+                    try:
+                        if engine.lower() == 'newsapi':
+                            items = self._search_newsapi(keyword)
+                        elif engine.lower() == 'google':
+                            items = self._search_google(keyword)
+                        elif engine.lower() == 'bing':
+                            items = self._search_bing(keyword)
+                        else:
+                            self.logger.warning(f"不支持的搜索引擎: {engine}")
+                            continue
+
+                        if items:  # 如果该引擎返回了结果
+                            keyword_items.extend(items)
+                            self.logger.info(f"从{engine}搜索 '{keyword}' 获取 {len(items)} 条结果")
+                            # 继续尝试其他引擎，提高覆盖面
+
+                    except Exception as e:
+                        self.logger.warning(f"{engine}搜索 '{keyword}' 失败: {str(e)}")
                         continue
 
-                    if items:  # 如果该引擎返回了结果
-                        keyword_items.extend(items)
-                        self.logger.info(f"从{engine}搜索 '{keyword}' 获取 {len(items)} 条结果")
-                        # 继续尝试其他引擎，提高覆盖面
+                # 如果所有引擎都失败，至少记录警告
+                if not keyword_items:
+                    self.logger.warning(f"所有搜索引擎对 '{keyword}' 都失败了")
 
-                except Exception as e:
-                    self.logger.warning(f"{engine}搜索 '{keyword}' 失败: {str(e)}")
-                    continue
+                # 对关键词结果进行全局去重
+                for item in keyword_items:
+                    if item['url'] not in seen_urls:
+                        all_items.append(item)
+                        seen_urls.add(item['url'])
+                    else:
+                        self.logger.debug(f"跳过重复URL: {item['url']}")
 
-            # 如果所有引擎都失败，至少记录警告
-            if not keyword_items:
-                self.logger.warning(f"所有搜索引擎对 '{keyword}' 都失败了")
-
-            all_items.extend(keyword_items)
-            time.sleep(2)  # 避免请求过快
+                time.sleep(2)  # 避免请求过快
+        else:
+            self.logger.info("未配置关键词，跳过搜索引擎搜索")
 
         # 从指定网站收集
         try:
             website_items = self._collect_from_websites()
-            all_items.extend(website_items)
+            # 网站内容也进行去重
+            for item in website_items:
+                if item['url'] not in seen_urls:
+                    all_items.append(item)
+                    seen_urls.add(item['url'])
+                else:
+                    self.logger.debug(f"跳过重复URL (网站): {item['url']}")
         except Exception as e:
             self.logger.warning(f"网站收集失败: {str(e)}")
+
+        self.logger.info(f"搜索引擎和网站收集完成后，去重前共有 {len(all_items)} 条信息")
 
         # 获取完整网页内容
         try:
@@ -131,18 +154,19 @@ class CollectorAgent:
         items = []
         max_results = self.config['search']['max_results_per_query']
 
-        # 尝试多种搜索策略来获取更多结果
-        search_strategies = [
-            # 策略1: 默认新闻搜索（最近48小时）
-            f"https://www.google.com/search?q={quote_plus(keyword)}&tbm=nws&tbs=qdr:d2",
-            # 策略2: 更宽泛的时间范围（最近一周）
-            f"https://www.google.com/search?q={quote_plus(keyword)}&tbm=nws&tbs=qdr:w",
-            # 策略3: 不限制时间
-            f"https://www.google.com/search?q={quote_plus(keyword)}&tbm=nws",
-            # 策略4: 普通搜索（可能返回更多结果）
-            f"https://www.google.com/search?q={quote_plus(keyword)}&tbs=qdr:d2",
-        ]
-        
+        # 根据配置的max_age_hours确定搜索时间范围
+        max_age_hours = self.config['filtering']['max_age_hours']
+
+        # 选择合适的Google时间过滤器
+        if max_age_hours <= 24:
+            time_filter = "qdr:d"  # 最近24小时
+        elif max_age_hours <= 168:  # 7天
+            time_filter = "qdr:w"  # 最近一周
+        elif max_age_hours <= 720:  # 30天
+            time_filter = "qdr:m"  # 最近一个月
+        else:
+            time_filter = "qdr:y"  # 最近一年
+
         headers = {
             'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
         }
@@ -154,98 +178,132 @@ class CollectorAgent:
         }
 
         all_items = []
-        for strategy_idx, search_url in enumerate(search_strategies):
-            try:
-                self.logger.debug(f"尝试搜索策略 {strategy_idx + 1}: {search_url}")
-                response = requests.get(search_url, headers=headers, timeout=10, proxies=proxies)
-                response.raise_for_status()
 
-                soup = BeautifulSoup(response.text, 'html.parser')
-                strategy_items = []
+        # 智能计算需要获取的页数（每页约10条结果）
+        # 考虑到重复内容和质量过滤，设置一个更合理的页数上限
+        max_pages = min(5, (max_results + 9) // 10)  # 最多5页，避免过度请求
+        pages_needed = max_pages
 
-                # 解析搜索结果 - 不限制数量，尽可能获取所有结果
-                for result in soup.select('div.SoaBEf'):
-                    try:
-                        # 提取标题和链接
-                        title_elem = result.select_one('div.n0jPhd')
-                        link_elem = result.select_one('a')
+        for page in range(pages_needed):
+            start_index = page * 10
 
-                        if not title_elem or not link_elem:
+            # 尝试多种搜索策略来获取更多结果
+            search_strategies = [
+                # 策略1: 带时间限制的新闻搜索 + 分页
+                f"https://www.google.com/search?q={quote_plus(keyword)}&tbm=nws&tbs={time_filter}&start={start_index}",
+                # 策略2: 普通搜索带时间限制 + 分页
+                f"https://www.google.com/search?q={quote_plus(keyword)}&tbs={time_filter}&start={start_index}",
+                # 策略3: 不限制时间的新闻搜索 + 分页（作为备用）
+                f"https://www.google.com/search?q={quote_plus(keyword)}&tbm=nws&start={start_index}",
+            ]
+
+            page_items = []
+            for strategy_idx, search_url in enumerate(search_strategies):
+                try:
+                    self.logger.debug(f"页面 {page + 1} 策略 {strategy_idx + 1}: {search_url}")
+                    response = requests.get(search_url, headers=headers, timeout=10, proxies=proxies)
+                    response.raise_for_status()
+
+                    soup = BeautifulSoup(response.text, 'html.parser')
+                    strategy_items = []
+
+                    # 解析搜索结果 - 不限制数量，尽可能获取所有结果
+                    for result in soup.select('div.SoaBEf'):
+                        try:
+                            # 提取标题和链接
+                            title_elem = result.select_one('div.n0jPhd')
+                            link_elem = result.select_one('a')
+
+                            if not title_elem or not link_elem:
+                                continue
+
+                            title = title_elem.get_text(strip=True)
+                            url = link_elem.get('href', '')
+
+                            # 提取摘要 - 尝试多种选择器
+                            snippet = ""
+                            for selector in ['div.GI74Re', 'div[data-ved]', 'div[data-ved] div', 'div:not([class])']:
+                                snippet_elem = result.select_one(selector)
+                                if snippet_elem and snippet_elem.get_text(strip=True):
+                                    snippet = snippet_elem.get_text(strip=True)
+                                    break
+
+                            # 如果还是没有摘要，尝试获取整个结果的文本
+                            if not snippet:
+                                # 移除标题和链接，只保留其他文本
+                                result_text = result.get_text()
+                                title_text = title_elem.get_text()
+                                # 粗略移除标题，保留其他内容
+                                snippet = result_text.replace(title_text, '').strip()
+                                # 限制长度
+                                snippet = snippet[:300] if snippet else ""
+
+                            # 提取来源和时间 - 尝试多种选择器
+                            source = "Unknown"
+                            published_date = None  # 不设置默认时间，让网页内容提取决定
+
+                            for src_selector in ['div.CEMjEf span', 'span:not([class])', 'cite', 'span[data-ved]']:
+                                source_elem = result.select_one(src_selector)
+                                if source_elem:
+                                    src_text = source_elem.get_text(strip=True)
+                                    if src_text:
+                                        # 尝试解析相对时间
+                                        parsed_time = self._parse_relative_time(src_text)
+                                        if parsed_time:
+                                            published_date = parsed_time
+                                            # 移除时间部分，只保留来源
+                                            src_text = re.sub(r'\d+\s*(秒|分钟|小时|天|周|月|年)前', '', src_text).strip()
+                                            if not src_text or len(src_text) > 50:
+                                                src_text = "Google News"
+                                        else:
+                                            # 不是时间，可能是来源
+                                            if len(src_text) < 50:
+                                                source = src_text
+
+                            if title and url:
+                                strategy_items.append(NewsItem(
+                                    title=title,
+                                    url=url,
+                                    content=snippet,
+                                    source=source,
+                                    published_date=published_date,
+                                    category=None,
+                                    quality_score=None,
+                                    embedding=None
+                                ))
+
+                        except Exception as e:
+                            self.logger.debug(f"解析搜索结果失败: {str(e)}")
                             continue
 
-                        title = title_elem.get_text(strip=True)
-                        url = link_elem.get('href', '')
+                    self.logger.debug(f"页面 {page + 1} 策略 {strategy_idx + 1} 获取 {len(strategy_items)} 条结果")
 
-                        # 提取摘要 - 尝试多种选择器
-                        snippet = ""
-                        for selector in ['div.GI74Re', 'div[data-ved]', 'div[data-ved] div', 'div:not([class])']:
-                            snippet_elem = result.select_one(selector)
-                            if snippet_elem and snippet_elem.get_text(strip=True):
-                                snippet = snippet_elem.get_text(strip=True)
-                                break
+                    # 合并当前页面的结果
+                    for item in strategy_items:
+                        if item not in page_items:  # 当前页面内的简单去重
+                            page_items.append(item)
 
-                        # 如果还是没有摘要，尝试获取整个结果的文本
-                        if not snippet:
-                            # 移除标题和链接，只保留其他文本
-                            result_text = result.get_text()
-                            title_text = title_elem.get_text()
-                            # 粗略移除标题，保留其他内容
-                            snippet = result_text.replace(title_text, '').strip()
-                            # 限制长度
-                            snippet = snippet[:300] if snippet else ""
+                    # 如果当前策略获取到了结果，就不再尝试其他策略
+                    if strategy_items:
+                        break
 
-                        # 提取来源和时间 - 尝试多种选择器
-                        source = "Unknown"
-                        published_date = datetime.now()  # 默认使用当前时间
+                except Exception as e:
+                    self.logger.debug(f"页面 {page + 1} 策略 {strategy_idx + 1} 失败: {str(e)}")
+                    continue
 
-                        for src_selector in ['div.CEMjEf span', 'span:not([class])', 'cite', 'span[data-ved]']:
-                            source_elem = result.select_one(src_selector)
-                            if source_elem:
-                                src_text = source_elem.get_text(strip=True)
-                                if src_text:
-                                    # 尝试解析相对时间
-                                    parsed_time = self._parse_relative_time(src_text)
-                                    if parsed_time:
-                                        published_date = parsed_time
-                                        # 移除时间部分，只保留来源
-                                        src_text = re.sub(r'\d+\s*(秒|分钟|小时|天|周|月|年)前', '', src_text).strip()
-                                        if not src_text or len(src_text) > 50:
-                                            src_text = "Google News"
-                                    else:
-                                        # 不是时间，可能是来源
-                                        if len(src_text) < 50:
-                                            source = src_text
+            # 将当前页面的结果添加到总结果中
+            for item in page_items:
+                if item not in all_items:  # 全局去重
+                    all_items.append(item)
 
-                        if title and url:
-                            strategy_items.append(NewsItem(
-                                title=title,
-                                url=url,
-                                content=snippet,
-                                source=source,
-                                published_date=published_date,
-                                category=None,
-                                quality_score=None,
-                                embedding=None
-                            ))
+            self.logger.debug(f"页面 {page + 1} 总共获取 {len(page_items)} 条结果，累计 {len(all_items)} 条")
 
-                    except Exception as e:
-                        self.logger.debug(f"解析搜索结果失败: {str(e)}")
-                        continue
+            # 如果已经达到目标数量，可以提前停止
+            if len(all_items) >= max_results:
+                break
 
-                self.logger.debug(f"策略 {strategy_idx + 1} 获取 {len(strategy_items)} 条结果")
-
-                # 合并结果，避免重复
-                for item in strategy_items:
-                    if item not in all_items:  # 简单去重
-                        all_items.append(item)
-
-                # 如果已经达到目标数量，可以提前停止
-                if len(all_items) >= max_results:
-                    break
-
-            except Exception as e:
-                self.logger.debug(f"搜索策略 {strategy_idx + 1} 失败: {str(e)}")
-                continue
+            # 添加延迟避免被限制
+            time.sleep(1)
 
         # 最终去重（按标题去重）
         unique_items = []
@@ -586,24 +644,48 @@ class CollectorAgent:
         return items
 
     def _fetch_all_full_content(self, items: List[NewsItem]) -> List[NewsItem]:
-        """为所有新闻条目获取完整网页内容和发布时间"""
+        """为所有新闻条目获取完整网页内容和发布时间（优化版本）"""
         updated_items = []
 
         for i, item in enumerate(items):
             try:
                 self.logger.debug(f"获取完整内容 {i+1}/{len(items)}: {item['url'][:50]}...")
-                full_content, publish_date = self._fetch_article_content(item['url'])
-                item['full_content'] = full_content
 
-                # 如果从网页提取到了发布时间，更新published_date
-                if publish_date and isinstance(publish_date, datetime):
-                    item['published_date'] = publish_date
-                    self.logger.debug(f"更新发布时间为网页发布日期: {publish_date}")
+                # 设置超时控制，避免单个网页卡住太久
+                import signal
+                from contextlib import contextmanager
+
+                @contextmanager
+                def timeout_context(seconds):
+                    def timeout_handler(signum, frame):
+                        raise TimeoutError(f"操作超时 {seconds} 秒")
+
+                    signal.signal(signal.SIGALRM, timeout_handler)
+                    signal.alarm(seconds)
+                    try:
+                        yield
+                    finally:
+                        signal.alarm(0)
+
+                try:
+                    # 为每个网页设置30秒超时
+                    with timeout_context(30):
+                        full_content, publish_date = self._fetch_article_content(item['url'])
+                        item['full_content'] = full_content
+
+                        # 如果从网页提取到了发布时间，更新published_date
+                        if publish_date and isinstance(publish_date, datetime):
+                            item['published_date'] = publish_date
+                            self.logger.debug(f"更新发布时间为网页发布日期: {publish_date}")
+
+                except TimeoutError:
+                    self.logger.warning(f"获取网页内容超时，跳过: {item['url']}")
+                    item['full_content'] = None
 
                 updated_items.append(item)
 
-                # 添加短暂延迟，避免请求过快
-                time.sleep(0.5)
+                # 减少延迟时间，从0.5秒改为0.2秒
+                time.sleep(0.2)
 
             except Exception as e:
                 self.logger.warning(f"获取完整内容失败 {item['url']}: {str(e)}")
@@ -890,7 +972,7 @@ class CollectorAgent:
         publish_date = None
         html_content = None
 
-        # 首先获取原始HTML
+        # 首先获取原始HTML，并进行编码检测和纠正
         try:
             headers = {
                 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36'
@@ -901,7 +983,51 @@ class CollectorAgent:
             }
             response = requests.get(url, headers=headers, timeout=10, proxies=proxies)
             response.raise_for_status()
-            html_content = response.text
+
+            # 检测网页编码并尝试多种解码方式
+            detected_encoding = chardet.detect(response.content)['encoding']
+            confidence = chardet.detect(response.content)['confidence']
+            self.logger.debug(f"检测到网页编码: {detected_encoding} (置信度: {confidence:.2f})")
+
+            # 尝试多种编码来正确解码中文内容，按优先级排序
+            encodings_to_try = [
+                detected_encoding,  # 检测到的编码优先
+                'utf-8',           # UTF-8最常见
+                'gbk',             # 中文GBK编码
+                'gb2312',          # 中文GB2312编码
+                'big5',            # 繁体中文Big5
+                'iso-8859-1',      # 西欧编码
+                'windows-1252',    # Windows西欧编码
+                'latin1'           # 拉丁编码
+            ]
+
+            html_content = None
+            best_encoding = None
+
+            for encoding in encodings_to_try:
+                if not encoding:
+                    continue
+                try:
+                    html_content = response.content.decode(encoding)
+                    # 验证解码质量：检查是否有明显的乱码特征
+                    invalid_chars = ['', '', '', '']  # UTF-8解码错误的常见字符
+                    has_invalid_chars = any(char in html_content for char in invalid_chars)
+
+                    # 检查是否包含正常的中文字符（作为解码成功的指标）
+                    has_chinese = any('\u4e00' <= char <= '\u9fff' for char in html_content)
+
+                    # 如果没有乱码字符，或者包含中文字符，认为是成功解码
+                    if not has_invalid_chars or has_chinese or encoding == 'utf-8':
+                        best_encoding = encoding
+                        self.logger.debug(f"成功使用编码 {encoding} 解码网页")
+                        break
+                except (UnicodeDecodeError, LookupError):
+                    continue
+
+            if html_content is None:
+                self.logger.warning("所有编码尝试都失败，使用response.text作为最后的后备方案")
+                html_content = response.text  # 最后的fallback
+                best_encoding = 'fallback'
 
         except Exception as e:
             self.logger.debug(f"获取HTML内容失败: {str(e)}")
@@ -933,11 +1059,24 @@ class CollectorAgent:
             if publish_date:
                 self.logger.debug(f"从HTML元数据提取到发布时间: {publish_date}")
 
-        # 优先级4: 使用LLM智能提取日期
+        # 优先级4: 使用LLM智能提取日期（只在必要时调用）
         if not publish_date:
-            publish_date = self._extract_publish_date_with_llm(html_content, self.llm)
-            if publish_date:
-                self.logger.debug(f"从LLM提取到发布时间: {publish_date}")
+            # 检查是否有明显的日期模式再调用LLM，避免不必要的调用
+            soup = BeautifulSoup(html_content, 'html.parser')
+            page_text = soup.get_text()[:1000]  # 只检查前1000字符
+
+            # 如果页面包含明显的日期关键词，才调用LLM
+            date_keywords = ['published', 'posted', 'date', '时间', '日期', '年', '月', '日']
+            has_date_indicators = any(keyword.lower() in page_text.lower() for keyword in date_keywords)
+
+            if has_date_indicators:
+                publish_date = self._extract_publish_date_with_llm(html_content, self.llm)
+                if publish_date:
+                    self.logger.debug(f"从LLM提取到发布时间: {publish_date}")
+                else:
+                    self.logger.debug("LLM未能提取到日期")
+            else:
+                self.logger.debug("页面无明显日期特征，跳过LLM提取")
 
         # 优先级5: 从页面文本提取日期（regex作为最后fallback）
         if not publish_date:

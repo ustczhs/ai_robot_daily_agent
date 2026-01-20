@@ -3,11 +3,13 @@
 """
 
 import logging
+import os
 from datetime import datetime
 from pathlib import Path
 from typing import List, Dict
 from collections import defaultdict
 from langchain.prompts import ChatPromptTemplate
+from langchain_openai import ChatOpenAI
 
 from utils.state import NewsItem
 
@@ -25,6 +27,22 @@ class ReporterAgent:
         # 检查LLM类型，适配不同的提示词格式
         llm_type = type(llm).__name__
         self.is_ollama = 'Ollama' in llm_type
+
+        # 初始化远程LLM用于分析方法
+        analysis_provider = self.config['report'].get('analysis_llm_provider', 'remote')
+        if analysis_provider == 'remote':
+            self.remote_llm = ChatOpenAI(
+                model="qwen-max",  # 使用qwen-max进行高质量分析
+                temperature=0.3,  # 分析需要更确定性的输出
+                max_tokens=4000,
+                openai_api_base=config['llm'].get('base_url'),
+                openai_api_key=os.getenv('DASHSCOPE_API_KEY') or os.getenv('OPENAI_API_KEY')
+            )
+            self.logger.info("分析方法将使用远程LLM: qwen-max")
+        else:
+            # 如果配置为ollama，则使用传入的llm
+            self.remote_llm = llm
+            self.logger.info("分析方法将使用本地LLM: ollama")
         
     def generate_report(self, items: List[NewsItem]) -> str:
         """生成报告"""
@@ -87,12 +105,18 @@ class ReporterAgent:
             report += f"\n### {category}\n\n"
             
             for i, item in enumerate(items[:max_items], 1):
-                # 生成幽默点评
+                # 生成点评，如果不技术相关则跳过
                 comment = self._generate_comment(item)
+                if comment is None:
+                    self.logger.debug(f"跳过非技术内容: {item['title']}")
+                    continue  # 跳过这个条目，不计入总数
+
+                # 翻译标题为简体中文
+                translated_title = self._translate_title(item['title'])
                 # 打印输出item的全部context内容以供调试
-                self.logger.info(f"生成点评 - content: {item['content']}...") 
-                self.logger.info(f"生成点评 - full_content: {item['full_content']}...")  
-                report += f"{i}. **[{item['title']}]({item['url']})**\n"
+                self.logger.info(f"生成点评 - content: {item['content']}...")
+                self.logger.info(f"生成点评 - full_content: {item['full_content']}...")
+                report += f"{i}. **[{translated_title}][{item['title']}]\n({item['url']})**\n"
                 report += f"   - 📰 来源: {item['source']}\n"
 
                 # 添加发布时间显示
@@ -100,9 +124,9 @@ class ReporterAgent:
                 if published_date and isinstance(published_date, datetime):
                     # 格式化为中文时间格式
                     time_str = published_date.strftime('%Y年%m月%d日')
-                    report += f"   - 🕒 发布时间: {time_str}\n"
+                    report += f"   - 🕒 发布时间: {time_str}\t"
                 else:
-                    report += f"   - 🕒 发布时间: 未知\n"
+                    report += f"   - 🕒 发布时间: 未知\t"
 
                 report += f"   - ⭐ 评分: {item.get('quality_score', 0):.1f}/10\n"
                 report += f"   - 💬 简介: {comment}\n\n"
@@ -125,34 +149,79 @@ class ReporterAgent:
         
         return report
     
+    def _translate_title(self, title: str) -> str:
+        """翻译标题为简体中文"""
+        if not self.is_ollama:
+            # 如果不是ollama，直接返回原标题
+            return title
+
+        from langchain.prompts import PromptTemplate
+        prompt = PromptTemplate.from_template("""请将以下标题翻译为简体中文，保持专业性和准确性。只输出翻译后的标题，不要添加任何其他内容。
+
+标题：{title}
+
+翻译：""")
+
+        try:
+            chain = prompt | self.llm
+            response = chain.invoke({"title": title})
+
+            # 处理ollama响应格式
+            if isinstance(response, str):
+                translated = response.strip()
+            elif hasattr(response, 'content') and response.content:
+                translated = response.content.strip()
+            else:
+                translated = str(response).strip()
+
+            # 清理可能的额外内容，只保留第一行
+            translated = translated.split('\n')[0].strip()
+
+            if translated:
+                return translated
+            else:
+                self.logger.warning(f"标题翻译失败，返回原标题: {title}")
+                return title
+
+        except Exception as e:
+            self.logger.error(f"翻译标题失败: {str(e)}")
+            return title
+
     def _generate_comment(self, item: NewsItem) -> str:
         """生成详细点评和内容介绍"""
         if self.is_ollama:
             # Ollama使用简单的字符串提示词
-            from langchain.prompts import PromptTemplate         
-            prompt = PromptTemplate.from_template("""你是一个严格事实导向的技术内容分析师，只基于提供的标题、内容和来源生成简短的中文点评。绝不添加任何未在输入中明确出现的信息。
+            from langchain.prompts import PromptTemplate
+            prompt = PromptTemplate.from_template("""你是一个技术新闻摘要器。只根据提供的标题、内容、来源，用简体中文写100-200字技术总结。
+任务：
+1. 生成100-200字技术点评，包含核心技术/产品/创新点和应用场景
+2. 判断内容是否与机器人/AI/自动化的技术直接相关
 
-严格要求：
-1. 用1-2句话准确概括输入内容中的核心产品、技术或创新点（必须直接引用或紧密改述原文关键点，无细节时简述发布事实）
-2. 分析这项技术的实际意义和应用前景（2-3句话，只讨论原文中明确提及的场景或影响，使用定性描述，避免量化）
-3. 总长度控制在100-150字，用简体中文输出，关键字可以用英文表示
-4. 严禁提及任何数字、百分比或量化指标，除非原文中明确出现并引用来源
+严禁添加原文没有的信息、任何数字、性能指标、推测内容。
 
-示例（仅供结构参考）：
-"Lenovo预览了Lenovo Qira个人AI代理，支持跨设备上下文连续性，帮助用户在PC、平板和手机间无缝切换任务。该技术强调隐私优先的混合AI架构，在企业混合办公场景中提供更自然的交互体验。预计将推动多设备生态的智能协同发展。"
-
-严禁：
-1. 捏造任何数据、数字、百分比、性能指标、技术细节或产品名称
-2. 长篇大论
-3. 使用未在原文出现的量化语言（如“提升XX%”）
-4. 输出与输入无关的内容
-5. 全英文输出                                                  
-
+输出格式：
+点评：[100-200字技术总结]
+是否技术相关：[是/否]
+                                                  
 标题：{title}
 内容：{content}
 来源：{source}
 
-请生成技术点评：""")
+输出：""")
+            # prompt = PromptTemplate.from_template("""你是一个技术新闻摘要器。只根据提供的标题、内容、来源，用简体中文写100-200字技术总结，只总结不判断。
+
+            # 必须包含：
+            # - 概括核心技术/产品/创新点
+            # - 1-2句说明实际意义或应用场景（只说原文提到的）
+            # - 重点关注提及的产品名称及特点                                                  
+
+            # 严禁添加原文没有的信息、任何数字、性能指标、推测内容。
+
+            # 标题：{title}
+            # 内容：{content}
+            # 来源：{source}
+
+            # 输出：""")
         else:
             # 其他LLM使用ChatPromptTemplate
             prompt = PromptTemplate.from_template("""你是一个严格事实导向的技术内容分析师，只基于提供的标题、内容和来源生成中文点评。绝不添加任何未在输入中明确出现的信息。来源（如StoryHub）仅作为发布平台，不要误解为产品或技术。
@@ -212,10 +281,17 @@ class ReporterAgent:
                     content = ""
 
             if content:
-                return content
+                # 解析响应，检查是否技术相关
+                if self._is_technical_comment(content):
+                    # 提取点评内容，移除判断部分
+                    comment_part = self._extract_comment_from_response(content)
+                    return comment_part
+                else:
+                    self.logger.debug(f"内容不技术相关，已过滤: {item['title']}")
+                    return None  # 标记为不技术相关
             else:
                 self.logger.warning("LLM返回内容为空")
-                return "值得关注的技术进展"
+                return None
 
         except Exception as e:
             self.logger.error(f"生成点评失败: {str(e)}")
@@ -223,7 +299,9 @@ class ReporterAgent:
     
     def _generate_trend_analysis(self, items: List[NewsItem]) -> str:
         """生成趋势分析"""
-        if self.is_ollama:
+        analysis_provider = self.config['report'].get('analysis_llm_provider', 'remote')
+
+        if analysis_provider == 'ollama':  # 使用Ollama
             from langchain.prompts import PromptTemplate
             prompt = PromptTemplate.from_template("""你是一个技术趋势分析专家。只基于今日提供的资讯标题和类别分布，提炼3个核心趋势。
 
@@ -242,18 +320,20 @@ class ReporterAgent:
 {categories}
 
 请输出3个趋势：""")
-        else:
+        else:  # 使用远程LLM
+            from langchain.prompts import PromptTemplate
             prompt = PromptTemplate.from_template("""你是一个技术趋势分析专家。只基于今日提供的资讯标题和类别分布，提炼3个核心趋势。
 
 要求：
-1. 严格从标题中提取热点（如具身智能、家庭机器人、中国出海等），避免外部知识
+1. 严格从标题中提取热点（如具身智能、家庭机器人、陪伴机器人等），避免外部知识
 2. 每个趋势2-3句：先描述现象（引用1-2条标题），再分析原因/影响
 3. 专业易懂，无推测性语言
-4. 输出格式：
+4. 可联网进行内容校验，但请勿重复
+5. 输出格式：
 **趋势1: [标题]**
 描述...
 
-今日资讯标题（前20条）：
+今日资讯标题：
 {titles}
 
 类别分布：
@@ -276,14 +356,15 @@ class ReporterAgent:
                 for cat, count in sorted(category_count.items(), key=lambda x: x[1], reverse=True)
             )
 
-            chain = prompt | self.llm
+            chain = prompt | self.remote_llm
             response = chain.invoke({"titles": titles, "categories": categories})
 
-            # 处理响应格式
-            if self.is_ollama:
-                content = response.strip() if isinstance(response, str) else str(response).strip()
-            else:
+            # 根据配置决定响应处理方式
+            if analysis_provider == 'remote':
                 content = response.content.strip()
+            else:
+                # Ollama响应处理
+                content = response.strip() if isinstance(response, str) else str(response).strip()
 
             return f"## 📈 趋势分析\n\n{content}\n"
         except Exception as e:
@@ -292,7 +373,9 @@ class ReporterAgent:
     
     def _generate_insights(self, items: List[NewsItem]) -> str:
         """生成前沿洞察"""
-        if self.is_ollama:
+        analysis_provider = self.config['report'].get('analysis_llm_provider', 'remote')
+
+        if analysis_provider == 'ollama':  # 使用Ollama
             from langchain.prompts import PromptTemplate
             prompt = PromptTemplate.from_template("""你是一个技术洞察专家。只基于今日资讯，提供3个不明显但重要的信号。
 
@@ -308,14 +391,16 @@ class ReporterAgent:
 {summaries}
 
 请输出3个洞察：""")
-        else:
+        else:  # 使用远程LLM
+            from langchain.prompts import PromptTemplate
             prompt = PromptTemplate.from_template("""你是一个技术洞察专家。只基于今日资讯，提供3个不明显但重要的信号。
 
 要求：
 1. 每个洞察从2-3条资讯连接出发，发现隐含趋势
 2. 2-3句：现象 + 深层含义 + 潜在影响
 3. 避免夸大，保持客观
-4. 输出格式：
+4. 可联网进行校验，避免重复
+5. 输出格式：
 **洞察1: [简短标题]**
 描述...
 
@@ -330,14 +415,15 @@ class ReporterAgent:
                 f"- [{item.get('category', '未分类')}] {item['title']}"
                 for item in items
             )
-            chain = prompt | self.llm
+            chain = prompt | self.remote_llm
             response = chain.invoke({"summaries": summaries})
 
-            # 处理响应格式
-            if self.is_ollama:
-                content = response.strip() if isinstance(response, str) else str(response).strip()
-            else:
+            # 根据配置决定响应处理方式
+            if analysis_provider == 'remote':
                 content = response.content.strip()
+            else:
+                # Ollama响应处理
+                content = response.strip() if isinstance(response, str) else str(response).strip()
 
             return f"## 🔮 前沿洞察\n\n{content}\n"
         except Exception as e:
@@ -346,7 +432,9 @@ class ReporterAgent:
     
     def _generate_predictions(self, items: List[NewsItem]) -> str:
         """生成方向预测"""
-        if self.is_ollama:
+        analysis_provider = self.config['report'].get('analysis_llm_provider', 'remote')
+
+        if analysis_provider == 'ollama':  # 使用Ollama
             from langchain.prompts import PromptTemplate
             prompt = PromptTemplate.from_template("""你是一个技术预测专家。只基于今日资讯类别分布和标题，预测3-12个月内可能的发展方向。
 
@@ -367,7 +455,8 @@ class ReporterAgent:
 {titles}
 
 请输出3个方向：""")
-        else:
+        else:  # 使用远程LLM
+            from langchain.prompts import PromptTemplate
             prompt = PromptTemplate.from_template("""你是一个技术预测专家。只基于今日资讯类别分布和标题，预测3-12个月内可能的发展方向。
 
 要求：
@@ -375,7 +464,8 @@ class ReporterAgent:
 2. 聚焦可观察变化（如产品落地、生态变化）
 3. 2-3句：依据 + 预测 + 理由
 4. 客观，避免绝对化
-5. 输出格式：
+5. 可联网进行校验，避免重复
+6. 输出格式：
 **方向1: [标题]**
 依据：...
 预测：...
@@ -409,20 +499,67 @@ class ReporterAgent:
             # 添加热门标题示例
             top_titles = "\n".join(f"- {item['title']}" for item in items[:10])  # 展示前10个标题作为示例
 
-            chain = prompt | self.llm
+            chain = prompt | self.remote_llm
             response = chain.invoke({"categories": categories, "titles": top_titles})
 
-            # 处理响应格式
-            if self.is_ollama:
-                content = response.strip() if isinstance(response, str) else str(response).strip()
-            else:
+            # 根据配置决定响应处理方式
+            if analysis_provider == 'remote':
                 content = response.content.strip()
+            else:
+                # Ollama响应处理
+                content = response.strip() if isinstance(response, str) else str(response).strip()
 
             return f"## 🎯 方向预测\n\n{content}\n"
         except Exception as e:
             self.logger.warning(f"生成方向预测失败: {str(e)}")
             return ""
-    
+
+    def _is_technical_comment(self, content: str) -> bool:
+        """检查点评内容是否技术相关"""
+        if not content:
+            return False
+
+        # 对于Ollama的结构化响应，检查是否技术相关标记
+        if "是否技术相关：" in content:
+            if "是否技术相关：是" in content:
+                return True
+            elif "是否技术相关：否" in content:
+                return False
+
+        # 对于远程LLM或其他情况，检查内容是否包含技术关键词
+        tech_indicators = [
+            '技术', '算法', 'AI', '人工智能', '机器人', '自动化',
+            '传感器', '控制器', '芯片', '处理器', '软件', '硬件',
+            '创新', '研发', '产品', '应用', '解决方案'
+        ]
+
+        content_lower = content.lower()
+        tech_count = sum(1 for indicator in tech_indicators if indicator in content_lower)
+
+        # 如果包含2个或以上技术指标，认为技术相关
+        return tech_count >= 2
+
+    def _extract_comment_from_response(self, content: str) -> str:
+        """从LLM响应中提取点评内容"""
+        if not content:
+            return ""
+
+        # 对于Ollama的结构化响应，提取点评部分
+        if "点评：" in content and "是否技术相关：" in content:
+            # 找到点评部分
+            start_marker = "点评："
+            end_marker = "是否技术相关："
+
+            start_idx = content.find(start_marker)
+            end_idx = content.find(end_marker)
+
+            if start_idx != -1 and end_idx != -1 and start_idx < end_idx:
+                comment = content[start_idx + len(start_marker):end_idx].strip()
+                return comment
+
+        # 对于其他情况，返回完整内容
+        return content.strip()
+
     def _save_report(self, content: str) -> Path:
         """保存报告"""
         filename = f"ai_robot_daily_{datetime.now().strftime('%Y%m%d')}.md"
