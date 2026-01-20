@@ -8,6 +8,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Dict
 from collections import defaultdict
+import asyncio
 from langchain.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 
@@ -75,13 +76,38 @@ class ReporterAgent:
         return dict(categorized)
     
     def _build_report(self, categorized: Dict[str, List[NewsItem]], all_items: List[NewsItem]) -> str:
-        """构建报告内容"""
+        """构建报告内容（并发点评生成版本）"""
+        # 使用异步方法并发生成点评
+        try:
+            # 创建新的事件循环或在现有循环中运行
+            try:
+                loop = asyncio.get_event_loop()
+                if loop.is_running():
+                    # 如果已有运行中的循环，使用线程池执行器
+                    import concurrent.futures
+                    with concurrent.futures.ThreadPoolExecutor() as executor:
+                        future = executor.submit(asyncio.run, self._build_report_async(categorized, all_items))
+                        report_content = future.result()
+                else:
+                    report_content = asyncio.run(self._build_report_async(categorized, all_items))
+            except RuntimeError:
+                # 没有事件循环，创建新的
+                report_content = asyncio.run(self._build_report_async(categorized, all_items))
+
+            return report_content
+        except Exception as e:
+            self.logger.error(f"异步构建报告失败，回退到同步模式: {str(e)}")
+            # 回退到同步模式
+            return self._build_report_sync(categorized, all_items)
+
+    async def _build_report_async(self, categorized: Dict[str, List[NewsItem]], all_items: List[NewsItem]) -> str:
+        """异步构建报告内容"""
         today = datetime.now().strftime('%Y年%m月%d日')
-        
+
         # 报告头部
         report = f"""# 🤖 AI与机器人技术日报
 
-**日期**: {today}  
+**日期**: {today}
 **生成时间**: {datetime.now().strftime('%H:%M:%S')}
 
 ---
@@ -97,13 +123,132 @@ class ReporterAgent:
 ## 🔥 技术分类
 
 """
-        
+
+        # 收集所有需要生成点评的条目
+        items_to_comment = []
+        for category, items in categorized.items():
+            max_items = self.config['report']['max_items_per_category']
+            items_to_comment.extend(items[:max_items])
+
+        self.logger.info(f"开始并发生成 {len(items_to_comment)} 条点评")
+
+        # 并发生成所有点评
+        comments_dict = await self._generate_comments_concurrent(items_to_comment)
+
         # 按类别生成内容
         max_items = self.config['report']['max_items_per_category']
-        
+
         for category, items in categorized.items():
             report += f"\n### {category}\n\n"
-            
+
+            for i, item in enumerate(items[:max_items], 1):
+                # 从并发结果中获取点评
+                comment = comments_dict.get(item['url'])
+                if comment is None:
+                    self.logger.debug(f"跳过非技术内容: {item['title']}")
+                    continue  # 跳过这个条目，不计入总数
+
+                # 翻译标题为简体中文
+                translated_title = self._translate_title(item['title'])
+                # 打印输出item的全部context内容以供调试
+                self.logger.info(f"生成点评 - content: {item['content']}...")
+                self.logger.info(f"生成点评 - full_content: {item['full_content']}...")
+                report += f"{i}. **[{translated_title}][{item['title']}]\n({item['url']})**\n"
+                report += f"   - 📰 来源: {item['source']}\n"
+
+                # 添加发布时间显示
+                published_date = item.get('published_date')
+                if published_date and isinstance(published_date, datetime):
+                    # 格式化为中文时间格式
+                    time_str = published_date.strftime('%Y年%m月%d日')
+                    report += f"   - 🕒 发布时间: {time_str}\t"
+                else:
+                    report += f"   - 🕒 发布时间: 未知\t"
+
+                report += f"   - ⭐ 评分: {item.get('quality_score', 0):.1f}/10\n"
+                report += f"   - 💬 简介: {comment}\n\n"
+
+        # 生成分析部分（这些可以串行执行，因为通常数量少）
+        if self.config['report']['include_trend_analysis']:
+            report += "\n---\n\n"
+            report += self._generate_trend_analysis(all_items)
+
+        if self.config['report']['include_insights']:
+            report += "\n---\n\n"
+            report += self._generate_insights(all_items)
+
+        if self.config['report']['include_predictions']:
+            report += "\n---\n\n"
+            report += self._generate_predictions(all_items)
+
+        # 报告尾部
+        report += f"\n---\n\n*本报告由AI自动生成 | 生成时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}*\n"
+
+        return report
+
+    async def _generate_comments_concurrent(self, items: List[NewsItem]) -> Dict[str, str]:
+        """并发生成多个条目的点评"""
+        comments_dict = {}
+
+        # 使用信号量控制并发数量，避免LLM服务过载
+        semaphore = asyncio.Semaphore(8)  # 最多8个并发点评生成
+
+        async def generate_single_comment(item: NewsItem) -> tuple[str, str]:
+            async with semaphore:
+                try:
+                    comment = await self._generate_comment_async(item)
+                    return item['url'], comment
+                except Exception as e:
+                    self.logger.warning(f"异步生成点评失败 {item['url']}: {str(e)}")
+                    return item['url'], None
+
+        # 创建所有任务
+        tasks = [generate_single_comment(item) for item in items]
+
+        # 并发执行所有任务
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+
+        # 处理结果
+        for result in results:
+            if isinstance(result, Exception):
+                self.logger.error(f"异步点评任务执行异常: {str(result)}")
+            else:
+                url, comment = result
+                comments_dict[url] = comment
+
+        self.logger.info(f"并发点评生成完成，共处理 {len(comments_dict)} 条")
+        return comments_dict
+
+    def _build_report_sync(self, categorized: Dict[str, List[NewsItem]], all_items: List[NewsItem]) -> str:
+        """同步回退方法：构建报告内容"""
+        today = datetime.now().strftime('%Y年%m月%d日')
+
+        # 报告头部
+        report = f"""# 🤖 AI与机器人技术日报
+
+**日期**: {today}
+**生成时间**: {datetime.now().strftime('%H:%M:%S')}
+
+---
+
+## 📊 今日概览
+
+- **收集资讯**: {len(all_items)} 条
+- **技术类别**: {len(categorized)} 个
+- **信息来源**: {len(set(item['source'] for item in all_items))} 个
+
+---
+
+## 🔥 技术分类
+
+"""
+
+        # 按类别生成内容
+        max_items = self.config['report']['max_items_per_category']
+
+        for category, items in categorized.items():
+            report += f"\n### {category}\n\n"
+
             for i, item in enumerate(items[:max_items], 1):
                 # 生成点评，如果不技术相关则跳过
                 comment = self._generate_comment(item)
@@ -130,23 +275,23 @@ class ReporterAgent:
 
                 report += f"   - ⭐ 评分: {item.get('quality_score', 0):.1f}/10\n"
                 report += f"   - 💬 简介: {comment}\n\n"
-        
+
         # 生成分析部分
         if self.config['report']['include_trend_analysis']:
             report += "\n---\n\n"
             report += self._generate_trend_analysis(all_items)
-        
+
         if self.config['report']['include_insights']:
             report += "\n---\n\n"
             report += self._generate_insights(all_items)
-        
+
         if self.config['report']['include_predictions']:
             report += "\n---\n\n"
             report += self._generate_predictions(all_items)
-        
+
         # 报告尾部
         report += f"\n---\n\n*本报告由AI自动生成 | 生成时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}*\n"
-        
+
         return report
     
     def _translate_title(self, title: str) -> str:
@@ -296,6 +441,20 @@ class ReporterAgent:
         except Exception as e:
             self.logger.error(f"生成点评失败: {str(e)}")
             return "值得关注的技术进展"
+
+    async def _generate_comment_async(self, item: NewsItem) -> str:
+        """异步生成详细点评和内容介绍"""
+        # 注意：由于langchain的LLM调用不支持原生异步，我们使用线程池来异步执行
+        import concurrent.futures
+
+        def sync_generate():
+            return self._generate_comment(item)
+
+        # 使用线程池执行器来异步运行同步LLM调用
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            loop = asyncio.get_event_loop()
+            result = await loop.run_in_executor(executor, sync_generate)
+            return result
     
     def _generate_trend_analysis(self, items: List[NewsItem]) -> str:
         """生成趋势分析"""

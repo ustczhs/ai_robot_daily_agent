@@ -7,11 +7,13 @@ import os
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Tuple
 from urllib.parse import quote_plus
 import time
 import html2text
 import re
+import asyncio
+import aiohttp
 
 import chardet
 from newsapi import NewsApiClient
@@ -644,7 +646,100 @@ class CollectorAgent:
         return items
 
     def _fetch_all_full_content(self, items: List[NewsItem]) -> List[NewsItem]:
-        """为所有新闻条目获取完整网页内容和发布时间（优化版本）"""
+        """为所有新闻条目获取完整网页内容和发布时间（并发异步版本）"""
+        # 使用异步方法并发获取内容
+        try:
+            # 创建新的事件循环或在现有循环中运行
+            try:
+                loop = asyncio.get_event_loop()
+                if loop.is_running():
+                    # 如果已有运行中的循环，使用线程池执行器
+                    import concurrent.futures
+                    with concurrent.futures.ThreadPoolExecutor() as executor:
+                        future = executor.submit(asyncio.run, self._fetch_all_full_content_async(items))
+                        updated_items = future.result()
+                else:
+                    updated_items = asyncio.run(self._fetch_all_full_content_async(items))
+            except RuntimeError:
+                # 没有事件循环，创建新的
+                updated_items = asyncio.run(self._fetch_all_full_content_async(items))
+
+            return updated_items
+        except Exception as e:
+            self.logger.error(f"异步获取内容失败，回退到同步模式: {str(e)}")
+            # 回退到同步模式
+            return self._fetch_all_full_content_sync(items)
+
+    async def _fetch_all_full_content_async(self, items: List[NewsItem]) -> List[NewsItem]:
+        """异步并发获取所有网页内容"""
+        updated_items = []
+
+        # 使用信号量控制并发数量，避免过载
+        semaphore = asyncio.Semaphore(15)  # 最多15个并发请求
+
+        async def fetch_single_item(item: NewsItem, index: int) -> NewsItem:
+            async with semaphore:
+                try:
+                    self.logger.debug(f"获取完整内容 {index+1}/{len(items)}: {item['url'][:50]}...")
+
+                    # 使用asyncio.wait_for设置超时
+                    try:
+                        full_content, publish_date = await asyncio.wait_for(
+                            self._fetch_article_content_async(item['url']),
+                            timeout=30.0  # 30秒超时
+                        )
+                        item['full_content'] = full_content
+
+                        # 如果从网页提取到了发布时间，更新published_date
+                        if publish_date and isinstance(publish_date, datetime):
+                            item['published_date'] = publish_date
+                            self.logger.debug(f"更新发布时间为网页发布日期: {publish_date}")
+
+                    except asyncio.TimeoutError:
+                        self.logger.warning(f"获取网页内容超时，跳过: {item['url']}")
+                        item['full_content'] = None
+
+                    return item
+
+                except Exception as e:
+                    self.logger.warning(f"获取完整内容失败 {item['url']}: {str(e)}")
+                    item['full_content'] = None
+                    return item
+
+        # 创建所有任务
+        tasks = [fetch_single_item(item, i) for i, item in enumerate(items)]
+
+        # 并发执行所有任务
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+
+        # 处理结果
+        for result in results:
+            if isinstance(result, Exception):
+                self.logger.error(f"异步任务执行异常: {str(result)}")
+                # 为异常情况创建空的item
+                empty_item = NewsItem(
+                    title="Error",
+                    url="",
+                    content="",
+                    source="Error",
+                    published_date=None,
+                    category=None,
+                    quality_score=None,
+                    embedding=None,
+                    full_content=None
+                )
+                updated_items.append(empty_item)
+            else:
+                updated_items.append(result)
+
+        # 过滤掉错误的项目
+        updated_items = [item for item in updated_items if item.get('url')]
+
+        self.logger.info(f"异步获取完成，共处理 {len(updated_items)} 条内容")
+        return updated_items
+
+    def _fetch_all_full_content_sync(self, items: List[NewsItem]) -> List[NewsItem]:
+        """同步回退方法：为所有新闻条目获取完整网页内容和发布时间"""
         updated_items = []
 
         for i, item in enumerate(items):
@@ -1031,6 +1126,178 @@ class CollectorAgent:
 
         except Exception as e:
             self.logger.debug(f"获取HTML内容失败: {str(e)}")
+            return None, None
+
+        # 优先级1: 使用htmldate提取日期（最准确）
+        try:
+            from htmldate import find_date
+            date_str = find_date(html_content, extensive_search=True, original_date=True)
+            if date_str:
+                try:
+                    # htmldate返回YYYY-MM-DD格式
+                    publish_date = datetime.strptime(date_str, '%Y-%m-%d')
+                    self.logger.debug(f"从htmldate提取到发布时间: {publish_date}")
+                except:
+                    pass
+        except Exception as e:
+            self.logger.debug(f"htmldate提取失败: {str(e)}")
+
+        # 优先级2: 如果htmldate失败，从URL提取日期
+        if not publish_date:
+            publish_date = self._extract_publish_date_from_url(url)
+            if publish_date:
+                self.logger.debug(f"从URL提取到发布时间: {publish_date}")
+
+        # 优先级3: 使用HTML元数据提取
+        if not publish_date:
+            publish_date = self._extract_publish_date_from_html(html_content)
+            if publish_date:
+                self.logger.debug(f"从HTML元数据提取到发布时间: {publish_date}")
+
+        # 优先级4: 使用LLM智能提取日期（只在必要时调用）
+        if not publish_date:
+            # 检查是否有明显的日期模式再调用LLM，避免不必要的调用
+            soup = BeautifulSoup(html_content, 'html.parser')
+            page_text = soup.get_text()[:1000]  # 只检查前1000字符
+
+            # 如果页面包含明显的日期关键词，才调用LLM
+            date_keywords = ['published', 'posted', 'date', '时间', '日期', '年', '月', '日']
+            has_date_indicators = any(keyword.lower() in page_text.lower() for keyword in date_keywords)
+
+            if has_date_indicators:
+                publish_date = self._extract_publish_date_with_llm(html_content, self.llm)
+                if publish_date:
+                    self.logger.debug(f"从LLM提取到发布时间: {publish_date}")
+                else:
+                    self.logger.debug("LLM未能提取到日期")
+            else:
+                self.logger.debug("页面无明显日期特征，跳过LLM提取")
+
+        # 优先级5: 从页面文本提取日期（regex作为最后fallback）
+        if not publish_date:
+            # 提取页面开头部分的文本来搜索日期
+            soup = BeautifulSoup(html_content, 'html.parser')
+            # 移除脚本和样式
+            for script in soup(["script", "style"]):
+                script.decompose()
+            page_text = soup.get_text()[:2000]  # 只检查前2000字符
+            publish_date = self._extract_publish_date_from_text(page_text)
+            if publish_date:
+                self.logger.debug(f"从页面文本(regex)提取到发布时间: {publish_date}")
+
+        # 尝试使用newspaper3k获取内容
+        try:
+            self.logger.debug(f"使用newspaper3k抓取: {url}")
+            article = newspaper.Article(url, language='en')
+            article.set_html(html_content)
+            article.parse()
+
+            if article.text and len(article.text.strip()) > 100:
+                content = article.text.strip()
+                # 限制长度，避免过长
+                content = content[:5000] if len(content) > 5000 else content
+
+                # 如果还没提取到时间，使用newspaper3k的时间作为备选
+                if not publish_date and article.publish_date:
+                    publish_date = article.publish_date
+                    self.logger.debug(f"从newspaper3k提取到发布时间: {publish_date}")
+
+                return content, publish_date
+
+        except Exception as e:
+            self.logger.debug(f"newspaper3k失败: {str(e)}")
+
+        # newspaper3k失败，尝试trafilatura
+        try:
+            self.logger.debug(f"使用trafilatura抓取: {url}")
+            content = extract(html_content, include_comments=False, include_tables=False,
+                            date_extraction_params={'extensive_search': True, 'original_date': True})
+            if content and len(content.strip()) > 100:
+                # 清理内容
+                content = content.strip()
+                content = content[:5000] if len(content) > 5000 else content
+
+                return content, publish_date
+
+        except Exception as e:
+            self.logger.debug(f"trafilatura失败: {str(e)}")
+
+        # 所有方法都失败，返回None
+        return None, publish_date
+
+    async def _fetch_article_content_async(self, url: str) -> tuple[Optional[str], Optional[datetime]]:
+        """异步版本：使用htmldate、newspaper3k和trafilatura获取文章完整内容和发布时间"""
+        if not url or not url.startswith(('http://', 'https://')):
+            return None, None
+
+        publish_date = None
+        html_content = None
+
+        # 配置代理
+        proxy_url = os.getenv('http_proxy') or os.getenv('https_proxy')
+
+        # 首先获取原始HTML，并进行编码检测和纠正
+        try:
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36'
+            }
+
+            # 使用aiohttp进行异步请求
+            connector = aiohttp.TCPConnector(limit_per_host=10)  # 限制每个主机的连接数
+            async with aiohttp.ClientSession(connector=connector) as session:
+                async with session.get(url, headers=headers, timeout=aiohttp.ClientTimeout(total=10),
+                                     proxy=proxy_url) as response:
+                    response.raise_for_status()
+
+                    # 获取响应内容
+                    content = await response.read()
+
+                    # 检测网页编码并尝试多种解码方式
+                    detected_encoding = chardet.detect(content)['encoding']
+                    confidence = chardet.detect(content)['confidence']
+                    self.logger.debug(f"检测到网页编码: {detected_encoding} (置信度: {confidence:.2f})")
+
+                    # 尝试多种编码来正确解码中文内容，按优先级排序
+                    encodings_to_try = [
+                        detected_encoding,  # 检测到的编码优先
+                        'utf-8',           # UTF-8最常见
+                        'gbk',             # 中文GBK编码
+                        'gb2312',          # 中文GB2312编码
+                        'big5',            # 繁体中文Big5
+                        'iso-8859-1',      # 西欧编码
+                        'windows-1252',    # Windows西欧编码
+                        'latin1'           # 拉丁编码
+                    ]
+
+                    html_content = None
+                    best_encoding = None
+
+                    for encoding in encodings_to_try:
+                        if not encoding:
+                            continue
+                        try:
+                            html_content = content.decode(encoding)
+                            # 验证解码质量：检查是否有明显的乱码特征
+                            invalid_chars = ['', '', '', '']  # UTF-8解码错误的常见字符
+                            has_invalid_chars = any(char in html_content for char in invalid_chars)
+
+                            # 检查是否包含正常的中文字符（作为解码成功的指标）
+                            has_chinese = any('\u4e00' <= char <= '\u9fff' for char in html_content)
+
+                            # 如果没有乱码字符，或者包含中文字符，认为是成功解码
+                            if not has_invalid_chars or has_chinese or encoding == 'utf-8':
+                                best_encoding = encoding
+                                self.logger.debug(f"成功使用编码 {encoding} 解码网页")
+                                break
+                        except (UnicodeDecodeError, LookupError):
+                            continue
+
+                    if html_content is None:
+                        self.logger.warning("所有编码尝试都失败，使用默认解码")
+                        html_content = content.decode('utf-8', errors='ignore')  # 最后的fallback
+
+        except Exception as e:
+            self.logger.debug(f"异步获取HTML内容失败: {str(e)}")
             return None, None
 
         # 优先级1: 使用htmldate提取日期（最准确）

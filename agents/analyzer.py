@@ -5,6 +5,7 @@
 import logging
 from datetime import datetime, timedelta
 from typing import List
+import asyncio
 from langchain.prompts import ChatPromptTemplate
 from langchain.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
@@ -153,7 +154,117 @@ class AnalyzerAgent:
             ])
     
     def analyze(self, items: List[NewsItem]) -> List[NewsItem]:
-        """分析所有条目"""
+        """分析所有条目（并发LLM调用版本）"""
+        # 使用异步方法并发分析
+        try:
+            # 创建新的事件循环或在现有循环中运行
+            try:
+                loop = asyncio.get_event_loop()
+                if loop.is_running():
+                    # 如果已有运行中的循环，使用线程池执行器
+                    import concurrent.futures
+                    with concurrent.futures.ThreadPoolExecutor() as executor:
+                        future = executor.submit(asyncio.run, self._analyze_all_items_async(items))
+                        analyzed_items = future.result()
+                else:
+                    analyzed_items = asyncio.run(self._analyze_all_items_async(items))
+            except RuntimeError:
+                # 没有事件循环，创建新的
+                analyzed_items = asyncio.run(self._analyze_all_items_async(items))
+
+            return analyzed_items
+        except Exception as e:
+            self.logger.error(f"异步分析失败，回退到同步模式: {str(e)}")
+            # 回退到同步模式
+            return self._analyze_all_items_sync(items)
+
+    async def _analyze_all_items_async(self, items: List[NewsItem]) -> List[NewsItem]:
+        """异步并发分析所有条目"""
+        analyzed_items = []
+
+        # 获取配置中的最大年龄限制
+        max_age_hours = self.config['filtering']['max_age_hours']
+        cutoff_time = datetime.now() - timedelta(hours=max_age_hours)
+
+        # 标题去重集合，避免标题完全相同的新闻
+        seen_titles = set()
+
+        self.logger.info(f"   使用日期过滤: 保留{max_age_hours}小时内的新闻 (截止时间: {cutoff_time})")
+        self.logger.info(f"   使用标题去重: 过滤标题完全相同的新闻")
+        self.logger.info(f"   开始并发LLM分析，共 {len(items)} 条内容")
+
+        # 使用信号量控制并发数量，避免LLM服务过载
+        semaphore = asyncio.Semaphore(5)  # 最多5个并发LLM调用
+
+        async def analyze_single_item(item: NewsItem, index: int) -> NewsItem:
+            async with semaphore:
+                try:
+                    self.logger.info(f"   分析 {index+1}/{len(items)}: {item['title'][:50]}...")
+
+                    # 首先检查标题是否重复（增强版去重）
+                    title_normalized = self._normalize_title_for_deduplication(item['title'])
+                    if title_normalized in seen_titles:
+                        self.logger.debug(f"      ✗ 标题重复，已过滤: {item['title']}")
+                        return None  # 返回None表示被过滤
+
+                    # 其次检查日期是否在允许范围内
+                    if item.get('published_date') and isinstance(item['published_date'], datetime):
+                        if item['published_date'] < cutoff_time:
+                            self.logger.debug(f"      ✗ 过期新闻，已过滤 (发布日期: {item['published_date']})")
+                            return None
+                        else:
+                            self.logger.debug(f"      ✓ 日期有效: {item['published_date']}")
+                    else:
+                        # 如果没有发布日期，直接过滤掉（不再允许无日期新闻通过）
+                        self.logger.debug(f"      ✗ 无发布日期，已过滤")
+                        return None
+
+                    # 第三步：智能预过滤 - 检查技术相关性
+                    pre_filter_score = self._calculate_pre_filter_score(item)
+                    if pre_filter_score < self.pre_filter_threshold:
+                        self.logger.debug(f"      ✗ 预过滤不通过 (分数: {pre_filter_score:.2f})")
+                        return None
+                    else:
+                        self.logger.debug(f"      ✓ 预过滤通过 (分数: {pre_filter_score:.2f})")
+
+                    # 异步调用LLM分析
+                    analysis = await self._analyze_item_async(item)
+
+                    # 更新条目信息
+                    item['category'] = analysis.category
+                    item['quality_score'] = analysis.quality_score
+
+                    # 只保留高质量内容
+                    if analysis.is_relevant and analysis.quality_score >= self.min_quality_score:
+                        seen_titles.add(title_normalized)  # 添加到已见标题集合
+                        self.logger.debug(f"      ✓ 评分: {analysis.quality_score:.1f} - {analysis.reason}")
+                        return item
+                    else:
+                        self.logger.debug(f"      ✗ 评分: {analysis.quality_score:.1f} - 已过滤")
+                        return None
+
+                except Exception as e:
+                    self.logger.warning(f"   分析失败: {str(e)}")
+                    return None
+
+        # 创建所有任务
+        tasks = [analyze_single_item(item, i) for i, item in enumerate(items)]
+
+        # 并发执行所有任务
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+
+        # 处理结果，过滤掉None值
+        for result in results:
+            if isinstance(result, Exception):
+                self.logger.error(f"异步分析任务执行异常: {str(result)}")
+            elif result is not None:
+                analyzed_items.append(result)
+
+        self.logger.info(f"   并发分析完成: 从 {len(items)} 条新闻中保留 {len(analyzed_items)} 条高质量内容")
+        return analyzed_items
+
+    def _analyze_all_items_sync(self, items: List[NewsItem]) -> List[NewsItem]:
+        """同步回退方法：分析所有条目"""
         analyzed_items = []
 
         # 获取配置中的最大年龄限制
@@ -215,7 +326,7 @@ class AnalyzerAgent:
                 self.logger.warning(f"   分析失败: {str(e)}")
                 continue
 
-        self.logger.info(f"   分析完成: 从 {len(items)} 条新闻中保留 {len(analyzed_items)} 条高质量内容")
+        self.logger.info(f"   同步分析完成: 从 {len(items)} 条新闻中保留 {len(analyzed_items)} 条高质量内容")
         return analyzed_items
     
     def _analyze_item(self, item: NewsItem) -> ContentAnalysis:
@@ -241,6 +352,20 @@ class AnalyzerAgent:
 
         # chain 已经包含解析器，直接返回结果
         return response
+
+    async def _analyze_item_async(self, item: NewsItem) -> ContentAnalysis:
+        """异步分析单个条目"""
+        # 注意：由于langchain的LLM调用不支持原生异步，我们使用线程池来异步执行
+        import concurrent.futures
+
+        def sync_analyze():
+            return self._analyze_item(item)
+
+        # 使用线程池执行器来异步运行同步LLM调用
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            loop = asyncio.get_event_loop()
+            result = await loop.run_in_executor(executor, sync_analyze)
+            return result
 
     def _normalize_title_for_deduplication(self, title: str) -> str:
         """为去重目的标准化标题"""
