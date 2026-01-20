@@ -22,7 +22,7 @@ search:
     # - "newsapi"  # 新增：NewsAPI (需要API key)
     - "google"
     # - "bing"
-  max_results_per_query: 80 # 每个查询返回的最大结果数
+  max_results_per_query: 60 # 每个查询返回的最大结果数
   # NewsAPI配置
   newsapi:
     api_key_env: "NEWS_API_KEY"  # 环境变量名
@@ -33,37 +33,192 @@ search:
   
 # 信息源配置
 sources:
-  keywords:
-    # CES相关（保持原有）
-    # - "CES 2026"
-    # # - "CES 2026 CHINA"
-    # - "CES 2026 ROBOT"
-    # # # AI/机器人通用关键词（英文）
-    # - "AI breakthrough"
-    # # - "artificial intelligence news"
-    # # - "machine learning advancement"
-    # - "LLM large language model"
-    # - "robot computer vision"
-    # - "VLN visual language navigation"
-    # # - "reinforcement learning"
-    # - "AI agent"
-    # # # 中文关键词
-    # - "人工智能最新进展"
-    # - "机器人技术突破"
-    # # - "AI最新新闻"
-    # # - "机器学习进展"
-    # - "具身智能 机器人"
-    # - "embodied intelligence robot"
-    ####################################
-    # - "陪伴机器人"
-    # - "家庭机器人"
-    # - "companion robot"
-    # - "social robot"
+  categories:
+    # 用于分类的关键词组（新增）
+    - name: "3D视频通话"
+      keywords:
+        - "3D视频通话"
+        - "3D video call"
+        - "全息视频通话"
+    - name: "AI 操作系统"
+      keywords:
+        - "AI OS "
+        - "AI operating system "
+        - "AI 操作系统"
+    - name: "陪伴机器人"
+      keywords:
+        - "陪伴机器人"
+        - "companion robot"
+        - "social robot"
+        - "家庭机器人"
+        - "情感机器人"
+    - name: "AI 智能硬件"
+      keywords:
+        - "AI 智能硬件"
+        - "AI smart hardware"
+        
+    # - name: "大语言模型与生成式AI"
+    #   keywords:
+    #     - "大语言模型"
+    #     - "LLM"
+    #     - "large language model"
+    #     - "生成式AI"
+    #     - "generative AI"
+    #     - "GPT"
+    #     - "ChatGPT"
+    #     - "Claude"
+    #     - "文心一言"
+    #     - "通义千问"
+    #     - "GLM"
+    #     - "LLaMA"
+    #     - "Transformer"
+    #     - "预训练模型"
+    #     - "fine-tuning"
+    #     - "prompt engineering"
+    #     - "对话系统"
 
-    - "3D视频通话"
-    - "3D video call"
-    - "AI OS"
-  
+    # - name: "机器人技术与具身智能"
+    #   keywords:
+    #     - "机器人"
+    #     - "robot"
+    #     - "具身智能"
+    #     - "embodied intelligence"
+    #     - "机械臂"
+    #     - "robotic arm"
+    #     - "manipulator"
+    #     - "人形机器人"
+    #     - "humanoid robot"
+    #     - "四足机器人"
+    #     - "quadruped robot"
+    #     - "双足机器人"
+    #     - "bipedal robot"
+    #     - "无人驾驶"
+    #     - "autonomous vehicle"
+    #     - "AGV"
+    #     - "移动机器人"
+    #     - "mobile robot"
+    #     - "工业机器人"
+    #     - "industrial robot"
+    #     - "服务机器人"
+    #     - "service robot"
+    #     - "协作机器人"
+    #     - "collaborative robot"
+    #     - "cobots"
+
+    # - name: "计算机视觉"
+    #   keywords:
+    #     - "计算机视觉"
+    #     - "computer vision"
+    #     - "图像识别"
+    #     - "image recognition"
+    #     - "目标检测"
+    #     - "object detection"
+    #     - "图像分割"
+    #     - "image segmentation"
+    #     - "图像处理"
+    #     - "image processing"
+    #     - "视觉SLAM"
+    #     - "visual SLAM"
+    #     - "深度学习视觉"
+    #     - "deep learning vision"
+    #     - "神经网络视觉"
+    #     - "neural network vision"
+    #     - "卷积神经网络"
+    #     - "CNN"
+    #     - "视觉感知"
+    #     - "visual perception"
+
+    # - name: "强化学习与决策智能"
+    #   keywords:
+    #     - "强化学习"
+    #     - "reinforcement learning"
+    #     - "RL"
+    #     - "Q-learning"
+    #     - "策略梯度"
+    #     - "policy gradient"
+    #     - "Actor-Critic"
+    #     - "多智能体系统"
+    #     - "multi-agent system"
+    #     - "决策智能"
+    #     - "decision intelligence"
+    #     - "自主学习"
+    #     - "autonomous learning"
+    #     - "智能决策"
+    #     - "intelligent decision"
+    #     - "游戏AI"
+    #     - "game AI"
+
+    # - name: "AI基础设施与工具"
+    #   keywords:
+    #     - "AI基础设施"
+    #     - "AI infrastructure"
+    #     - "深度学习框架"
+    #     - "deep learning framework"
+    #     - "TensorFlow"
+    #     - "PyTorch"
+    #     - "JAX"
+    #     - "AI芯片"
+    #     - "AI chip"
+    #     - "GPU"
+    #     - "TPU"
+    #     - "NPU"
+    #     - "神经网络加速器"
+    #     - "neural network accelerator"
+    #     - "AI平台"
+    #     - "AI platform"
+    #     - "MLOps"
+    #     - "模型部署"
+    #     - "model deployment"
+    #     - "边缘计算"
+    #     - "edge computing"
+
+    # - name: "行业应用与产品"
+    #   keywords:
+    #     - "AI应用"
+    #     - "AI application"
+    #     - "智能家居"
+    #     - "smart home"
+    #     - "智慧城市"
+    #     - "smart city"
+    #     - "医疗AI"
+    #     - "medical AI"
+    #     - "金融科技"
+    #     - "fintech"
+    #     - "教育科技"
+    #     - "edtech"
+    #     - "自动驾驶"
+    #     - "autonomous driving"
+    #     - "智能制造"
+    #     - "smart manufacturing"
+    #     - "农业科技"
+    #     - "agritech"
+    #     - "机器人流程自动化"
+    #     - "RPA"
+
+    # - name: "研究前沿与理论突破"
+    #   keywords:
+    #     - "AI研究"
+    #     - "AI research"
+    #     - "论文发表"
+    #     - "paper published"
+    #     - "arXiv"
+    #     - "Nature"
+    #     - "Science"
+    #     - "ICML"
+    #     - "NeurIPS"
+    #     - "CVPR"
+    #     - "ICCV"
+    #     - "ACL"
+    #     - "EMNLP"
+    #     - "理论突破"
+    #     - "theoretical breakthrough"
+    #     - "新型架构"
+    #     - "novel architecture"
+    #     - "算法创新"
+    #     - "algorithm innovation"
+    #     - "基准测试"
+    #     - "benchmark"
+
   # 可选：特定网站（作为补充）
   websites:
     # - "https://arxiv.org/list/cs.AI/recent"
@@ -74,7 +229,7 @@ sources:
 # 内容过滤配置
 filtering:
   min_quality_score: 4.0  # 最低质量分数（0-10）
-  max_age_hours: 168  # 最大内容年龄（小时）
+  max_age_hours: 48  # 最大内容年龄（小时）
   similarity_threshold: 0.5  # 去重相似度阈值
   min_content_length: 30  # 最小内容长度（字符）
 

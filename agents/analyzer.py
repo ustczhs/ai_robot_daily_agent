@@ -31,6 +31,10 @@ class AnalyzerAgent:
         self.min_quality_score = config['filtering']['min_quality_score']
         self.categories = config['categories']
 
+        # 加载关键词分类配置
+        self.keyword_categories = config['sources'].get('categories', [])
+        self.logger.info(f"加载了 {len(self.keyword_categories)} 个关键词分类配置")
+
         # 检查LLM类型，适配不同的提示词格式
         llm_type = type(llm).__name__
         self.is_ollama = 'Ollama' in llm_type
@@ -227,11 +231,8 @@ class AnalyzerAgent:
                     else:
                         self.logger.debug(f"      ✓ 预过滤通过 (分数: {pre_filter_score:.2f})")
 
-                    # 异步调用LLM分析
+                    # 第四步：LLM质量评分（分类已在检索阶段完成）
                     analysis = await self._analyze_item_async(item)
-
-                    # 更新条目信息
-                    item['category'] = analysis.category
                     item['quality_score'] = analysis.quality_score
 
                     # 只保留高质量内容
@@ -307,11 +308,8 @@ class AnalyzerAgent:
                 else:
                     self.logger.debug(f"      ✓ 预过滤通过 (分数: {pre_filter_score:.2f})")
 
-                # 调用LLM分析
+                # 第四步：LLM质量评分（分类已在检索阶段完成）
                 analysis = self._analyze_item(item)
-
-                # 更新条目信息
-                item['category'] = analysis.category
                 item['quality_score'] = analysis.quality_score
 
                 # 只保留高质量内容
@@ -495,3 +493,59 @@ class AnalyzerAgent:
 
         # 限制惩罚最大值为1.0
         return min(1.0, penalty)
+
+    def _classify_by_keywords(self, item: NewsItem) -> str:
+        """基于关键词匹配进行分类"""
+        if not self.keyword_categories:
+            return None
+
+        # 获取要分析的文本内容
+        title_text = item['title'].lower()
+        content_text = ""
+        if item.get('full_content') and len(item['full_content'].strip()) > 50:
+            content_text = item['full_content'][:2000].lower()  # 限制长度
+        elif item.get('content'):
+            content_text = item['content'][:1000].lower()
+
+        combined_text = f"{title_text} {content_text}"
+
+        # 计算每个类别的匹配分数
+        category_scores = {}
+
+        for category_config in self.keyword_categories:
+            category_name = category_config['name']
+            keywords = category_config.get('keywords', [])
+
+            score = 0
+            matched_keywords = []
+
+            for keyword in keywords:
+                # 检查关键词是否出现在文本中（不区分大小写）
+                keyword_lower = keyword.lower()
+                if keyword_lower in combined_text:
+                    # 标题中匹配权重更高
+                    if keyword_lower in title_text:
+                        score += 2  # 标题匹配加2分
+                        matched_keywords.append(f"标题:{keyword}")
+                    else:
+                        score += 1  # 内容匹配加1分
+                        matched_keywords.append(f"内容:{keyword}")
+
+            if score > 0:
+                category_scores[category_name] = {
+                    'score': score,
+                    'matched_keywords': matched_keywords
+                }
+
+        # 如果没有匹配任何类别，返回None
+        if not category_scores:
+            return None
+
+        # 选择分数最高的类别
+        best_category = max(category_scores.items(), key=lambda x: x[1]['score'])
+        category_name = best_category[0]
+        category_info = best_category[1]
+
+        self.logger.debug(f"关键词分类结果 - {category_name} (分数:{category_info['score']}) | 匹配: {', '.join(category_info['matched_keywords'])}")
+
+        return category_name

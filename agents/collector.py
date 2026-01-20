@@ -74,56 +74,79 @@ class CollectorAgent:
         return None
         
     def collect(self) -> List[NewsItem]:
-        """收集信息"""
+        """收集信息 - 方案A：直接分类（用category的关键词检索，直接归类）"""
         all_items = []
 
         # 全局URL去重集合，避免不同关键词返回相同新闻
         seen_urls = set()
 
-        # 从搜索引擎收集（只有在配置了关键词时才执行）
-        keywords = self.config['sources'].get('keywords', [])
-        if keywords:
+        # 从搜索引擎收集（按照categories配置进行检索和分类）
+        categories = self.config['sources'].get('categories', [])
+        if categories:
             engines = self.config['search'].get('engines', ['google'])
-            for keyword in keywords:
-                keyword_items = []
 
-                # 尝试每个搜索引擎（全部执行，提高覆盖面）
-                for engine in engines:
-                    try:
-                        if engine.lower() == 'newsapi':
-                            items = self._search_newsapi(keyword)
-                        elif engine.lower() == 'google':
-                            items = self._search_google(keyword)
-                        elif engine.lower() == 'bing':
-                            items = self._search_bing(keyword)
-                        else:
-                            self.logger.warning(f"不支持的搜索引擎: {engine}")
+            for category_config in categories:
+                category_name = category_config['name']
+                category_keywords = category_config.get('keywords', [])
+
+                if not category_keywords:
+                    self.logger.warning(f"分类 '{category_name}' 没有配置关键词，跳过")
+                    continue
+
+                self.logger.info(f"开始收集分类 '{category_name}' 的内容，共 {len(category_keywords)} 个关键词")
+
+                category_items = []
+
+                # 对该category的所有关键词进行检索
+                for keyword in category_keywords:
+                    keyword_items = []
+
+                    # 尝试每个搜索引擎
+                    for engine in engines:
+                        try:
+                            if engine.lower() == 'newsapi':
+                                items = self._search_newsapi(keyword)
+                            elif engine.lower() == 'google':
+                                items = self._search_google(keyword)
+                            elif engine.lower() == 'bing':
+                                items = self._search_bing(keyword)
+                            else:
+                                self.logger.warning(f"不支持的搜索引擎: {engine}")
+                                continue
+
+                            if items:  # 如果该引擎返回了结果
+                                keyword_items.extend(items)
+                                self.logger.debug(f"从{engine}搜索 '{keyword}' 获取 {len(items)} 条结果")
+                                # 继续尝试其他引擎，提高覆盖面
+
+                        except Exception as e:
+                            self.logger.warning(f"{engine}搜索 '{keyword}' 失败: {str(e)}")
                             continue
 
-                        if items:  # 如果该引擎返回了结果
-                            keyword_items.extend(items)
-                            self.logger.info(f"从{engine}搜索 '{keyword}' 获取 {len(items)} 条结果")
-                            # 继续尝试其他引擎，提高覆盖面
+                    # 如果所有引擎都失败，至少记录警告
+                    if not keyword_items:
+                        self.logger.warning(f"所有搜索引擎对关键词 '{keyword}' 都失败了")
 
-                    except Exception as e:
-                        self.logger.warning(f"{engine}搜索 '{keyword}' 失败: {str(e)}")
-                        continue
+                    # 为该关键词的结果设置分类，并加入category结果集
+                    for item in keyword_items:
+                        if item['url'] not in seen_urls:
+                            # 直接设置分类为当前category
+                            item['category'] = category_name
+                            category_items.append(item)
+                            seen_urls.add(item['url'])
+                        else:
+                            self.logger.debug(f"跳过重复URL: {item['url']}")
 
-                # 如果所有引擎都失败，至少记录警告
-                if not keyword_items:
-                    self.logger.warning(f"所有搜索引擎对 '{keyword}' 都失败了")
+                    time.sleep(1)  # 关键词间避免请求过快
 
-                # 对关键词结果进行全局去重
-                for item in keyword_items:
-                    if item['url'] not in seen_urls:
-                        all_items.append(item)
-                        seen_urls.add(item['url'])
-                    else:
-                        self.logger.debug(f"跳过重复URL: {item['url']}")
+                self.logger.info(f"分类 '{category_name}' 收集完成，共获取 {len(category_items)} 条内容")
 
-                time.sleep(2)  # 避免请求过快
+                # 将该category的结果加入总结果集
+                all_items.extend(category_items)
+
+                time.sleep(2)  # category间避免请求过快
         else:
-            self.logger.info("未配置关键词，跳过搜索引擎搜索")
+            self.logger.info("未配置categories，跳过搜索引擎搜索")
 
         # 从指定网站收集
         try:
@@ -423,7 +446,7 @@ class CollectorAgent:
                                 url=url,
                                 content=snippet[:500],  # 限制长度
                                 source=source,
-                                published_date=datetime.now(),
+                                published_date=None,  # 不设置默认日期，让网页内容提取决定
                                 category=None,
                                 quality_score=None,
                                 embedding=None
@@ -566,7 +589,7 @@ class CollectorAgent:
                                     url=paper_url,
                                     content=f"Abstract: {abstract[:300]}...",
                                     source="ArXiv",
-                                    published_date=datetime.now(),
+                                    published_date=None,  # 不设置默认日期，让网页内容提取决定
                                     category="研究前沿与理论突破",
                                     quality_score=8.0,  # ArXiv论文通常质量较高
                                     embedding=None
@@ -621,7 +644,7 @@ class CollectorAgent:
                             url=url if url.startswith('http') else f"https://news.ycombinator.com/{url}",
                             content="",  # HN没有摘要
                             source="Hacker News",
-                            published_date=datetime.now(),
+                            published_date=None,  # 不设置默认日期，让网页内容提取决定
                             category=None,
                             quality_score=6.0,  # HN文章质量较好
                             embedding=None
@@ -900,6 +923,276 @@ class CollectorAgent:
 
         return None
 
+    def extract_36kr_publish_date(self, soup: BeautifulSoup) -> Optional[datetime]:
+        """
+        从36Kr移动端文章中提取真正的发布时间
+
+        36Kr移动端特点：
+        - 几乎不用标准的meta标签
+        - 日期在标题下方，作者后面，带·分隔符
+        - 格式：作者名 · YYYY年MM月DD日 HH:MM
+        """
+        # 存储所有候选日期 [(datetime, confidence_score, source)]
+        candidates = []
+
+        # 优先级1: 寻找标题下方的作者-时间行（最可靠）
+        title_candidates = self._find_title_nearby_dates_36kr(soup)
+        candidates.extend(title_candidates)
+
+        # 优先级2: CSS选择器暴力搜索（中等可靠）
+        css_candidates = self._find_css_selector_dates_36kr(soup)
+        candidates.extend(css_candidates)
+
+        # 优先级3: 正则表达式全文本搜索（兜底）
+        regex_candidates = self._find_regex_dates_36kr(soup)
+        candidates.extend(regex_candidates)
+
+        if not candidates:
+            self.logger.debug("36Kr日期提取: 未找到任何候选日期")
+            return None
+
+        # 按置信度排序，选择最佳候选
+        candidates.sort(key=lambda x: x[1], reverse=True)  # 按置信度降序
+        best_candidate = candidates[0]
+        best_date, confidence, source = best_candidate
+
+        self.logger.debug(f"36Kr日期提取: 选择最佳候选 - {best_date} (置信度:{confidence}, 来源:{source})")
+
+        # 最终验证：日期不能太早或太晚
+        now = datetime.now()
+        if best_date.year < 2010 or best_date > now:
+            self.logger.warning(f"36Kr日期提取: 日期不合理 {best_date}, 放弃")
+            return None
+
+        return best_date
+
+    def _find_title_nearby_dates_36kr(self, soup: BeautifulSoup) -> List[Tuple[datetime, int, str]]:
+        """优先级1: 寻找标题下方的作者-时间行"""
+        candidates = []
+
+        # 寻找标题元素
+        title_selectors = ['h1', '.title', '.article-title', '[class*="title"]']
+        title_elem = None
+
+        for selector in title_selectors:
+            title_elem = soup.select_one(selector)
+            if title_elem:
+                self.logger.debug(f"找到标题元素: {selector}")
+                break
+
+        if not title_elem:
+            self.logger.debug("未找到标题元素")
+            return candidates
+
+        # 从标题元素开始，向下搜索兄弟元素和子元素
+        search_elements = []
+
+        # 标题的下一个兄弟元素
+        sibling = title_elem.find_next_sibling()
+        if sibling:
+            search_elements.append((sibling, 95))  # 高置信度
+
+        # 标题父元素的下一个兄弟
+        parent_sibling = title_elem.parent.find_next_sibling() if title_elem.parent else None
+        if parent_sibling:
+            search_elements.append((parent_sibling, 90))
+
+        # 包含info/meta/detail类的元素
+        info_selectors = ['.info', '.meta', '.detail', '.author', '.article-info', '.detail-info']
+        for selector in info_selectors:
+            info_elems = soup.select(selector)
+            for elem in info_elems[:3]:  # 只看前3个
+                search_elements.append((elem, 85))
+
+        # 检查这些元素中的文本
+        for elem, base_confidence in search_elements:
+            text = elem.get_text(strip=True)
+            if not text:
+                continue
+
+            self.logger.debug(f"检查元素文本: {text[:50]}...")
+
+            # 特别处理带·分隔符的行（36Kr特征）
+            if '·' in text:
+                parts = text.split('·')
+                for part in parts[1:]:  # ·后面的部分
+                    date = self._parse_date_string_36kr(part.strip())
+                    if date:
+                        candidates.append((date, base_confidence + 10, f"标题附近·分隔符"))
+                        break
+
+            # 普通文本中的日期
+            date = self._parse_date_string_36kr(text)
+            if date:
+                candidates.append((date, base_confidence, f"标题附近文本"))
+
+        return candidates
+
+    def _find_css_selector_dates_36kr(self, soup: BeautifulSoup) -> List[Tuple[datetime, int, str]]:
+        """优先级2: CSS选择器暴力搜索"""
+        candidates = []
+
+        # 36Kr常见的作者-时间行选择器
+        selectors = [
+            '.author', '.info', '.meta', '.detail-info', '.article-info',
+            '.publish-time', '.article-time', '.time'
+        ]
+
+        for selector in selectors:
+            try:
+                elements = soup.select(selector)
+                for elem in elements[:5]:  # 每个选择器最多检查5个元素
+                    text = elem.get_text(strip=True)
+                    if not text:
+                        continue
+
+                    self.logger.debug(f"CSS选择器 {selector}: {text[:50]}...")
+
+                    # 优先处理·分隔符
+                    if '·' in text:
+                        parts = text.split('·')
+                        for part in parts:
+                            date = self._parse_date_string_36kr(part.strip())
+                            if date:
+                                candidates.append((date, 80, f"CSS·分隔符:{selector}"))
+                                break
+
+                    # 普通日期
+                    date = self._parse_date_string_36kr(text)
+                    if date:
+                        candidates.append((date, 70, f"CSS文本:{selector}"))
+
+            except Exception as e:
+                self.logger.debug(f"CSS选择器 {selector} 失败: {e}")
+
+        return candidates
+
+    def _find_regex_dates_36kr(self, soup: BeautifulSoup) -> List[Tuple[datetime, int, str]]:
+        """优先级3: 正则表达式全文本搜索"""
+        candidates = []
+
+        # 获取页面主要内容文本（排除script/style）
+        for script in soup(["script", "style"]):
+            script.decompose()
+
+        text = soup.get_text()
+
+        # 正则模式（按优先级排序）
+        patterns = [
+            # 带时间的完整格式
+            (r'(\d{4})年(\d{1,2})月(\d{1,2})日\s*(\d{1,2}):(\d{1,2})', 65, "中文完整时间"),
+            (r'(\d{4})-(\d{1,2})-(\d{1,2})\s*(\d{1,2}):(\d{1,2})', 60, "ISO完整时间"),
+
+            # 只带日期的格式
+            (r'(\d{4})年(\d{1,2})月(\d{1,2})日', 55, "中文日期"),
+            (r'(\d{4})-(\d{1,2})-(\d{1,2})', 50, "ISO日期"),
+
+            # 年月格式（取当月1日）
+            (r'(\d{4})年(\d{1,2})月', 30, "中文年月"),
+        ]
+
+        for pattern, confidence, source in patterns:
+            matches = re.finditer(pattern, text)
+            for match in matches:
+                try:
+                    groups = match.groups()
+                    if len(groups) >= 3:
+                        year = int(groups[0])
+                        month = int(groups[1])
+                        day = int(groups[2]) if len(groups) > 2 else 1
+                        hour = int(groups[3]) if len(groups) > 3 else 0
+                        minute = int(groups[4]) if len(groups) > 4 else 0
+
+                        # 验证日期合理性
+                        if 2010 <= year <= datetime.now().year and 1 <= month <= 12 and 1 <= day <= 31:
+                            try:
+                                date = datetime(year, month, day, hour, minute)
+                                candidates.append((date, confidence, f"正则:{source}"))
+                            except ValueError:
+                                continue  # 无效日期如2月30日
+
+                except (ValueError, IndexError) as e:
+                    self.logger.debug(f"正则解析失败: {match.group()} - {e}")
+                    continue
+
+        # 如果没找到高质量候选，尝试全文最早的合法日期（兜底）
+        if not candidates or max(c[1] for c in candidates) < 40:
+            earliest_date = self._find_earliest_valid_date_36kr(text)
+            if earliest_date:
+                candidates.append((earliest_date, 25, "全文最早日期"))
+
+        return candidates
+
+    def _parse_date_string_36kr(self, text: str) -> Optional[datetime]:
+        """解析单个日期字符串"""
+        text = text.strip()
+
+        # 中文完整格式: 2018年01月04日 19:14
+        match = re.search(r'(\d{4})年(\d{1,2})月(\d{1,2})日\s*(\d{1,2}):(\d{1,2})', text)
+        if match:
+            try:
+                return datetime(
+                    int(match.group(1)), int(match.group(2)), int(match.group(3)),
+                    int(match.group(4)), int(match.group(5))
+                )
+            except ValueError:
+                pass
+
+        # 中文日期格式: 2018年01月04日
+        match = re.search(r'(\d{4})年(\d{1,2})月(\d{1,2})日', text)
+        if match:
+            try:
+                return datetime(int(match.group(1)), int(match.group(2)), int(match.group(3)))
+            except ValueError:
+                pass
+
+        # ISO完整格式: 2018-01-04 19:14
+        match = re.search(r'(\d{4})-(\d{1,2})-(\d{1,2})\s*(\d{1,2}):(\d{1,2})', text)
+        if match:
+            try:
+                return datetime(
+                    int(match.group(1)), int(match.group(2)), int(match.group(3)),
+                    int(match.group(4)), int(match.group(5))
+                )
+            except ValueError:
+                pass
+
+        # ISO日期格式: 2018-01-04
+        match = re.search(r'(\d{4})-(\d{1,2})-(\d{1,2})', text)
+        if match:
+            try:
+                return datetime(int(match.group(1)), int(match.group(2)), int(match.group(3)))
+            except ValueError:
+                pass
+
+        return None
+
+    def _find_earliest_valid_date_36kr(self, text: str) -> Optional[datetime]:
+        """兜底：找全文最早的合法日期"""
+        # 只找2010年后的日期，避免抓到历史事件
+        pattern = r'\b(20[1-9]\d)[-/年](\d{1,2})[-/月](\d{1,2})日?\b'
+        matches = re.finditer(pattern, text)
+
+        valid_dates = []
+        for match in matches:
+            try:
+                year = int(match.group(1))
+                month = int(match.group(2))
+                day = int(match.group(3))
+
+                if year >= 2010 and month <= 12 and day <= 31:
+                    date = datetime(year, month, day)
+                    valid_dates.append(date)
+            except ValueError:
+                continue
+
+        if valid_dates:
+            earliest = min(valid_dates)
+            self.logger.debug(f"找到全文最早日期: {earliest}")
+            return earliest
+
+        return None
+
     def _extract_publish_date_with_llm(self, text: str, llm) -> Optional[datetime]:
         """使用LLM智能提取日期"""
         if not text or not llm:
@@ -1128,21 +1421,35 @@ class CollectorAgent:
             self.logger.debug(f"获取HTML内容失败: {str(e)}")
             return None, None
 
-        # 优先级1: 使用htmldate提取日期（最准确）
-        try:
-            from htmldate import find_date
-            date_str = find_date(html_content, extensive_search=True, original_date=True)
-            if date_str:
-                try:
-                    # htmldate返回YYYY-MM-DD格式
-                    publish_date = datetime.strptime(date_str, '%Y-%m-%d')
-                    self.logger.debug(f"从htmldate提取到发布时间: {publish_date}")
-                except:
-                    pass
-        except Exception as e:
-            self.logger.debug(f"htmldate提取失败: {str(e)}")
+        # 优先级1: 针对36Kr移动端特殊处理（最高优先级）
+        if 'm.36kr.com' in url:
+            soup = BeautifulSoup(html_content, 'html.parser')
+            publish_date = self.extract_36kr_publish_date(soup)
+            if publish_date:
+                self.logger.debug(f"从36Kr专用提取器提取到发布时间: {publish_date}")
 
-        # 优先级2: 如果htmldate失败，从URL提取日期
+        # 优先级2: 使用htmldate提取日期（最准确）
+        if not publish_date:
+            try:
+                from htmldate import find_date
+                date_str = find_date(html_content, extensive_search=True, original_date=True)
+                if date_str:
+                    try:
+                        # htmldate返回YYYY-MM-DD格式
+                        extracted_date = datetime.strptime(date_str, '%Y-%m-%d')
+                        # 验证htmldate结果的合理性
+                        now = datetime.now()
+                        if extracted_date.year >= 2010 and extracted_date <= now:
+                            publish_date = extracted_date
+                            self.logger.debug(f"从htmldate提取到发布时间: {publish_date}")
+                        else:
+                            self.logger.debug(f"htmldate提取到不合理日期，跳过: {extracted_date}")
+                    except:
+                        pass
+            except Exception as e:
+                self.logger.debug(f"htmldate提取失败: {str(e)}")
+
+        # 优先级3: 如果htmldate失败，从URL提取日期
         if not publish_date:
             publish_date = self._extract_publish_date_from_url(url)
             if publish_date:
@@ -1154,24 +1461,13 @@ class CollectorAgent:
             if publish_date:
                 self.logger.debug(f"从HTML元数据提取到发布时间: {publish_date}")
 
-        # 优先级4: 使用LLM智能提取日期（只在必要时调用）
+        # 优先级4: 使用LLM智能提取日期（放宽条件，提高覆盖率）
         if not publish_date:
-            # 检查是否有明显的日期模式再调用LLM，避免不必要的调用
-            soup = BeautifulSoup(html_content, 'html.parser')
-            page_text = soup.get_text()[:1000]  # 只检查前1000字符
-
-            # 如果页面包含明显的日期关键词，才调用LLM
-            date_keywords = ['published', 'posted', 'date', '时间', '日期', '年', '月', '日']
-            has_date_indicators = any(keyword.lower() in page_text.lower() for keyword in date_keywords)
-
-            if has_date_indicators:
-                publish_date = self._extract_publish_date_with_llm(html_content, self.llm)
-                if publish_date:
-                    self.logger.debug(f"从LLM提取到发布时间: {publish_date}")
-                else:
-                    self.logger.debug("LLM未能提取到日期")
+            publish_date = self._extract_publish_date_with_llm(html_content, self.llm)
+            if publish_date:
+                self.logger.debug(f"从LLM提取到发布时间: {publish_date}")
             else:
-                self.logger.debug("页面无明显日期特征，跳过LLM提取")
+                self.logger.debug("LLM未能提取到日期")
 
         # 优先级5: 从页面文本提取日期（regex作为最后fallback）
         if not publish_date:
@@ -1300,19 +1596,33 @@ class CollectorAgent:
             self.logger.debug(f"异步获取HTML内容失败: {str(e)}")
             return None, None
 
-        # 优先级1: 使用htmldate提取日期（最准确）
-        try:
-            from htmldate import find_date
-            date_str = find_date(html_content, extensive_search=True, original_date=True)
-            if date_str:
-                try:
-                    # htmldate返回YYYY-MM-DD格式
-                    publish_date = datetime.strptime(date_str, '%Y-%m-%d')
-                    self.logger.debug(f"从htmldate提取到发布时间: {publish_date}")
-                except:
-                    pass
-        except Exception as e:
-            self.logger.debug(f"htmldate提取失败: {str(e)}")
+        # 优先级1: 针对36Kr移动端特殊处理（最高优先级）
+        if 'm.36kr.com' in url:
+            soup = BeautifulSoup(html_content, 'html.parser')
+            publish_date = self.extract_36kr_publish_date(soup)
+            if publish_date:
+                self.logger.debug(f"从36Kr专用提取器提取到发布时间: {publish_date}")
+
+        # 优先级2: 使用htmldate提取日期（最准确）
+        if not publish_date:
+            try:
+                from htmldate import find_date
+                date_str = find_date(html_content, extensive_search=True, original_date=True)
+                if date_str:
+                    try:
+                        # htmldate返回YYYY-MM-DD格式
+                        extracted_date = datetime.strptime(date_str, '%Y-%m-%d')
+                        # 验证htmldate结果的合理性
+                        now = datetime.now()
+                        if extracted_date.year >= 2010 and extracted_date <= now:
+                            publish_date = extracted_date
+                            self.logger.debug(f"从htmldate提取到发布时间: {publish_date}")
+                        else:
+                            self.logger.debug(f"htmldate提取到不合理日期，跳过: {extracted_date}")
+                    except:
+                        pass
+            except Exception as e:
+                self.logger.debug(f"htmldate提取失败: {str(e)}")
 
         # 优先级2: 如果htmldate失败，从URL提取日期
         if not publish_date:
@@ -1326,24 +1636,13 @@ class CollectorAgent:
             if publish_date:
                 self.logger.debug(f"从HTML元数据提取到发布时间: {publish_date}")
 
-        # 优先级4: 使用LLM智能提取日期（只在必要时调用）
+        # 优先级4: 使用LLM智能提取日期（放宽条件，提高覆盖率）
         if not publish_date:
-            # 检查是否有明显的日期模式再调用LLM，避免不必要的调用
-            soup = BeautifulSoup(html_content, 'html.parser')
-            page_text = soup.get_text()[:1000]  # 只检查前1000字符
-
-            # 如果页面包含明显的日期关键词，才调用LLM
-            date_keywords = ['published', 'posted', 'date', '时间', '日期', '年', '月', '日']
-            has_date_indicators = any(keyword.lower() in page_text.lower() for keyword in date_keywords)
-
-            if has_date_indicators:
-                publish_date = self._extract_publish_date_with_llm(html_content, self.llm)
-                if publish_date:
-                    self.logger.debug(f"从LLM提取到发布时间: {publish_date}")
-                else:
-                    self.logger.debug("LLM未能提取到日期")
+            publish_date = self._extract_publish_date_with_llm(html_content, self.llm)
+            if publish_date:
+                self.logger.debug(f"从LLM提取到发布时间: {publish_date}")
             else:
-                self.logger.debug("页面无明显日期特征，跳过LLM提取")
+                self.logger.debug("LLM未能提取到日期")
 
         # 优先级5: 从页面文本提取日期（regex作为最后fallback）
         if not publish_date:
