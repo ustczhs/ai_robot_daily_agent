@@ -14,6 +14,7 @@ import html2text
 import re
 import asyncio
 import aiohttp
+import numpy as np
 
 import chardet
 from newsapi import NewsApiClient
@@ -219,7 +220,7 @@ class CollectorAgent:
                 # 策略2: 普通搜索带时间限制 + 分页
                 f"https://www.google.com/search?q={quote_plus(keyword)}&tbs={time_filter}&start={start_index}",
                 # 策略3: 不限制时间的新闻搜索 + 分页（作为备用）
-                f"https://www.google.com/search?q={quote_plus(keyword)}&tbm=nws&start={start_index}",
+                # f"https://www.google.com/search?q={quote_plus(keyword)}&tbm=nws&start={start_index}",
             ]
 
             page_items = []
@@ -327,8 +328,8 @@ class CollectorAgent:
             if len(all_items) >= max_results:
                 break
 
-            # 添加延迟避免被限制
-            time.sleep(1)
+            # 添加随机延迟避免被限制
+            time.sleep(np.random.uniform(1, 3))
 
         # 最终去重（按标题去重）
         unique_items = []
@@ -1193,6 +1194,164 @@ class CollectorAgent:
 
         return None
 
+    def _decode_html_content(self, content: bytes, url: str) -> Optional[str]:
+        """
+        改进的网页内容编码检测和解码
+
+        专门处理中文网站的编码问题，特别是：
+        1. UTF-8 BOM问题
+        2. GBK/GB2312编码检测
+        3. 编码验证和修复
+        """
+        try:
+            # 首先检查BOM（字节顺序标记）
+            if content.startswith(b'\xef\xbb\xbf'):
+                # UTF-8 BOM，移除BOM后解码
+                self.logger.debug("检测到UTF-8 BOM，移除BOM后解码")
+                try:
+                    return content[3:].decode('utf-8')
+                except UnicodeDecodeError:
+                    pass
+
+            # 使用chardet检测编码
+            detected = chardet.detect(content)
+            detected_encoding = detected.get('encoding', '').lower()
+            confidence = detected.get('confidence', 0)
+
+            self.logger.debug(f"chardet检测编码: {detected_encoding} (置信度: {confidence:.2f})")
+
+            # 编码优先级列表（针对中文网站优化）
+            encodings_to_try = []
+
+            # 1. 检测到的编码优先（如果置信度高）
+            if detected_encoding and confidence > 0.7:
+                encodings_to_try.append(detected_encoding)
+
+            # 2. 常见的中文编码
+            chinese_encodings = ['utf-8', 'gbk', 'gb2312', 'big5', 'utf-16', 'utf-32']
+
+            # 3. 根据URL判断可能的编码
+            if 'china.com' in url or 'm.36kr.com' in url or any(domain in url for domain in ['.cn', '.com.cn']):
+                # 中文网站优先尝试GBK
+                encodings_to_try.extend(['gbk', 'gb2312'])
+            else:
+                # 其他网站优先尝试UTF-8
+                encodings_to_try.append('utf-8')
+
+            # 添加其他常见编码
+            for enc in chinese_encodings:
+                if enc not in encodings_to_try:
+                    encodings_to_try.append(enc)
+
+            # 最后的fallback编码
+            fallback_encodings = ['iso-8859-1', 'windows-1252', 'latin1']
+            encodings_to_try.extend(fallback_encodings)
+
+            # 尝试解码
+            best_content = None
+            best_score = 0
+
+            for encoding in encodings_to_try:
+                try:
+                    decoded = content.decode(encoding)
+
+                    # 评估解码质量
+                    score = self._evaluate_decoding_quality(decoded, url)
+                    self.logger.debug(f"编码 {encoding} 得分: {score}")
+
+                    if score > best_score:
+                        best_score = score
+                        best_content = decoded
+
+                        # 如果得分很高，直接使用
+                        if score >= 90:
+                            self.logger.debug(f"找到高质量解码: {encoding} (得分: {score})")
+                            return decoded
+
+                except (UnicodeDecodeError, LookupError) as e:
+                    self.logger.debug(f"编码 {encoding} 解码失败: {str(e)}")
+                    continue
+
+            if best_content and best_score >= 50:
+                self.logger.debug(f"选择最佳解码结果 (得分: {best_score})")
+                return best_content
+            else:
+                # 最后的暴力解码
+                self.logger.warning("所有编码尝试得分过低，使用暴力解码")
+                return content.decode('utf-8', errors='ignore')
+
+        except Exception as e:
+            self.logger.error(f"编码检测失败: {str(e)}")
+            # 最后的fallback
+            return content.decode('utf-8', errors='ignore')
+
+    def _evaluate_decoding_quality(self, text: str, url: str) -> int:
+        """
+        评估解码质量，返回0-100的分数
+
+        评估标准：
+        - 中文字符比例
+        - 乱码特征检测
+        - 网站类型匹配
+        """
+        if not text:
+            return 0
+
+        score = 0
+        text_length = len(text)
+
+        if text_length == 0:
+            return 0
+
+        # 1. 中文字符比例 (40分)
+        chinese_chars = sum(1 for char in text if '\u4e00' <= char <= '\u9fff')
+        chinese_ratio = chinese_chars / text_length
+
+        if chinese_ratio > 0.1:  # 超过10%是中文
+            score += min(40, chinese_ratio * 200)  # 最多40分
+
+        # 2. 乱码特征检测 (30分)
+        invalid_patterns = [
+            'ï»¿', 'â', '€', '™', 'Â', '¿', '½', '¼', '¾', '×', '÷', '±',
+            'Ã', '¤', '¥', '§', '¨', '©', 'ª', '«', '¬', '®', '¯', '°',
+            '²', '³', 'µ', '¶', '·', '¸', '¹', 'º', '»', '¼', '½', '¾',
+        ]
+
+        invalid_count = sum(text.count(pattern) for pattern in invalid_patterns)
+        invalid_ratio = invalid_count / text_length
+
+        if invalid_ratio < 0.01:  # 乱码少于1%
+            score += 30
+        elif invalid_ratio < 0.05:  # 乱码少于5%
+            score += 20
+        elif invalid_ratio < 0.1:   # 乱码少于10%
+            score += 10
+
+        # 3. HTML结构完整性 (20分)
+        html_score = 0
+        if '<html' in text.lower():
+            html_score += 5
+        if '<head' in text.lower():
+            html_score += 5
+        if '<body' in text.lower():
+            html_score += 5
+        if '<title' in text.lower():
+            html_score += 5
+
+        score += html_score
+
+        # 4. 网站特定特征 (10分)
+        if 'china.com' in url or 'm.36kr.com' in url:
+            # 中文网站应该有较高中文比例
+            if chinese_ratio > 0.15:
+                score += 10
+        elif any(domain in url for domain in ['.com', '.org', '.net']):
+            # 英文网站中文比例不应过高
+            if chinese_ratio < 0.3:
+                score += 10
+
+        return min(100, max(0, score))
+
     def _extract_publish_date_with_llm(self, text: str, llm) -> Optional[datetime]:
         """使用LLM智能提取日期"""
         if not text or not llm:
@@ -1548,49 +1707,11 @@ class CollectorAgent:
                     # 获取响应内容
                     content = await response.read()
 
-                    # 检测网页编码并尝试多种解码方式
-                    detected_encoding = chardet.detect(content)['encoding']
-                    confidence = chardet.detect(content)['confidence']
-                    self.logger.debug(f"检测到网页编码: {detected_encoding} (置信度: {confidence:.2f})")
-
-                    # 尝试多种编码来正确解码中文内容，按优先级排序
-                    encodings_to_try = [
-                        detected_encoding,  # 检测到的编码优先
-                        'utf-8',           # UTF-8最常见
-                        'gbk',             # 中文GBK编码
-                        'gb2312',          # 中文GB2312编码
-                        'big5',            # 繁体中文Big5
-                        'iso-8859-1',      # 西欧编码
-                        'windows-1252',    # Windows西欧编码
-                        'latin1'           # 拉丁编码
-                    ]
-
-                    html_content = None
-                    best_encoding = None
-
-                    for encoding in encodings_to_try:
-                        if not encoding:
-                            continue
-                        try:
-                            html_content = content.decode(encoding)
-                            # 验证解码质量：检查是否有明显的乱码特征
-                            invalid_chars = ['', '', '', '']  # UTF-8解码错误的常见字符
-                            has_invalid_chars = any(char in html_content for char in invalid_chars)
-
-                            # 检查是否包含正常的中文字符（作为解码成功的指标）
-                            has_chinese = any('\u4e00' <= char <= '\u9fff' for char in html_content)
-
-                            # 如果没有乱码字符，或者包含中文字符，认为是成功解码
-                            if not has_invalid_chars or has_chinese or encoding == 'utf-8':
-                                best_encoding = encoding
-                                self.logger.debug(f"成功使用编码 {encoding} 解码网页")
-                                break
-                        except (UnicodeDecodeError, LookupError):
-                            continue
-
-                    if html_content is None:
-                        self.logger.warning("所有编码尝试都失败，使用默认解码")
-                        html_content = content.decode('utf-8', errors='ignore')  # 最后的fallback
+            # 改进的编码检测和处理逻辑
+            html_content = self._decode_html_content(content, url)
+            if html_content is None:
+                self.logger.warning("所有编码尝试都失败，使用默认解码")
+                html_content = content.decode('utf-8', errors='ignore')  # 最后的fallback
 
         except Exception as e:
             self.logger.debug(f"异步获取HTML内容失败: {str(e)}")

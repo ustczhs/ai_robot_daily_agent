@@ -22,12 +22,12 @@ search:
     # - "newsapi"  # 新增：NewsAPI (需要API key)
     - "google"
     # - "bing"
-  max_results_per_query: 60 # 每个查询返回的最大结果数
+  max_results_per_query: 30 # 每个查询返回的最大结果数
   # NewsAPI配置
   newsapi:
     api_key_env: "NEWS_API_KEY"  # 环境变量名
     calls_per_keyword: 1  # 测试阶段限制：每个关键词只调用1次
-    max_calls_per_day: 50  # 每日最大调用次数
+    max_calls_per_day: 10  # 每日最大调用次数
     language: "en"  # 优先英文，备用中文
     sort_by: "publishedAt"  # 按发布时间排序
   
@@ -44,7 +44,7 @@ sources:
       keywords:
         - "AI OS "
         - "AI operating system "
-        - "AI 操作系统"
+        - "AI 智能操作系统"
     - name: "陪伴机器人"
       keywords:
         - "陪伴机器人"
@@ -228,8 +228,8 @@ sources:
 
 # 内容过滤配置
 filtering:
-  min_quality_score: 4.0  # 最低质量分数（0-10）
-  max_age_hours: 48  # 最大内容年龄（小时）
+  min_quality_score: 6.5  # 最低质量分数（0-10）
+  max_age_hours: 24  # 最大内容年龄（小时）
   similarity_threshold: 0.5  # 去重相似度阈值
   min_content_length: 30  # 最小内容长度（字符）
 
@@ -253,6 +253,7 @@ report:
   include_predictions: true
   max_items_per_category: 200
   analysis_llm_provider: "ollama"  # "remote" 或 "ollama" - 控制趋势分析、前沿洞察、方向预测使用哪种LLM
+  enable_auto_deduplication: true  # 是否启用自动去重功能（需要 Ollama LLM）
 
 # 数据库配置
 database:

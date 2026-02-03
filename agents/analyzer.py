@@ -85,7 +85,7 @@ class AnalyzerAgent:
         }
 
         # 过滤阈值
-        self.pre_filter_threshold = 0.3  # 预过滤阈值，0-1之间
+        self.pre_filter_threshold = 0.1  # 预过滤阈值，0-1之间
         self.min_content_length = 100   # 最小内容长度
 
         # 创建分析提示词
@@ -215,13 +215,13 @@ class AnalyzerAgent:
                     if item.get('published_date') and isinstance(item['published_date'], datetime):
                         if item['published_date'] < cutoff_time:
                             self.logger.debug(f"      ✗ 过期新闻，已过滤 (发布日期: {item['published_date']})")
-                            return None
+                            # return None
                         else:
                             self.logger.debug(f"      ✓ 日期有效: {item['published_date']}")
                     else:
                         # 如果没有发布日期，直接过滤掉（不再允许无日期新闻通过）
                         self.logger.debug(f"      ✗ 无发布日期，已过滤")
-                        return None
+                        # return None
 
                     # 第三步：智能预过滤 - 检查技术相关性
                     pre_filter_score = self._calculate_pre_filter_score(item)
@@ -292,13 +292,13 @@ class AnalyzerAgent:
                 if item.get('published_date') and isinstance(item['published_date'], datetime):
                     if item['published_date'] < cutoff_time:
                         self.logger.debug(f"      ✗ 过期新闻，已过滤 (发布日期: {item['published_date']})")
-                        continue
+                        # continue
                     else:
                         self.logger.debug(f"      ✓ 日期有效: {item['published_date']}")
                 else:
                     # 如果没有发布日期，直接过滤掉（不再允许无日期新闻通过）
                     self.logger.debug(f"      ✗ 无发布日期，已过滤")
-                    continue
+                    # continue
 
                 # 第三步：智能预过滤 - 检查技术相关性
                 pre_filter_score = self._calculate_pre_filter_score(item)

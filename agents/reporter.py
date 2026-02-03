@@ -6,11 +6,12 @@ import logging
 import os
 from datetime import datetime
 from pathlib import Path
-from typing import List, Dict
+from typing import List, Dict, Optional
 from collections import defaultdict
 import asyncio
-from langchain.prompts import ChatPromptTemplate
+from langchain.prompts import ChatPromptTemplate, PromptTemplate
 from langchain_openai import ChatOpenAI
+from langchain_ollama import OllamaLLM
 
 from utils.state import NewsItem
 
@@ -44,18 +45,40 @@ class ReporterAgent:
             # 如果配置为ollama，则使用传入的llm
             self.remote_llm = llm
             self.logger.info("分析方法将使用本地LLM: ollama")
+
+        # 初始化去重相关配置
+        self.enable_auto_deduplication = self.config['report'].get('enable_auto_deduplication', False)
+        if self.enable_auto_deduplication:
+            # 为去重初始化独立的 Ollama LLM
+            dedup_llm_config = self.config['llm']
+            if dedup_llm_config['provider'].lower() == 'ollama':
+                self.dedup_llm = OllamaLLM(
+                    model=dedup_llm_config['model'],
+                    base_url=dedup_llm_config.get('ollama_base_url', 'http://localhost:11434'),
+                    temperature=0.1  # 去重需要较低温度以保证一致性
+                )
+                self.logger.info("已启用自动去重功能，使用 Ollama LLM")
+            else:
+                self.enable_auto_deduplication = False
+                self.logger.warning("自动去重需要配置 Ollama LLM，已禁用去重功能")
+        else:
+            self.logger.info("自动去重功能已禁用")
         
     def generate_report(self, items: List[NewsItem]) -> str:
         """生成报告"""
+        # 自动去重（如果启用）
+        if self.enable_auto_deduplication:
+            items = self._deduplicate_news(items)
+
         # 按类别分组
         categorized = self._categorize_items(items)
-        
+
         # 生成报告内容
         report_content = self._build_report(categorized, items)
-        
+
         # 保存报告
         report_path = self._save_report(report_content)
-        
+
         return str(report_path)
     
     def _categorize_items(self, items: List[NewsItem]) -> Dict[str, List[NewsItem]]:
@@ -153,7 +176,9 @@ class ReporterAgent:
                 # 打印输出item的全部context内容以供调试
                 self.logger.info(f"生成点评 - content: {item['content']}...")
                 self.logger.info(f"生成点评 - full_content: {item['full_content']}...")
-                report += f"{i}. **[{translated_title}][{item['title']}]\n({item['url']})**\n"
+                # 使用HTML超链接格式，让URL可点击
+                report += f"{i}. **[{translated_title}][{item['title']}]**\n"
+                report += f"   <a href=\"{item['url']}\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"source-link\">🔗 阅读原文</a>\n"
                 report += f"   - 📰 来源: {item['source']}\n"
 
                 # 添加发布时间显示
@@ -261,7 +286,9 @@ class ReporterAgent:
                 # 打印输出item的全部context内容以供调试
                 self.logger.info(f"生成点评 - content: {item['content']}...")
                 self.logger.info(f"生成点评 - full_content: {item['full_content']}...")
-                report += f"{i}. **[{translated_title}][{item['title']}]\n({item['url']})**\n"
+                # 使用HTML超链接格式，让URL可点击
+                report += f"{i}. **[{translated_title}][{item['title']}]**\n"
+                report += f"   <a href=\"{item['url']}\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"source-link\">🔗 阅读原文</a>\n"
                 report += f"   - 📰 来源: {item['source']}\n"
 
                 # 添加发布时间显示
@@ -719,12 +746,101 @@ class ReporterAgent:
         # 对于其他情况，返回完整内容
         return content.strip()
 
+    def _deduplicate_news(self, items: List[NewsItem]) -> List[NewsItem]:
+        """使用 LLM 对新闻进行去重"""
+        if not self.enable_auto_deduplication:
+            return items
+
+        self.logger.info(f"开始 LLM 去重处理，共 {len(items)} 条新闻")
+
+        if len(items) <= 1:
+            return items
+
+        deduplicated = []
+        removed_count = 0
+
+        # 对每条新闻，检查是否与已保留的新闻重复
+        for i, item in enumerate(items):
+            self.logger.info(f"检查 {i+1}/{len(items)}: {item['title'][:50]}...")
+
+            is_duplicate = False
+            duplicate_with = None
+
+            # 与已保留的新闻比较
+            for existing in deduplicated:
+                if self._is_duplicate_news(item, existing):
+                    is_duplicate = True
+                    duplicate_with = existing['title'][:30] + "..."
+                    break
+
+            if is_duplicate:
+                self.logger.info(f"  ✗ 重复 (与: {duplicate_with})")
+                removed_count += 1
+            else:
+                deduplicated.append(item)
+                self.logger.info(f"  ✓ 保留")
+
+        self.logger.info(f"去重完成: 原始 {len(items)} 条，去除 {removed_count} 条重复，保留 {len(deduplicated)} 条")
+        return deduplicated
+
+    def _is_duplicate_news(self, item1: NewsItem, item2: NewsItem) -> bool:
+        """判断两条新闻是否重复"""
+        prompt = PromptTemplate.from_template("""
+请判断以下两条新闻是否描述相同的核心事件。
+
+新闻A：
+标题：{title_a}
+来源：{source_a}
+简介：{content_a}
+
+新闻B：
+标题：{title_b}
+来源：{source_b}
+简介：{content_b}
+
+请只回答"是"或"否"，后面简要说明理由（不超过30字）。
+
+判断标准：
+- 如果描述的是同一事件、同一产品发布、同一公司动态，则为"是"
+- 如果只是相关但不同的事件，则为"否"
+- 即使来源不同，只要核心事件相同就是重复
+
+回答格式：
+[是/否] 理由
+""")
+
+        try:
+            response = self.dedup_llm.invoke(prompt.format(
+                title_a=item1['title'],
+                source_a=item1.get('source', ''),
+                content_a=item1.get('content', '')[:200],  # 限制内容长度
+                title_b=item2['title'],
+                source_b=item2.get('source', ''),
+                content_b=item2.get('content', '')[:200]
+            ))
+
+            response = response.strip()
+
+            # 解析响应
+            if response.upper().startswith('是') or response.upper().startswith('YES'):
+                return True
+            elif response.upper().startswith('否') or response.upper().startswith('NO'):
+                return False
+            else:
+                # 如果无法解析，保守处理为不重复
+                self.logger.warning(f"LLM 响应无法解析: {response}")
+                return False
+
+        except Exception as e:
+            self.logger.error(f"LLM 判断重复失败: {str(e)}")
+            return False  # 出错时保守处理为不重复
+
     def _save_report(self, content: str) -> Path:
         """保存报告"""
         filename = f"ai_robot_daily_{datetime.now().strftime('%Y%m%d')}.md"
         filepath = self.output_dir / filename
-        
+
         with open(filepath, 'w', encoding='utf-8') as f:
             f.write(content)
-        
+
         return filepath

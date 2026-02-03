@@ -1,0 +1,135 @@
+{% extends "layout.html" %}
+
+{% block title %}历史报告 - AI与机器人技术日报{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h4 class="card-title mb-0">
+                    <i class="fas fa-history me-2"></i>历史报告列表
+                </h4>
+            </div>
+            <div class="card-body">
+                {% if error %}
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        加载历史报告失败: {{ error }}
+                    </div>
+                {% elif reports %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col"><i class="fas fa-calendar me-1"></i>报告日期</th>
+                                    <th scope="col"><i class="fas fa-file-alt me-1"></i>文件名</th>
+                                    <th scope="col"><i class="fas fa-weight me-1"></i>文件大小</th>
+                                    <th scope="col"><i class="fas fa-clock me-1"></i>修改时间</th>
+                                    <th scope="col"><i class="fas fa-eye me-1"></i>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for report in reports %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ report.display_date }}</strong>
+                                    </td>
+                                    <td>
+                                        <code class="text-muted">{{ report.filename }}</code>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">{{ report.file_size }}</span>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">{{ report.modified_time }}</small>
+                                    </td>
+                                    <td>
+                                        <a href="{{ report.url }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye me-1"></i>查看
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt-3">
+                        <p class="text-muted mb-0">
+                            <i class="fas fa-info-circle me-1"></i>
+                            共找到 <strong>{{ reports|length }}</strong> 个历史报告文件
+                        </p>
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning">
+                        <i class="fas fa-folder-open me-2"></i>
+                        暂无历史报告文件。请先生成日报报告，然后刷新此页面查看。
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 统计信息卡片 -->
+{% if reports %}
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="text-primary">{{ reports|length }}</h3>
+                <p class="card-text">总报告数</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="text-success">{{ reports[0].file_size if reports else '0 KB' }}</h3>
+                <p class="card-text">最新报告大小</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="text-info">{{ reports[0].modified_time if reports else '未知' }}</h3>
+                <p class="card-text">最后更新</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- 使用说明 -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-question-circle me-2"></i>使用说明
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-eye text-primary me-1"></i>查看报告</h6>
+                        <p class="small text-muted">点击"查看"按钮可以浏览完整的日报报告内容，包括技术分类、趋势分析等。</p>
+
+                        <h6 class="mt-3"><i class="fas fa-sort-amount-down text-success me-1"></i>排序规则</h6>
+                        <p class="small text-muted">报告按生成时间倒序排列，最新的报告显示在顶部。</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-home text-warning me-1"></i>返回首页</h6>
+                        <p class="small text-muted">点击导航栏的"最新报告"可以快速返回查看最新的日报内容。</p>
+
+                        <h6 class="mt-3"><i class="fas fa-info-circle text-info me-1"></i>文件信息</h6>
+                        <p class="small text-muted">显示每个报告的文件大小和最后修改时间，帮助了解报告状态。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
