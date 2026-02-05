@@ -34,7 +34,6 @@ search:
 # 信息源配置
 sources:
   categories:
-    # 用于分类的关键词组（新增）
     - name: "3D视频通话"
       keywords:
         - "3D视频通话"
@@ -267,3 +266,25 @@ logging:
   file: "./logs/agent.log"
   max_size_mb: 10
   backup_count: 5
+
+# 邮件推送配置
+email:
+  enabled: true  # 是否启用邮件推送
+  smtp_server: "mail.tcl.com"  # TCL企业邮箱SMTP服务器地址
+  smtp_port: 587  # SMTP服务器端口（TLS）
+  username: "hongshen.zhao@tcl.com"  # TCL企业邮箱用户名
+  password_env: "EMAIL_PASSWORD"  # 邮箱密码的环境变量名（安全考虑）
+  recipients: 
+    - "hongshen.zhao@tcl.com"  # 默认收件人（可添加更多）
+    - "guoqing.yao@tcl.com"
+    - "xinrong.an@tcl.com"
+    - "haiqing.liu@tcl.com"
+    - "sheng.zhang@tcl.com"
+    - "man.xu@tcl.com"
+    - "bo.he@tcl.com"
+    - "quanlin.wang@tcl.com"
+    - "jiusheng.zhang@tcl.com"
+    - "lifang.kang@tcl.com"
+    - "yue.yang@tcl.com"
+  subject_template: "AI与机器人技术日报 - {date}"  # 邮件主题模板
+  send_time: ""  # 定时发送时间（可选，如：08:00）
