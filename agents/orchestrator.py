@@ -134,8 +134,12 @@ class DailyReportOrchestrator:
         self.logger.info(f"   报告已生成: {report_path}")
         return state
     
-    def run(self) -> str:
-        """运行完整流程"""
+    def run(self) -> tuple[str, int]:
+        """运行完整流程
+        
+        Returns:
+            tuple: (报告路径, 资讯数量)
+        """
         # 初始化状态
         initial_state = AgentState(
             raw_items=[],
@@ -150,4 +154,6 @@ class DailyReportOrchestrator:
         # 执行工作流
         final_state = self.workflow.invoke(initial_state)
 
-        return final_state['report_path']
+        # 返回报告路径和资讯数量
+        items_count = len(final_state['unique_items'])
+        return final_state['report_path'], items_count

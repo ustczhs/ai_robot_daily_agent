@@ -3,7 +3,7 @@
 # LLM配置
 llm:
   provider: "ollama"     # dashscope, openai, ollama
-  model: "qwen3:4b-instruct"      # 远程: qwen-plus/qwen-max; 本地: qwen2.5:7b等
+  model: "qwen3-14b-fast"      # 远程: qwen-plus/qwen-max; 本地: qwen2.5:7b等 qwen3-14b-nothink  qwen3:4b-instruct
   base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"  # 远程API地址
   ollama_base_url: "http://localhost:11434"  # Ollama服务地址
   temperature: 0.5
@@ -22,7 +22,7 @@ search:
     # - "newsapi"  # 新增：NewsAPI (需要API key)
     - "google"
     # - "bing"
-  max_results_per_query: 30 # 每个查询返回的最大结果数
+  max_results_per_query: 40 # 每个查询返回的最大结果数
   # NewsAPI配置
   newsapi:
     api_key_env: "NEWS_API_KEY"  # 环境变量名
@@ -269,7 +269,7 @@ logging:
 
 # 邮件推送配置
 email:
-  enabled: true  # 是否启用邮件推送
+  enabled: false  # 是否启用邮件推送
   smtp_server: "mail.tcl.com"  # TCL企业邮箱SMTP服务器地址
   smtp_port: 587  # SMTP服务器端口（TLS）
   username: "hongshen.zhao@tcl.com"  # TCL企业邮箱用户名
@@ -285,6 +285,8 @@ email:
     - "quanlin.wang@tcl.com"
     - "jiusheng.zhang@tcl.com"
     - "lifang.kang@tcl.com"
+    - "yuanxiao@tcl.com"
     - "yue.yang@tcl.com"
+    - "yang.zou@tcl.com"
   subject_template: "AI与机器人技术日报 - {date}"  # 邮件主题模板
   send_time: ""  # 定时发送时间（可选，如：08:00）

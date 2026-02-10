@@ -58,14 +58,25 @@ def test_ollama_connection():
         llm = OllamaLLM(
             model=model_name,
             base_url=base_url,
-            temperature=config['llm']['temperature']
+            temperature=config['llm']['temperature'],
+            reasoning=False,
+            num_gpu=999,              # 强制尽量多层卸载到 GPU（999 表示全部可能）
+            num_thread=12,            # 根据你的 CPU 核心数调整（4060 Ti 搭配的 CPU 一般 8-16 核）
+            num_predict=512,          # 限制最大生成长度，避免不必要预分配
+            num_ctx=8192,   
         )
 
         # 测试基本调用
         print("💬 发送测试消息...")
         test_prompt = "请简单介绍一下你自己，限制在50字以内。"
-
-        response = llm.invoke(test_prompt)
+        enhanced_prompt = test_prompt + " /no_think"
+        # 输出推理时间
+        import time
+        start_time = time.time()
+        response = llm.invoke(enhanced_prompt)
+        end_time = time.time()
+        inference_time = end_time - start_time
+        print(f"推理时间: {inference_time:.2f}秒")
 
         print("✅ Ollama连接成功!")
         print(f"🤖 模型回复: {response}")

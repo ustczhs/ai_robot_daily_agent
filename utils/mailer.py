@@ -161,7 +161,7 @@ def create_email_content(report_path):
                 <div class="content">
                     <p>您好！</p>
                     
-                    <p>今日AI与机器人技术日报已生成完成，请查收附件中的详细报告，也可访问 <a href="http://172.16.40.78:5000/" target="_blank" style="color: #007acc; text-decoration: none;">http://172.16.40.78:5000/</a> 在线查看。</p>
+                    <p>今日AI与机器人技术日报已生成完成，请查收附件中的详细报告，也可访问 <a href="http://172.16.40.98:5000/" target="_blank" style="color: #007acc; text-decoration: none;">http://172.16.40.98:5000/</a> 在线查看。</p>
                     
                     <div class="highlight">
                         <strong>📊 报告内容概览：</strong>

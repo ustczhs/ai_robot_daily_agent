@@ -68,29 +68,33 @@ def main():
         orchestrator = DailyReportOrchestrator(config)
         logger.info("开始执行日报生成流程...")
         
-        report_path = orchestrator.run()
+        report_path, items_count = orchestrator.run()
         
         print("\n" + "=" * 80)
-        print("✅ 报告生成成功!")
-        print(f"📄 报告路径: {report_path}")
-        
-        # 自动发送邮件（如果启用）
-        try:
-            email_config = config.get('email', {})
-            if email_config.get('enabled', False):
-                print("📧 正在发送邮件通知...")
-                from utils.mailer import send_daily_report
-                
-                email_success = send_daily_report(report_path, email_config)
-                if email_success:
-                    print("✅ 邮件发送成功!")
+        if items_count > 0:
+            print(f"✅ 报告生成成功! (收集到 {items_count} 条资讯)")
+            print(f"📄 报告路径: {report_path}")
+            
+            # 自动发送邮件（如果启用）
+            try:
+                email_config = config.get('email', {})
+                if email_config.get('enabled', False):
+                    print("📧 正在发送邮件通知...")
+                    from utils.mailer import send_daily_report
+                    
+                    email_success = send_daily_report(report_path, email_config)
+                    if email_success:
+                        print("✅ 邮件发送成功!")
+                    else:
+                        print("❌ 邮件发送失败，请检查配置")
                 else:
-                    print("❌ 邮件发送失败，请检查配置")
-            else:
-                print("📧 邮件推送未启用（可在config.yaml中配置）")
-        except Exception as e:
-            print(f"⚠️  邮件发送异常: {str(e)}")
-            logger.error(f"邮件发送失败: {str(e)}")
+                    print("📧 邮件推送未启用（可在config.yaml中配置）")
+            except Exception as e:
+                print(f"⚠️  邮件发送异常: {str(e)}")
+                logger.error(f"邮件发送失败: {str(e)}")
+        else:
+            print("⚠️  未收集到任何资讯，跳过邮件发送")
+            logger.warning("未收集到任何资讯，跳过邮件发送")
         
         print("=" * 80)
         
