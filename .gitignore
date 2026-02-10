@@ -1,6 +1,6 @@
 # 日志文件
 logs/agent.log
 # 缓存文件
-__pycache__/
-agent/__pycache__/
-utils/__pycache__/
+__pycache__/*
+agent/__pycache__/*
+utils/__pycache__/*

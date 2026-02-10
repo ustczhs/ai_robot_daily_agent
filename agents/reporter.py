@@ -73,13 +73,72 @@ class ReporterAgent:
         # 按类别分组
         categorized = self._categorize_items(items)
 
-        # 生成报告内容
-        report_content = self._build_report(categorized, items)
+        # 全局最大条目数过滤
+        filtered_categorized, filtered_items = self._filter_by_max_items(categorized)
+
+        # 生成报告内容（传入过滤后的条目用于统计）
+        report_content = self._build_report(filtered_categorized, filtered_items)
 
         # 保存报告
         report_path = self._save_report(report_content)
 
         return str(report_path)
+    
+    def _filter_by_max_items(self, categorized: Dict[str, List[NewsItem]]) -> tuple[Dict[str, List[NewsItem]], List[NewsItem]]:
+        """按全局最大条目数限制过滤条目，保留得分较高的条目
+        
+        Returns:
+            filtered_categorized: 过滤后的分类字典（保持原有类别顺序）
+            filtered_items: 过滤后的所有条目列表（用于统计）
+        """
+        max_total_items = self.config['report'].get('max_total_items')
+        
+        if max_total_items is None or max_total_items <= 0:
+            self.logger.info("全局最大条目数未配置或无效，跳过全局过滤")
+            return categorized, []
+        
+        # 收集所有条目及其类别信息
+        all_items_with_category = []
+        for category, items in categorized.items():
+            for item in items:
+                all_items_with_category.append({
+                    'item': item,
+                    'category': category,
+                    'score': item.get('quality_score', 0)
+                })
+        
+        total_items = len(all_items_with_category)
+        self.logger.info(f"当前条目总数: {total_items}, 配置的最大条目数: {max_total_items}")
+        
+        if total_items <= max_total_items:
+            self.logger.info(f"条目数未超过限制，无需过滤")
+            return categorized, all_items_with_category
+        
+        # 按质量分数降序排序
+        all_items_with_category.sort(key=lambda x: x['score'], reverse=True)
+        
+        # 保留得分最高的条目
+        filtered_items_with_category = all_items_with_category[:max_total_items]
+        
+        # 保持原有类别顺序，重新构建分类字典
+        filtered_categorized: Dict[str, List[NewsItem]] = {}
+        for category in categorized.keys():
+            category_items = [
+                item_info['item'] 
+                for item_info in filtered_items_with_category 
+                if item_info['category'] == category
+            ]
+            # 按质量分数排序
+            category_items.sort(key=lambda x: x.get('quality_score', 0), reverse=True)
+            if category_items:
+                filtered_categorized[category] = category_items
+        
+        # 收集过滤后的所有条目
+        filtered_items = [item_info['item'] for item_info in filtered_items_with_category]
+        
+        self.logger.info(f"全局过滤完成: {total_items} -> {len(filtered_items)} 条 (移除了 {total_items - len(filtered_items)} 条低分条目)")
+        
+        return filtered_categorized, filtered_items
     
     def _categorize_items(self, items: List[NewsItem]) -> Dict[str, List[NewsItem]]:
         """按类别分组"""

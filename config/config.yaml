@@ -34,15 +34,20 @@ search:
 # 信息源配置
 sources:
   categories:
-    - name: "3D视频通话"
+    - name: "机器人用硬件"
       keywords:
-        - "3D视频通话"
-        - "3D video call"
-        - "全息视频通话"
+        - "机器人 SoC"
+        - "机器人 内存"
+        - "ROBOT SoC"
+        - "消费级 SoC"
+        - "Consumer-grade SoC"
+        - "端侧算力 芯片"
+        - "端侧智能 芯片"
     - name: "AI 操作系统"
       keywords:
         - "AI OS "
-        - "AI operating system "
+        # - "AI operating system "
+        - "AI 智能助手"
         - "AI 智能操作系统"
     - name: "陪伴机器人"
       keywords:
@@ -51,10 +56,18 @@ sources:
         - "social robot"
         - "家庭机器人"
         - "情感机器人"
+        - "桌面机器人"
     - name: "AI 智能硬件"
       keywords:
         - "AI 智能硬件"
         - "AI smart hardware"
+        - "AI 新概念产品"
+
+    - name: "3D视频通话"
+      keywords:
+        - "3D视频通话"
+        - "3D video call"
+        - "全息视频通话"
         
     # - name: "大语言模型与生成式AI"
     #   keywords:
@@ -227,7 +240,7 @@ sources:
 
 # 内容过滤配置
 filtering:
-  min_quality_score: 6.5  # 最低质量分数（0-10）
+  min_quality_score: 6.0  # 最低质量分数（0-10）
   max_age_hours: 24  # 最大内容年龄（小时）
   similarity_threshold: 0.5  # 去重相似度阈值
   min_content_length: 30  # 最小内容长度（字符）
@@ -251,7 +264,8 @@ report:
   include_insights: true
   include_predictions: true
   max_items_per_category: 200
-  analysis_llm_provider: "ollama"  # "remote" 或 "ollama" - 控制趋势分析、前沿洞察、方向预测使用哪种LLM
+  max_total_items: 60  # 最终报告中显示的最大条目总数（按质量分数过滤后）
+  analysis_llm_provider: "ollama"  # "remote" 或 "ollama" - 控制趋势分析、前景洞察、方向预测使用哪种LLM
   enable_auto_deduplication: true  # 是否启用自动去重功能（需要 Ollama LLM）
 
 # 数据库配置
